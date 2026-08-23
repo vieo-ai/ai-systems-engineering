@@ -170,4 +170,66 @@
     reset: reset,
     onChange: onChange,
   };
+
+  window.AIFS_motion = {
+    scrollBehavior: function () {
+      return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth';
+    },
+    prefersReduced: function () {
+      return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    },
+    shouldTrail: function (delta, threshold) {
+      if (window.AIFS_motion.prefersReduced()) return false;
+      var t = threshold == null ? 0.02 : threshold;
+      return Math.abs(Number(delta) || 0) >= t;
+    },
+    spawnTrail: function (el, opts) {
+      if (!el || !el.parentNode || window.AIFS_motion.prefersReduced()) return null;
+      if (window.matchMedia && window.matchMedia('(max-width: 640px)').matches) return null;
+      opts = opts || {};
+      var parent = el.parentNode;
+      if (getComputedStyle(parent).position === 'static') {
+        parent.style.position = 'relative';
+      }
+      var ghost = el.cloneNode(true);
+      ghost.classList.add('aifs-trail');
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.style.pointerEvents = 'none';
+      ghost.style.position = 'absolute';
+      ghost.style.left = el.offsetLeft + 'px';
+      ghost.style.top = el.offsetTop + 'px';
+      ghost.style.width = el.offsetWidth + 'px';
+      ghost.style.height = el.offsetHeight + 'px';
+      ghost.style.margin = '0';
+      ghost.style.opacity = String(opts.opacity != null ? opts.opacity : 0.35);
+      ghost.style.transform = 'translate(' + (opts.dx || 0) + 'px,' + (opts.dy || 0) + 'px)';
+      ghost.style.transition =
+        'opacity var(--duration-trail, 520ms) var(--ease-trail, cubic-bezier(0.16,1,0.3,1)),' +
+        ' transform var(--duration-trail, 520ms) var(--ease-trail, cubic-bezier(0.16,1,0.3,1))';
+      parent.appendChild(ghost);
+      requestAnimationFrame(function () {
+        ghost.style.opacity = '0';
+        ghost.style.transform =
+          'translate(' + ((opts.dx || 0) * 1.6) + 'px,' + ((opts.dy || 0) * 1.6) + 'px) scale(1.02)';
+      });
+      var ttl = opts.duration != null ? opts.duration : 560;
+      window.setTimeout(function () {
+        if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
+      }, ttl);
+      return ghost;
+    },
+    pauseSmilIn: function (root) {
+      if (!window.AIFS_motion.prefersReduced()) return;
+      var scope = root && root.querySelectorAll ? root : document;
+      var svgs = scope.querySelectorAll ? scope.querySelectorAll('svg') : [];
+      for (var i = 0; i < svgs.length; i++) {
+        try {
+          if (typeof svgs[i].setCurrentTime === 'function') svgs[i].setCurrentTime(0);
+          if (typeof svgs[i].pauseAnimations === 'function') svgs[i].pauseAnimations();
+        } catch (_) {}
+      }
+    },
+  };
 })();

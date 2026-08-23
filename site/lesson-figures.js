@@ -30,8 +30,15 @@
       '.lf-num{font-family:var(--font-mono,monospace);font-size:2rem;color:var(--blueprint,#3553ff);font-variant-numeric:tabular-nums;line-height:1}',
       '.lf-num small{font-size:.9rem;color:var(--ink-soft,#555);letter-spacing:.04em}',
       '.lf-bar{position:relative;height:10px;background:var(--rule-soft,#eee);margin-top:12px;overflow:hidden}',
-      '.lf-bar i{position:absolute;inset:0 auto 0 0;width:0;background:var(--blueprint,#3553ff);transition:width .12s ease}',
+      '.lf-bar i{position:absolute;inset:0 auto 0 0;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--blueprint,#3553ff)}',
+      '.lf-bar .lf-bar-trail{background:var(--blueprint,#3553ff);opacity:0;transition:opacity var(--duration-trail,520ms) var(--ease-trail,cubic-bezier(0.16,1,0.3,1)),transform var(--duration-trail,520ms) var(--ease-trail,cubic-bezier(0.16,1,0.3,1));pointer-events:none}',
       '.lf-bar.over i{background:var(--warn,#b8870f)}',
+      '.lf-bar.over .lf-bar-trail{background:var(--warn,#b8870f)}',
+      '.lf-bar.lf-bar-pulse i{animation:lf-bar-pulse .45s cubic-bezier(0.16,1,0.3,1)}',
+      '@keyframes lf-bar-pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25)}}',
+      '.lf-path-trace{transition:stroke-dashoffset .48s cubic-bezier(0.16,1,0.3,1)}',
+      '.lf-row-enter{animation:lf-row-enter .32s cubic-bezier(0.16,1,0.3,1) both}',
+      '@keyframes lf-row-enter{from{opacity:.35;transform:scaleX(.88)}to{opacity:1;transform:scaleX(1)}}',
       '.lf-meta{font-family:var(--font-mono,monospace);font-size:.7rem;color:var(--ink-mute,#777);margin-top:8px;letter-spacing:.04em}',
       '.lf-formula{font-family:var(--font-mono,monospace);font-size:.72rem;color:var(--ink-soft,#555);margin-top:6px;word-break:break-word}',
       '.lf-cap{font-family:var(--font-body,serif);font-size:.92rem;color:var(--ink-soft,#555);line-height:1.5;padding:12px 16px;border-top:1px solid var(--rule-soft,#ddd)}',
@@ -60,6 +67,38 @@
   }
   function fmtInt(n) { return n.toLocaleString('en-US'); }
   function fmtSeq(n) { return n >= 1024 ? (n / 1024) + 'K' : String(n); }
+
+  function setLfBarScale(bar, pct) {
+    var scale = Math.max(0, Math.min(100, Number(pct))) / 100;
+    var prev = Number(bar.dataset.prevScale || 0);
+    if (
+      window.AIFS_motion &&
+      window.AIFS_motion.shouldTrail &&
+      window.AIFS_motion.shouldTrail(scale - prev, 0.02) &&
+      bar.parentNode
+    ) {
+      var wrap = bar.parentNode;
+      var trail = wrap.querySelector('.lf-bar-trail');
+      if (!trail) {
+        trail = document.createElement('i');
+        trail.className = 'lf-bar-trail';
+        trail.setAttribute('aria-hidden', 'true');
+        wrap.appendChild(trail);
+      }
+      trail.style.width = '100%';
+      trail.style.transformOrigin = 'left center';
+      trail.style.transform = 'scaleX(' + prev + ')';
+      trail.style.opacity = '0.35';
+      requestAnimationFrame(function () {
+        trail.style.opacity = '0';
+        trail.style.transform = 'scaleX(' + scale + ')';
+      });
+    }
+    bar.dataset.prevScale = String(scale);
+    bar.style.width = '100%';
+    bar.style.transformOrigin = 'left center';
+    bar.style.transform = 'scaleX(' + scale + ')';
+  }
 
   function slider(state, key, label, min, max, step, fmt) {
     var val = el('b', {}, [fmt ? fmt(state[key]) : String(state[key])]);
@@ -113,8 +152,14 @@
       var gib = bytes / GiB;
       num.innerHTML = gib.toFixed(gib < 10 ? 2 : 1) + ' <small>GiB</small>';
       var pct = Math.min(100, gib / REF * 100);
-      bar.style.width = pct + '%';
+      setLfBarScale(bar, pct);
+      var wasOver = barWrap.classList.contains('over');
       barWrap.classList.toggle('over', gib > REF);
+      if (gib > REF && !wasOver) {
+        barWrap.classList.remove('lf-bar-pulse');
+        void barWrap.offsetWidth;
+        barWrap.classList.add('lf-bar-pulse');
+      }
       meta.textContent = (gib > REF ? '⚠ exceeds ' : '') + Math.round(gib / REF * 100) + '% of one ' + REF + ' GiB GPU';
       formula.textContent = '2 · ' + state.layers + ' layers · ' + state.kvHeads + ' kv-heads · ' + state.headDim +
         ' head-dim · ' + fmtInt(state.seq) + ' tokens · ' + state.batch + ' batch · ' + state.dbytes + ' B';
@@ -164,7 +209,16 @@
       for (t = 0; t <= state.steps; t++) { pts.push(xc); xc = xc - state.lr * (2 * xc); if (Math.abs(xc) > 3.2) { diverged = true; break; } }
       var pd = '';
       pts.forEach(function (xi, idx) { pd += (idx ? 'L' : 'M') + px(xi).toFixed(1) + ' ' + py(fx(xi)).toFixed(1) + ' '; });
-      svg.appendChild(svgEl('path', { d: pd, fill: 'none', stroke: 'var(--blueprint,#3553ff)', 'stroke-width': '1.5', 'stroke-dasharray': '4 3' }));
+      var trace = svgEl('path', { d: pd, fill: 'none', stroke: 'var(--blueprint,#3553ff)', 'stroke-width': '1.5', 'stroke-dasharray': '4 3', class: 'lf-path-trace' });
+      svg.appendChild(trace);
+      try {
+        var pathLen = trace.getTotalLength();
+        trace.style.strokeDasharray = pathLen + ' ' + pathLen;
+        trace.style.strokeDashoffset = String(pathLen);
+        requestAnimationFrame(function () {
+          trace.style.strokeDashoffset = '0';
+        });
+      } catch (e) {}
       pts.forEach(function (xi, idx) { svg.appendChild(svgEl('circle', { cx: px(xi), cy: py(fx(xi)), r: idx === pts.length - 1 ? '5' : '3', fill: 'var(--blueprint,#3553ff)' })); });
       var last = pts[pts.length - 1];
       var conv = !diverged && Math.abs(last) < 0.05;
@@ -202,11 +256,12 @@
       var ent = -p.reduce(function (a, pi) { return a + (pi > 0 ? pi * Math.log2(pi) : 0); }, 0);
       while (rows.firstChild) rows.removeChild(rows.firstChild);
       p.forEach(function (pi, i) {
-        var bar = el('i'); bar.style.width = (pi * 100).toFixed(1) + '%';
-        rows.appendChild(el('div', { class: 'lf-ctrl' }, [
-          el('label', {}, [labels[i], el('b', {}, [(pi * 100).toFixed(1) + '%'])]),
-          el('div', { class: 'lf-bar' }, [bar])
-        ]));
+        var bar = el('i'); setLfBarScale(bar, pi * 100);
+        var row = el('div', { class: 'lf-ctrl lf-row-enter' });
+        row.style.animationDelay = (i * 45) + 'ms';
+        row.appendChild(el('label', {}, [labels[i], el('b', {}, [(pi * 100).toFixed(1) + '%'])]));
+        row.appendChild(el('div', { class: 'lf-bar' }, [bar]));
+        rows.appendChild(row);
       });
       meta.textContent = 'entropy ' + ent.toFixed(2) + ' bits  ·  ' + (T < 0.6 ? 'sharp / confident' : T > 1.6 ? 'flat / random' : 'balanced');
       formula.textContent = 'softmax(zᵢ / T),  T = ' + T.toFixed(2) + '   ·   logits [' + logits.join(', ') + ']';
@@ -270,7 +325,7 @@
       var norm = Math.sqrt(w.reduce(function (a, x) { return a + x * x; }, 0));
       while (rows.firstChild) rows.removeChild(rows.firstChild);
       w.forEach(function (wi, i) {
-        var bar = el('i'); bar.style.width = (Math.abs(wi) * 100).toFixed(0) + '%';
+        var bar = el('i'); setLfBarScale(bar, Math.abs(wi) * 100);
         rows.appendChild(el('div', { class: 'lf-ctrl' }, [
           el('label', {}, ['w' + (i + 1), el('b', {}, [wi.toFixed(2)])]),
           el('div', { class: 'lf-bar' }, [bar])
@@ -363,7 +418,7 @@
       idx.forEach(function (i) {
         var on = !!keep[i];
         var renorm = on ? probs[i] / kSum : 0;
-        var bar = el('i'); bar.style.width = (renorm * 100).toFixed(1) + '%';
+        var bar = el('i'); setLfBarScale(bar, renorm * 100);
         if (!on) bar.style.background = 'var(--rule-soft,#ccc)';
         var lab = el('label', {}, [labels[i] + (on ? '' : ' ·'), el('b', {}, [on ? (renorm * 100).toFixed(1) + '%' : 'cut'])]);
         if (!on) lab.style.opacity = '0.45';
@@ -401,7 +456,7 @@
       var ratio = D / N;
       num.innerHTML = L.toFixed(3) + ' <small>loss</small>';
       var pct = Math.max(2, Math.min(100, (ratio / 20) * 50));
-      bar.style.width = pct + '%';
+      setLfBarScale(bar, pct);
       barWrap.classList.toggle('over', ratio > 30 || ratio < 12);
       meta.textContent = human(ratio) + ' tokens/param  ·  ' + (ratio < 12 ? 'under-trained: too few tokens' : ratio > 30 ? 'over-trained: spend on params instead' : 'near Chinchilla-optimal (~20)');
       formula.textContent = 'N = ' + human(N) + ' params · D = ' + human(D) + ' tokens · compute 6ND ≈ ' + human(C) + ' FLOPs';
@@ -434,7 +489,7 @@
       var bytes = N * state.bits / 8;
       var gb = bytes / GB;
       num.innerHTML = gb.toFixed(gb < 10 ? 2 : 1) + ' <small>GB</small>';
-      bar.style.width = Math.min(100, state.bits / 32 * 100) + '%';
+      setLfBarScale(bar, Math.min(100, state.bits / 32 * 100));
       var levels = Math.pow(2, state.bits);
       var err = state.bits >= 16 ? 'negligible' : state.bits >= 8 ? '< 1% perplexity hit' : state.bits >= 4 ? 'small with good schemes (GPTQ/AWQ)' : 'large: needs care';
       meta.textContent = Math.round((1 - bytes / bytesFp32) * 100) + '% smaller than fp32  ·  quantization error: ' + err;
@@ -509,7 +564,7 @@
       var lora = mats * 2 * state.d * state.r;
       var frac = lora / full * 100;
       num.innerHTML = frac.toFixed(frac < 1 ? 3 : 2) + ' <small>% trainable</small>';
-      bar.style.width = Math.min(100, frac * 8) + '%';
+      setLfBarScale(bar, Math.min(100, frac * 8));
       meta.textContent = human(lora) + ' trainable of ' + human(full) + ' frozen  ·  ' + Math.round(full / lora) + 'x fewer gradients to store';
       formula.textContent = 'ΔW = B·A,  A∈ℝ^{r×d}, B∈ℝ^{d×r}  →  2·d·r per matrix vs d²  =  2r/d = ' + (2 * state.r / state.d * 100).toFixed(3) + '%';
     };
@@ -703,31 +758,66 @@
     'rag-chunking': ragChunking
   };
 
+  function figureHosts(root) {
+    var scope = root || document;
+    var out = [];
+    if (scope.nodeType === 1 && scope.matches && scope.matches('.lesson-figure[data-figure]')) {
+      out.push(scope);
+    }
+    var found = scope.querySelectorAll('.lesson-figure[data-figure]');
+    for (var i = 0; i < found.length; i++) {
+      if (out.indexOf(found[i]) === -1) out.push(found[i]);
+    }
+    return out;
+  }
+
   function mountLessonFigures(root) {
     ensureStyles();
-    (root || document).querySelectorAll('.lesson-figure[data-figure]').forEach(function (host) {
-      if (host.dataset.lfMounted) return;
+    figureHosts(root).forEach(function (host) {
+      if (host.dataset.lfMounted || host.dataset.mtMounted) return;
       var parts = (host.dataset.figure || '').trim().split(/\s+/);
       var name = parts[0];
       var cfg = {};
       var rest = host.dataset.figure.trim().slice(name.length).trim();
       if (rest) { try { cfg = JSON.parse(rest); } catch (e) {} }
 
-      var local = FIGS[name];
-      var animated = window.AIFS_FIGURES && window.AIFS_FIGURES[name];
-      try {
-        if (local) {
-          local(host, cfg);
-        } else if (animated) {
-          host.classList.add('lf-animated');
-          animated(host, cfg);
-        } else {
-          return; // unknown figure; leave the empty host out
+      function mountLocal() {
+        var local = FIGS[name];
+        var animated = window.AIFS_FIGURES && window.AIFS_FIGURES[name];
+        try {
+          if (local) {
+            local(host, cfg);
+          } else if (animated) {
+            host.classList.add('lf-animated');
+            animated(host, cfg);
+            if (window.AIFS_motion) window.AIFS_motion.pauseSmilIn(host);
+          } else {
+            return;
+          }
+          host.dataset.lfMounted = '1';
+        } catch (e) {
+          console.warn('lesson figure "' + name + '" failed:', e);
         }
-        host.dataset.lfMounted = '1';
-      } catch (e) {
-        console.warn('lesson figure "' + name + '" failed:', e);
       }
+
+      var mt = window.AIFS_motionThree;
+      if (
+        mt &&
+        mt.canUseThree &&
+        mt.canUseThree() &&
+        mt.isLabFigure(name) &&
+        host.dataset.mtSkip !== '1'
+      ) {
+        mt.mountLabScene(host, name).then(function (ok) {
+          if (!ok) {
+            host.dataset.mtSkip = '1';
+            mountLocal();
+          }
+        });
+        return;
+      }
+
+      mountLocal();
     });
   }
 

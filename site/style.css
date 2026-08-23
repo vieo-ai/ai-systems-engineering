@@ -42,6 +42,64 @@
   --shadow-hard: 3px 3px 0 var(--ink);
   --shadow-hard-lg: 5px 5px 0 var(--ink);
   --dot-color: var(--paper-rule);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-trail: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-press: 160ms;
+  --duration-ui: 200ms;
+  --duration-panel: 250ms;
+  --duration-reveal: 680ms;
+  --duration-exit: 160ms;
+  --duration-trail: 520ms;
+  --trail-opacity: 0.35;
+}
+
+.aifs-trail {
+  pointer-events: none !important;
+  z-index: 2;
+}
+
+.stat-row-bar,
+.modal-progress-bar {
+  position: relative;
+}
+
+.stat-row-bar-trail,
+.modal-progress-bar-trail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  transform-origin: left center;
+  background: var(--blueprint);
+  opacity: var(--trail-opacity);
+  pointer-events: none;
+  transition:
+    opacity var(--duration-trail) var(--ease-trail),
+    transform var(--duration-trail) var(--ease-trail);
+}
+
+.masthead-btn--primary:active,
+.lab-tab.is-active:active {
+  outline: 1px solid var(--blueprint);
+  outline-offset: 2px;
+  transition:
+    transform var(--duration-press) var(--ease-out),
+    outline-offset var(--duration-trail) var(--ease-trail);
+}
+
+@media (min-width: 641px) {
+  body.js-anim .reveal {
+    clip-path: inset(0 0 12% 0);
+  }
+
+  body.js-anim .reveal.in-view {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 [data-theme="dark"] {
@@ -83,6 +141,12 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 96px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -344,12 +408,16 @@ p.dropcap::first-letter {
   font-family: var(--font-mono);
   font-size: 0.95rem;
   color: var(--ink);
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color 0.15s, color 0.15s, transform var(--duration-press) var(--ease-out);
 }
 
 .theme-toggle:hover {
   border-color: var(--blueprint);
   color: var(--blueprint);
+}
+
+.theme-toggle:active {
+  transform: scale(0.97);
 }
 
 .btn {
@@ -365,7 +433,11 @@ p.dropcap::first-letter {
   cursor: pointer;
   display: inline-block;
   text-align: center;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform var(--duration-press) var(--ease-out);
+}
+
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn:hover {
@@ -433,12 +505,19 @@ p.dropcap::first-letter {
   padding: 32px 16px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s;
+  transition: opacity var(--duration-ui) var(--ease-out);
 }
 
 .modal-overlay.open {
   opacity: 1;
   pointer-events: auto;
+}
+
+.modal-overlay.modal-closing {
+  opacity: 0;
+  pointer-events: none;
+  transition-duration: var(--duration-exit);
+  transition-timing-function: var(--ease-exit);
 }
 
 .modal {
@@ -450,12 +529,23 @@ p.dropcap::first-letter {
   max-height: 86vh;
   overflow-y: auto;
   padding: 36px 32px 28px;
-  transform: translateY(16px);
-  transition: transform 0.25s ease;
+  opacity: 0;
+  transform: translateY(18px) scale(0.97);
+  transition:
+    opacity var(--duration-panel) var(--ease-enter),
+    transform var(--duration-panel) var(--ease-enter);
 }
 
 .modal-overlay.open .modal {
-  transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.modal-overlay.modal-closing .modal {
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  transition-duration: var(--duration-exit);
+  transition-timing-function: var(--ease-exit);
 }
 
 .modal-close {
@@ -469,6 +559,11 @@ p.dropcap::first-letter {
   color: var(--ink-mute);
   cursor: pointer;
   line-height: 1;
+  transition: color 0.15s, transform var(--duration-press) var(--ease-out);
+}
+
+.modal-close:active {
+  transform: scale(0.97);
 }
 
 .modal-close:hover {
@@ -545,10 +640,12 @@ p.dropcap::first-letter {
 }
 
 .modal-progress-bar-fill {
+  width: 100%;
   height: 100%;
   background: var(--blueprint);
-  transition: width 0.4s ease;
-  width: 0%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.4s var(--ease-out);
 }
 
 .modal-footer {
@@ -579,7 +676,11 @@ p.dropcap::first-letter {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color 0.15s, border-color 0.15s, transform var(--duration-press) var(--ease-out);
+}
+
+.modal-reset:active {
+  transform: scale(0.97);
 }
 
 .modal-reset:hover {
@@ -729,8 +830,12 @@ p.dropcap::first-letter {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform var(--duration-press) var(--ease-out);
   padding: 0;
+}
+
+.modal-lesson-toggle:active {
+  transform: scale(0.97);
 }
 
 .modal-lesson-toggle:hover {
@@ -752,7 +857,11 @@ p.dropcap::first-letter {
   cursor: pointer;
   padding: 2px 6px;
   color: var(--ink-mute);
-  transition: color 0.15s;
+  transition: color 0.15s, transform var(--duration-press) var(--ease-out);
+}
+
+.copy-btn:active {
+  transform: scale(0.97);
 }
 
 .copy-btn:hover {
@@ -812,8 +921,8 @@ p.dropcap::first-letter {
 
 .reveal {
   transition:
-    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--stagger-delay, 0ms),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--stagger-delay, 0ms);
+    opacity var(--duration-reveal) var(--ease-emphasized) var(--stagger-delay, 0ms),
+    transform var(--duration-reveal) var(--ease-emphasized) var(--stagger-delay, 0ms);
   will-change: opacity, transform;
 }
 
@@ -831,6 +940,20 @@ body.js-anim .reveal.in-view {
   transform: none;
 }
 
+@media (max-width: 640px) {
+  body.js-anim .reveal,
+  body.js-anim .reveal--left {
+    transform: none;
+    opacity: 0;
+    clip-path: none;
+  }
+
+  body.js-anim .reveal.in-view,
+  body.js-anim .reveal--left.in-view {
+    opacity: 1;
+  }
+}
+
 .ascii-rule {
   transition: clip-path 1.1s cubic-bezier(0.22, 1, 0.36, 1) var(--stagger-delay, 0ms);
 }
@@ -845,9 +968,9 @@ body.js-anim .ascii-rule.in-view {
 
 .toc-row {
   transition:
-    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--stagger-delay, 0ms),
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--stagger-delay, 0ms),
-    background 0.15s;
+    opacity 0.5s var(--ease-out) var(--stagger-delay, 0ms),
+    transform 0.5s var(--ease-out) var(--stagger-delay, 0ms),
+    background 150ms ease;
 }
 
 body.js-anim .toc-row {
@@ -860,29 +983,59 @@ body.js-anim .toc-row.in-view {
   transform: none;
 }
 
-@keyframes title-flicker {
-  0%, 100% { opacity: 1; }
-  18% { opacity: 0.4; }
-  20% { opacity: 1; }
-  62% { opacity: 0.7; }
-  64% { opacity: 1; }
-}
-
-.manual-title {
-  animation: title-flicker 2.4s ease-out 0.1s 1;
-}
-
 @media (prefers-reduced-motion: reduce) {
+  .aifs-trail,
+  .stat-row-bar-trail,
+  .modal-progress-bar-trail,
+  .lab-tab-indicator-ghost {
+    display: none !important;
+  }
+
   .reveal,
   .ascii-rule,
-  .toc-row,
-  .stat-row-bar::before,
   .manual-title {
     transition: none !important;
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
+  }
+
+  .toc-row {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: background 150ms ease;
+  }
+
+  .stat-row-bar::before {
+    transition: none !important;
+  }
+
+  .modal-overlay.modal-closing {
+    transition-duration: var(--duration-exit);
+    transition-timing-function: var(--ease-exit);
+  }
+
+  .modal {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .modal-overlay {
+    transition: opacity var(--duration-ui) var(--ease-out);
+  }
+
+  .search-toggle:active,
+  .theme-toggle:active,
+  .btn:active,
+  .modal-close:active,
+  .modal-reset:active,
+  .modal-lesson-toggle:active,
+  .copy-btn:active,
+  .lang-picker-btn:active {
+    transform: none;
   }
 }
 
@@ -1201,8 +1354,12 @@ body.js-anim .toc-row.in-view {
   align-items: center;
   justify-content: center;
   color: var(--ink-soft);
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color 0.15s, color 0.15s, transform var(--duration-press) var(--ease-out);
   flex-shrink: 0;
+}
+
+.search-toggle:active {
+  transform: scale(0.97);
 }
 
 .search-toggle:hover {
@@ -1233,7 +1390,6 @@ body.js-anim .toc-row.in-view {
   inset: 0;
   background: var(--overlay-bg);
   opacity: 0;
-  transition: opacity 0.15s ease;
 }
 
 #cmdPalette.cp-open .cp-backdrop {
@@ -1253,12 +1409,8 @@ body.js-anim .toc-row.in-view {
   border: 2px solid var(--ink);
   box-shadow: 6px 6px 0 var(--ink);
   overflow: hidden;
-  /* entry animation */
   opacity: 0;
   transform: translateY(-12px);
-  transition:
-    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity   0.16s ease;
 }
 
 #cmdPalette.cp-open .cp-panel {
@@ -1520,14 +1672,6 @@ body[data-palette-open] {
   overflow: hidden;
 }
 
-/* ── Reduced motion ──────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  .cp-backdrop,
-  .cp-panel {
-    transition: none !important;
-  }
-}
-
 /* ── Mobile: full-width sheet pinned to top ──────────────────────────── */
 @media (max-width: 600px) {
   #cmdPalette {
@@ -1563,10 +1707,10 @@ body[data-palette-open] {
   font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em;
   color: var(--ink-soft); background: transparent;
   border: 1px solid var(--rule-soft); padding: 6px 10px; cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, transform var(--duration-press) var(--ease-out);
 }
 .lang-picker-btn:hover { color: var(--blueprint); border-color: var(--blueprint); }
-.lang-picker-btn:active { transform: scale(0.98); }
+.lang-picker-btn:active { transform: scale(0.97); }
 .lang-glyph {
   font-weight: 700; color: var(--blueprint); font-size: 0.7rem; letter-spacing: 0;
 }
@@ -1607,6 +1751,6 @@ body[data-palette-open] {
   color: var(--ink-mute); text-transform: uppercase;
 }
 @media (prefers-reduced-motion: reduce) {
-  .lang-picker-btn, .lang-item { transition: none; }
   .lang-picker-btn:active { transform: none; }
+  .lang-item { transition: background 0.15s ease, color 0.15s ease; }
 }

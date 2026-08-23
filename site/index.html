@@ -7,6 +7,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23fafaf5'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%233553ff' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%233553ff'>AI</text></svg>">
   <meta name="description" content="AI Engineering from Scratch is a free, open-source curriculum that builds every core AI algorithm by hand — 503 lessons, 20 phases, four languages. The math, the model, the tokenizer, and the agent loop. Once, by hand.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/">
+  <link rel="alternate" type="text/markdown" href="https://aiengineeringfromscratch.com/llms.txt">
   <meta property="og:title" content="AI Engineering from Scratch">
   <meta property="og:description" content="503 lessons. 20 phases. Write the backprop, the tokenizer, the attention mechanism, and the agent loop by hand before any framework gets imported. Python, TypeScript, Rust, Julia.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
@@ -28,9 +29,15 @@
         "@type": "Organization",
         "@id": "https://aiengineeringfromscratch.com/#org",
         "name": "AI Engineering from Scratch",
+        "alternateName": "AIFS",
         "url": "https://aiengineeringfromscratch.com",
         "logo": "https://aiengineeringfromscratch.com/og-image.png",
         "sameAs": ["https://github.com/rohitg00/ai-engineering-from-scratch", "https://github.com/rohitg00"],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "project support",
+          "url": "https://github.com/rohitg00/ai-engineering-from-scratch/issues"
+        },
         "founder": { "@type": "Person", "name": "Rohit Ghumare", "url": "https://github.com/rohitg00" }
       },
       {
@@ -100,6 +107,13 @@
       pointer-events: none;
     }
     .fig-panel.is-active { opacity: 1; transition: opacity 0.3s ease 0.3s; }
+    .fig-panel.is-leaving {
+      opacity: 0.22;
+      transition: opacity var(--duration-trail, 520ms) var(--ease-trail, cubic-bezier(0.16, 1, 0.3, 1));
+    }
+    .fig-panel.is-leaving .fig-edge {
+      opacity: 0.4;
+    }
     .fig-panel svg { width: 100%; height: 100%; }
 
     .fig-frame { stroke: var(--rule-soft); }
@@ -129,7 +143,7 @@
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
     }
-    .is-active .fig-edge { animation: fig-draw 0.9s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+    .is-active .fig-edge { animation: fig-draw 0.9s var(--ease-out) forwards; }
     .is-active .fig-l2 { animation-delay: 0.35s; }
     .is-active .fig-l3 { animation-delay: 0.7s; }
     @keyframes fig-draw { to { stroke-dashoffset: 0; } }
@@ -175,8 +189,8 @@
     .fig-curve { stroke-dasharray: 1; stroke-dashoffset: 1; stroke-width: 2; }
     .fig-curve--flat { stroke: var(--ink-mute); }
     .fig-curve--steep { stroke: var(--blueprint); }
-    .is-active .fig-curve--flat { animation: fig-draw 1.4s cubic-bezier(0.23, 1, 0.32, 1) 0.3s forwards; }
-    .is-active .fig-curve--steep { animation: fig-draw 1.4s cubic-bezier(0.23, 1, 0.32, 1) 0.8s forwards; }
+    .is-active .fig-curve--flat { animation: fig-draw 1.4s var(--ease-out) 0.3s forwards; }
+    .is-active .fig-curve--steep { animation: fig-draw 1.4s var(--ease-out) 0.8s forwards; }
     .fig-curve--flat { stroke-dasharray: 1; }
 
     .fig-curve-label {
@@ -270,6 +284,8 @@
     @media (prefers-reduced-motion: reduce) {
       .fig-edge, .fig-node, .fig-curve, .fig-curve-label, .fig-line { animation: none !important; stroke-dashoffset: 0; opacity: 1; }
       .fig-pulse { display: none; }
+      .fig-caret, .is-active .fig-caret { animation: none !important; opacity: 1; }
+      .fig-rider, .is-active .fig-rider { animation: none !important; opacity: 1; }
     }
 
     .manual-meta-row {
@@ -335,13 +351,17 @@
       font-family: var(--font-mono);
       font-size: 0.82rem;
       letter-spacing: 0.02em;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     .masthead-btn:hover,
     .masthead-btn:focus-visible {
       background: var(--ink);
       color: var(--bg);
+    }
+
+    .masthead-btn:active {
+      transform: scale(0.97);
     }
 
     .masthead-btn--primary {
@@ -376,6 +396,19 @@
       font-size: 0.82rem;
     }
 
+    .masthead-install--secondary {
+      margin-top: 22px;
+      padding: 0;
+      border-style: dashed;
+      background: transparent;
+    }
+
+    .masthead-install--secondary .masthead-install-bar {
+      color: var(--ink-mute);
+      font-size: 0.64rem;
+      letter-spacing: 0.1em;
+    }
+
     .masthead-install-bar {
       display: flex;
       justify-content: space-between;
@@ -402,7 +435,7 @@
       cursor: pointer;
       padding: 4px 9px;
       margin: 4px 0;
-      transition: background 0.15s ease, color 0.15s ease, transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: background 0.15s ease, color 0.15s ease, transform var(--duration-press) var(--ease-out);
     }
 
     .copy-chip:hover,
@@ -411,7 +444,7 @@
       color: var(--bg);
     }
 
-    .copy-chip:active { transform: scale(0.96); }
+    .copy-chip:active { transform: scale(0.97); }
 
     .copy-chip svg { flex-shrink: 0; }
 
@@ -456,19 +489,10 @@
       height: 13px;
       fill: currentColor;
       color: var(--ink);
-      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), color 0.3s ease;
+      transition: color 0.3s ease;
     }
 
-    /* each agent mark gets its own micro-motion when the card is hovered */
     .masthead-install:hover .agent-chip .glyph { color: var(--blueprint); }
-    .masthead-install:hover .agent-chip:nth-child(1) .glyph { transform: rotate(-10deg) translateX(-1px) scale(1.12); }
-    .masthead-install:hover .agent-chip:nth-child(2) .glyph { transform: rotate(8deg) scale(1.15); }
-    .masthead-install:hover .agent-chip:nth-child(3) .glyph { transform: translateY(-2px) rotate(-6deg) scale(1.12); }
-    .masthead-install:hover .agent-chip:nth-child(4) .glyph { transform: rotate(10deg) translateX(1px); }
-
-    @media (prefers-reduced-motion: reduce) {
-      .masthead-install:hover .agent-chip .glyph { transform: none; }
-    }
 
     /* ── Learners marquee ─────────────────────────────────────────────── */
     .learners-strip {
@@ -551,7 +575,7 @@
       width: auto;
       filter: grayscale(1);
       opacity: 0.62;
-      transition: filter 0.15s ease, opacity 0.15s ease;
+      transition: opacity 0.15s ease;
     }
 
     .marquee-item:hover .mark-logo { filter: none; opacity: 1; }
@@ -732,10 +756,17 @@
       content: "";
       position: absolute;
       inset: 0;
-      width: var(--bar-pct, 0%);
+      width: 100%;
+      transform-origin: bottom center;
+      transform: scaleY(var(--bar-scale, 0));
       background: var(--blueprint);
-      transition: width 0.6s ease;
+      transition: transform 0.85s var(--ease-emphasized);
     }
+
+    .stat-row:nth-child(1) .stat-row-bar::before { transition-delay: 0ms; }
+    .stat-row:nth-child(2) .stat-row-bar::before { transition-delay: 90ms; }
+    .stat-row:nth-child(3) .stat-row-bar::before { transition-delay: 180ms; }
+    .stat-row:nth-child(4) .stat-row-bar::before { transition-delay: 270ms; }
 
     .stat-row-value {
       text-align: right;
@@ -1063,16 +1094,20 @@
     }
 
     @media (max-width: 600px) {
-      html,
+      html {
+        overflow-x: clip;
+      }
+
       body {
-        overflow-x: hidden;
+        overflow-x: clip;
       }
 
       .manual-masthead.container,
       .preface.container,
       .stat-block.container,
       .toc.container,
-      .colophon.container {
+      .colophon.container,
+      .lab-section.container {
         padding-left: 20px;
         padding-right: 20px;
       }
@@ -1190,7 +1225,8 @@
       .preface.container,
       .stat-block.container,
       .toc.container,
-      .colophon.container {
+      .colophon.container,
+      .lab-section.container {
         padding-left: 18px;
         padding-right: 18px;
       }
@@ -1309,6 +1345,480 @@
       color: var(--ink-soft);
       line-height: 1.5;
     }
+
+    .lab-section {
+      padding: 56px 0 48px;
+      border-bottom: 1px solid var(--rule-soft);
+    }
+
+    .lab-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .lab-intro {
+      max-width: 720px;
+    }
+
+    .lab-demo {
+      min-width: 0;
+    }
+
+    .lab-lede {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      max-width: 62ch;
+      margin-bottom: 16px;
+    }
+
+    .lab-paths {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink-mute);
+      margin-bottom: 0;
+    }
+
+    .lab-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--blueprint);
+      margin-bottom: 10px;
+    }
+
+    .lab-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 0.95;
+      color: var(--ink);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .lab-paths a {
+      color: var(--blueprint);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s ease;
+    }
+
+    .lab-paths a:hover,
+    .lab-paths a:focus-visible {
+      border-bottom-color: var(--blueprint);
+    }
+
+    .lab-tabs {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 0;
+      padding: 0;
+      border: 1px solid var(--rule-soft);
+      border-bottom: none;
+      background: var(--bg-surface);
+    }
+
+    .lab-tab-indicator {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--blueprint);
+      pointer-events: none;
+      transform: translateX(0);
+      width: 0;
+      transition: transform 0.28s var(--ease-enter), width 0.28s var(--ease-enter);
+      z-index: 1;
+    }
+
+    .lab-tab-indicator-ghost {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--blueprint);
+      pointer-events: none;
+      opacity: 0.45;
+      transition: opacity var(--duration-trail, 520ms) var(--ease-trail, cubic-bezier(0.16, 1, 0.3, 1));
+      z-index: 0;
+    }
+
+    .lab-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 10px 14px;
+      border: none;
+      border-right: 1px solid var(--rule-soft);
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      font-family: var(--font-mono);
+      text-align: left;
+      transition: border-color 0.15s ease, background 0.15s ease, transform var(--duration-press) var(--ease-out);
+    }
+
+    .lab-tab:last-child {
+      border-right: none;
+    }
+
+    .lab-tab:hover,
+    .lab-tab:focus-visible {
+      background: var(--blueprint-tint);
+    }
+
+    .lab-tab:active {
+      transform: scale(0.97);
+    }
+
+    .lab-tab.is-active {
+      border-bottom-color: var(--blueprint);
+      background: var(--blueprint-tint);
+    }
+
+    .lab-tab-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .lab-tab-sub {
+      font-size: 0.66rem;
+      color: var(--ink-mute);
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 640px) {
+      .lab-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+      }
+
+      .lab-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .lab-tab {
+        flex: 0 0 auto;
+        min-width: min(148px, 42vw);
+        scroll-snap-align: start;
+        padding: 8px 10px;
+      }
+
+      .lab-tab-label {
+        font-size: 0.68rem;
+        white-space: normal;
+        line-height: 1.2;
+      }
+
+      .lab-tab-sub {
+        font-size: 0.62rem;
+        white-space: normal;
+        line-height: 1.25;
+      }
+
+      .lab-demo,
+      .lab-stack,
+      .lab-section.container {
+        min-width: 0;
+      }
+
+      #labFigureHost.lab-swap-out,
+      #labFigureHost.lab-swap-in {
+        transform: translateY(8px);
+      }
+
+      body.js-anim .reveal,
+      body.js-anim .reveal--left {
+        transform: none;
+        opacity: 0;
+      }
+
+      body.js-anim .reveal.in-view,
+      body.js-anim .reveal--left.in-view {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .lab-tab {
+        min-width: min(132px, 78vw);
+      }
+    }
+
+    .lab-figure-host {
+      min-height: 320px;
+      position: relative;
+      border: 1px solid var(--rule-soft);
+      border-top: none;
+      background: var(--bg);
+    }
+
+    #labFigureHost {
+      transition:
+        opacity var(--duration-exit) var(--ease-exit),
+        transform var(--duration-exit) var(--ease-exit);
+    }
+
+    #labFigureHost.lab-swap-out {
+      opacity: 0;
+      transform: translateX(calc(var(--lab-dir, 1) * -18px)) scaleX(0.98);
+      pointer-events: none;
+    }
+
+    #labFigureHost.lab-swap-smear {
+      filter: none;
+      box-shadow: calc(var(--lab-dir, 1) * -10px) 0 0 rgba(53, 83, 255, 0.12);
+    }
+
+    #labFigureHost.lab-swap-in {
+      opacity: 0;
+      transform: translateX(calc(var(--lab-dir, 1) * 22px)) scaleX(0.98);
+    }
+
+    #labFigureHost.lab-swap-in-active {
+      opacity: 1;
+      transform: translateX(0);
+      transition:
+        opacity var(--duration-panel) var(--ease-enter),
+        transform var(--duration-panel) var(--ease-enter);
+    }
+
+    .lab-figure-host .lf,
+    .lab-figure-host .lesson-figure.lf-animated {
+      margin: 0;
+      border: none;
+    }
+
+    .lesson-figure[data-lab-error] {
+      padding: 24px;
+      border: 1px dashed var(--warn);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+    }
+
+    .daily-card {
+      border: 1px solid var(--rule-soft);
+      background: var(--bg-surface);
+      padding: 18px 18px 16px;
+    }
+
+    @media (min-width: 768px) {
+      .daily-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 32px;
+        row-gap: 12px;
+        align-items: start;
+      }
+
+      .daily-card > .daily-meta {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        margin-bottom: 0;
+      }
+
+      .daily-card #dailyChallenge {
+        display: contents;
+      }
+
+      .daily-card #dailyChallenge .daily-meta {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        margin-bottom: 0;
+      }
+
+      .daily-card #dailyChallenge .daily-q {
+        grid-column: 1;
+        grid-row: 3;
+        margin-bottom: 0;
+        padding-right: 8px;
+      }
+
+      .daily-card #dailyChallenge .daily-opts {
+        grid-column: 2;
+        grid-row: 3;
+        align-self: start;
+      }
+
+      .daily-card #dailyChallenge .daily-feedback {
+        grid-column: 1 / -1;
+        grid-row: 4;
+      }
+    }
+
+    .daily-meta {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-mute);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .daily-q {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+
+    .daily-opts {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .daily-opt {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      border: 1px solid var(--rule-soft);
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      line-height: 1.4;
+      hyphens: none;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, transform var(--duration-press) var(--ease-out);
+    }
+
+    .daily-opt:hover:not(:disabled),
+    .daily-opt:focus-visible:not(:disabled) {
+      border-color: var(--blueprint);
+      background: var(--blueprint-tint);
+    }
+
+    .daily-opt:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .daily-opt.is-correct {
+      border-color: var(--blueprint);
+      background: var(--blueprint-tint-strong);
+      animation: daily-pop 0.38s var(--ease-enter);
+    }
+
+    .daily-opt.daily-heat {
+      box-shadow: 0 0 0 1px var(--blueprint), 0 0 24px rgba(53, 83, 255, 0.28);
+    }
+
+    .daily-opt.is-wrong {
+      border-color: var(--warn);
+      background: rgba(184, 135, 15, 0.12);
+      animation: daily-shake 0.42s var(--ease-out);
+    }
+
+    .daily-opt.daily-residual {
+      box-shadow: -6px 0 0 rgba(184, 135, 15, 0.35);
+    }
+
+    .daily-feedback.is-visible {
+      animation: daily-reveal 0.35s var(--ease-enter);
+    }
+
+    @keyframes daily-pop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes daily-shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(2px); }
+    }
+
+    @keyframes daily-reveal {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #labFigureHost,
+      .lab-tab-indicator,
+      .lab-tab-indicator-ghost,
+      .daily-opt.is-correct,
+      .daily-opt.is-wrong,
+      .daily-feedback.is-visible {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      #labFigureHost.lab-swap-out,
+      #labFigureHost.lab-swap-in {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .daily-opt.is-wrong {
+      border-color: var(--warn);
+      opacity: 0.75;
+    }
+
+    .daily-opt:disabled {
+      cursor: default;
+    }
+
+    .daily-feedback {
+      margin-top: 12px;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: var(--ink-soft);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s cubic-bezier(0.23, 1, 0.32, 1), transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .daily-feedback.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .lab-lesson-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--blueprint);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s ease;
+    }
+
+    .lab-lesson-link:hover,
+    .lab-lesson-link:focus-visible {
+      border-bottom-color: var(--blueprint);
+    }
   </style>
 </head>
 <body>
@@ -1321,6 +1831,7 @@
         <span class="logo-icon" aria-hidden="true"></span> AI / FROM SCRATCH
       </a>
       <nav class="header-nav">
+        <a href="#lab">Lab</a>
         <a href="#contents">Contents</a>
         <a href="#books">Books</a>
         <a href="catalog.html">Catalog</a>
@@ -1364,9 +1875,9 @@
           <span>Star on GitHub</span>
           <span class="masthead-btn-count" data-gh-stars="rohitg00/ai-engineering-from-scratch" data-loading="true">…</span>
         </a>
-        <a class="masthead-btn" href="https://github.com/rohitg00" target="_blank" rel="noopener" aria-label="Follow Rohit Ghumare on GitHub">
+        <a class="masthead-btn" href="https://github.com/rohitg00" target="_blank" rel="noopener" aria-label="Follow rohitg00 on GitHub">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-          <span>Follow @rohitg00</span>
+          <span>Follow rohitg00</span>
         </a>
       </div>
       <div class="masthead-install reveal" style="--stagger-delay: 200ms;">
@@ -1555,6 +2066,31 @@
       <p class="learners-quote">&ldquo;Obsessed with the AI Engineering from Scratch repo.&rdquo; <span class="learners-quote-attr">&mdash; AI engineer at Google</span></p>
     </section>
 
+    <section class="lab-section container" id="lab" aria-labelledby="labTitle">
+      <div class="lab-stack">
+        <header class="lab-intro reveal">
+          <div class="lab-eyebrow">Browser lab · free · no signup</div>
+          <h2 class="lab-title" id="labTitle">Build before you read</h2>
+          <p class="lab-lede">You do not learn backprop by scrolling a syllabus. Drag the sliders, break the learning rate, watch the loss curve move. Same interactive widgets live inside every lesson.</p>
+          <div class="lab-paths">
+            <span>No repo? <a href="#lab">Use the lab below</a></span>
+            <span>Ready to commit? <a href="lesson.html?path=phases/00-setup-and-tooling/01-dev-environment">Start lesson 1</a></span>
+          </div>
+        </header>
+        <div class="lab-demo reveal" style="--stagger-delay: 80ms;">
+          <div class="lab-tabs" id="labTabs" role="tablist" aria-label="Lab demos"></div>
+          <div class="lab-figure-host">
+            <div class="lesson-figure" id="labFigureHost"></div>
+          </div>
+          <a class="lab-lesson-link" href="lesson.html?path=phases/01-math-foundations/08-optimization">See gradient descent in a full lesson &rarr;</a>
+        </div>
+        <aside class="daily-card reveal" style="--stagger-delay: 120ms;" aria-labelledby="dailyTitle">
+          <div class="daily-meta" id="dailyTitle">Daily challenge</div>
+          <div id="dailyChallenge"></div>
+        </aside>
+      </div>
+    </section>
+
     <section class="preface container">
       <div class="preface-grid">
         <div class="preface-eyebrow reveal reveal--left">How this works</div>
@@ -1572,22 +2108,22 @@
       <div class="stat-rows reveal" style="--stagger-delay: 100ms;" id="statRows">
         <div class="stat-row">
           <span class="stat-row-label">Finished Lessons</span>
-          <span class="stat-row-bar" data-bar="complete" style="--bar-pct:0%;" aria-hidden="true">bar</span>
+          <span class="stat-row-bar" data-bar="complete" style="--bar-scale:0;" aria-hidden="true">bar</span>
           <span class="stat-row-value" data-stat="complete-frac">0 / 0</span>
         </div>
         <div class="stat-row">
           <span class="stat-row-label">Phases</span>
-          <span class="stat-row-bar" data-bar="phases" style="--bar-pct:0%;" aria-hidden="true">bar</span>
+          <span class="stat-row-bar" data-bar="phases" style="--bar-scale:0;" aria-hidden="true">bar</span>
           <span class="stat-row-value" data-stat="phases-frac">0 / 0</span>
         </div>
         <div class="stat-row">
           <span class="stat-row-label">Languages</span>
-          <span class="stat-row-bar" data-bar="languages" style="--bar-pct:100%;" aria-hidden="true">bar</span>
+          <span class="stat-row-bar" data-bar="languages" style="--bar-scale:1;" aria-hidden="true">bar</span>
           <span class="stat-row-value">4</span>
         </div>
         <div class="stat-row">
           <span class="stat-row-label">Glossary Terms</span>
-          <span class="stat-row-bar" data-bar="glossary" style="--bar-pct:100%;" aria-hidden="true">bar</span>
+          <span class="stat-row-bar" data-bar="glossary" style="--bar-scale:1;" aria-hidden="true">bar</span>
           <span class="stat-row-value" data-stat="glossary-count">···</span>
         </div>
       </div>
@@ -1641,7 +2177,18 @@
         var cap = fig.querySelector('.fig-caption');
         var i = 0, paused = false;
         function show(n) {
-          panels.forEach(function (p, k) { p.classList.toggle('is-active', k === n); });
+          var prev = panels[i];
+          if (prev && prev !== panels[n]) {
+            prev.classList.add('is-leaving');
+            prev.classList.remove('is-active');
+            window.setTimeout(function () {
+              prev.classList.remove('is-leaving');
+            }, 520);
+          }
+          panels.forEach(function (p, k) {
+            if (k === n) p.classList.add('is-active');
+            else if (p !== prev) p.classList.remove('is-active');
+          });
           dots.forEach(function (d, k) { d.classList.toggle('is-active', k === n); });
           cap.textContent = panels[n].getAttribute('data-caption');
           i = n;
@@ -1742,6 +2289,9 @@
         <a href="https://github.com/rohitg00/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
         <a href="about.html">About</a>
         <a href="catalog.html">Catalog</a>
+        <a href="developer.html">Developer resources</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy</a>
         <a href="glossary.html">Glossary</a>
         <a href="https://github.com/rohitg00/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report</a>
       </div>
@@ -1751,10 +2301,13 @@
   <script src="langs.js?v=20260802a"></script>
   <script src="lang-picker.js?v=20260802a" defer></script>
   <script src="data.js?v=20260801a"></script>
-  <script src="progress.js?v=20260801a"></script>
+  <script src="progress.js?v=20260820a"></script>
   <script src="header.js?v=20260801a" defer></script>
   <script src="cmdpalette.js?v=20260801a" defer></script>
-  <script src="app.js?v=20260803b"></script>
+  <script src="app.js?v=20260820a"></script>
+  <script src="motion-three.js?v=20260820a"></script>
+  <script src="lesson-figures.js?v=20260820a"></script>
+  <script src="lab.js?v=20260820a"></script>
   <script defer src="https://va.vercel-scripts.com/v1/script.js"></script>
 </body>
 </html>

@@ -26,10 +26,12 @@
       top: 0;
       left: 0;
       height: 2px;
+      width: 100%;
       background: var(--blueprint);
       z-index: 9999;
-      transition: width 0.05s linear;
-      width: 0%;
+      transform-origin: left center;
+      transform: scaleX(0);
+      box-shadow: 0 0 10px rgba(53, 83, 255, 0.35);
     }
 
     .lesson-layout {
@@ -49,7 +51,7 @@
       overflow-y: auto;
       z-index: 50;
       padding: 24px 0;
-      transition: transform 0.25s ease;
+      transition: transform var(--duration-panel) var(--ease-drawer);
     }
 
     .lesson-sidebar-toggle {
@@ -68,6 +70,11 @@
       color: var(--ink);
       align-items: center;
       justify-content: center;
+      transition: border-color 0.15s, color 0.15s, transform var(--duration-press) var(--ease-out);
+    }
+
+    .lesson-sidebar-toggle:active {
+      transform: scale(0.97);
     }
 
     .lesson-sidebar-toggle:hover {
@@ -662,10 +669,14 @@
       font-size: 0.96rem;
       color: var(--ink);
       cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
+      transition: border-color 0.15s, background 0.15s, transform var(--duration-press) var(--ease-out);
       background: transparent;
       text-align: left;
       width: 100%;
+    }
+
+    .quiz-option:active:not(.disabled) {
+      transform: scale(0.97);
     }
 
     .quiz-option:hover:not(.selected):not(.disabled) {
@@ -817,7 +828,11 @@
       color: var(--ink-soft);
       background: transparent;
       cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
+      transition: color 0.15s, border-color 0.15s, transform var(--duration-press) var(--ease-out);
+    }
+
+    .mermaid-btn:active {
+      transform: scale(0.97);
     }
 
     .mermaid-btn:hover {
@@ -1125,7 +1140,12 @@
       color: var(--ink-soft);
       background: transparent;
       cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
+      transition: color 0.15s, border-color 0.15s, transform var(--duration-press) var(--ease-out);
+    }
+
+    .output-btn:active,
+    .code-card-btn:active {
+      transform: scale(0.97);
     }
 
     .output-btn:hover,
@@ -1319,9 +1339,12 @@
     }
 
     .phase-progress-fill {
+      width: 100%;
       height: 100%;
       background: var(--blueprint);
-      transition: width 0.5s ease;
+      transform-origin: left center;
+      transform: scaleX(0);
+      transition: transform 0.5s var(--ease-out);
     }
 
     .phase-progress-text {
@@ -1674,6 +1697,25 @@
       .timeline-item { min-width: 70px; }
       .timeline-line { width: 20px; }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      .spinner {
+        animation: none;
+        border-top-color: var(--blueprint);
+      }
+
+      .lesson-sidebar {
+        transition: none;
+      }
+
+      .lesson-sidebar-toggle:active,
+      .quiz-option:active:not(.disabled),
+      .mermaid-btn:active,
+      .output-btn:active,
+      .code-card-btn:active {
+        transform: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1748,11 +1790,12 @@
   <script src="langs.js?v=20260802a"></script>
   <script src="lang-picker.js?v=20260802a"></script>
   <script src="data.js?v=20260801a"></script>
-  <script src="progress.js?v=20260801a"></script>
+  <script src="progress.js?v=20260820a"></script>
   <script src="header.js?v=20260801a" defer></script>
   <script src="cmdpalette.js?v=20260801a" defer></script>
   <script src="figures.js?v=20260801a"></script>
-  <script src="lesson-figures.js?v=20260801a"></script>
+  <script src="motion-three.js?v=20260820a"></script>
+  <script src="lesson-figures.js?v=20260820a"></script>
   <script src="figures-math.js?v=20260801a"></script>
   <script src="figures-ml.js?v=20260801a"></script>
   <script src="figures-dl.js?v=20260801a"></script>
@@ -2012,11 +2055,17 @@
       function initScrollProgress() {
         var bar = document.getElementById('scrollProgress');
         if (!bar) return;
+        var pending = false;
         window.addEventListener('scroll', function () {
-          var scrollTop = window.scrollY || document.documentElement.scrollTop;
-          var docHeight = document.documentElement.scrollHeight - window.innerHeight;
-          var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-          bar.style.width = pct + '%';
+          if (pending) return;
+          pending = true;
+          requestAnimationFrame(function () {
+            pending = false;
+            var scrollTop = window.scrollY || document.documentElement.scrollTop;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var pct = docHeight > 0 ? (scrollTop / docHeight) : 0;
+            bar.style.transform = 'scaleX(' + pct + ')';
+          });
         }, { passive: true });
       }
 
@@ -2174,7 +2223,7 @@
             var target = document.querySelector(link.getAttribute('href'));
             if (target) {
               e.preventDefault();
-              target.scrollIntoView({ behavior: 'smooth' });
+              target.scrollIntoView({ behavior: window.AIFS_motion ? window.AIFS_motion.scrollBehavior() : 'smooth' });
             }
           });
         });
@@ -2250,7 +2299,7 @@
             var target = document.getElementById(id);
             if (!target) return;
             e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.scrollIntoView({ behavior: window.AIFS_motion ? window.AIFS_motion.scrollBehavior() : 'smooth', block: 'start' });
             history.replaceState(null, '', '#' + id);
             if (!target.hasAttribute('tabindex')) {
               target.setAttribute('tabindex', '-1');
@@ -2306,7 +2355,7 @@
             var sidebarHeight = sidebar.clientHeight;
             var sidebarScroll = sidebar.scrollTop;
             if (linkTop < sidebarScroll + 50 || linkTop > sidebarScroll + sidebarHeight - 100) {
-              sidebar.scrollTo({ top: Math.max(0, linkTop - sidebarHeight / 3), behavior: 'smooth' });
+              sidebar.scrollTo({ top: Math.max(0, linkTop - sidebarHeight / 3), behavior: window.AIFS_motion ? window.AIFS_motion.scrollBehavior() : 'smooth' });
             }
           }
         }
@@ -3605,7 +3654,7 @@
         var totalCount = lessonsInPhase.length;
         var pct = Math.round((completedCount / totalCount) * 100);
 
-        html += '<div class="phase-progress-bar"><div class="phase-progress-fill" style="width:' + pct + '%"></div></div>';
+        html += '<div class="phase-progress-bar"><div class="phase-progress-fill" style="transform:scaleX(' + (pct / 100) + ')"></div></div>';
         html += '<div class="phase-progress-text">You\'ve completed ' + completedCount + ' of ' + totalCount + ' lessons in this phase</div>';
 
         if (completedCount >= totalCount && phaseIdx < PHASES.length - 1) {

@@ -76,10 +76,34 @@
     if (!el) return;
     var clamped = Math.max(0, Math.min(100, pct));
     el.setAttribute('data-target-pct', clamped.toFixed(1));
+    var scale = (clamped / 100).toFixed(4);
+    var prev = Number(el.style.getPropertyValue('--bar-scale') || el.getAttribute('data-prev-scale') || 0);
+    var next = Number(scale);
+    if (
+      window.AIFS_motion &&
+      window.AIFS_motion.shouldTrail &&
+      window.AIFS_motion.shouldTrail(next - prev, 0.02) &&
+      (el.classList.contains('in-view') || !window.IntersectionObserver)
+    ) {
+      var trail = el.querySelector('.stat-row-bar-trail');
+      if (!trail) {
+        trail = document.createElement('span');
+        trail.className = 'stat-row-bar-trail';
+        trail.setAttribute('aria-hidden', 'true');
+        el.appendChild(trail);
+      }
+      trail.style.transform = 'scaleX(' + prev + ')';
+      trail.style.opacity = '0.35';
+      requestAnimationFrame(function () {
+        trail.style.opacity = '0';
+        trail.style.transform = 'scaleX(' + next + ')';
+      });
+    }
+    el.setAttribute('data-prev-scale', scale);
     if (el.classList.contains('in-view') || !window.IntersectionObserver) {
-      el.style.setProperty('--bar-pct', clamped.toFixed(1) + '%');
+      el.style.setProperty('--bar-scale', scale);
     } else {
-      el.style.setProperty('--bar-pct', '0%');
+      el.style.setProperty('--bar-scale', '0');
     }
   }
 
@@ -215,7 +239,9 @@
 
     renderModalLessons(p);
 
-    document.getElementById('modalOverlay').classList.add('open');
+    var overlay = document.getElementById('modalOverlay');
+    overlay.classList.remove('modal-closing');
+    overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
@@ -287,7 +313,24 @@
       }
       if (barEl && barFill) {
         barEl.style.display = '';
-        barFill.style.width = pct + '%';
+        var prev = Number(barFill.style.transform.replace(/scaleX\(|\)/g, '') || 0);
+        var next = pct / 100;
+        if (window.AIFS_motion && window.AIFS_motion.shouldTrail && window.AIFS_motion.shouldTrail(next - prev, 0.02)) {
+          var trail = barEl.querySelector('.modal-progress-bar-trail');
+          if (!trail) {
+            trail = document.createElement('span');
+            trail.className = 'modal-progress-bar-trail';
+            trail.setAttribute('aria-hidden', 'true');
+            barEl.appendChild(trail);
+          }
+          trail.style.transform = 'scaleX(' + prev + ')';
+          trail.style.opacity = '0.35';
+          requestAnimationFrame(function () {
+            trail.style.opacity = '0';
+            trail.style.transform = 'scaleX(' + next + ')';
+          });
+        }
+        barFill.style.transform = 'scaleX(' + next + ')';
       }
     } else {
       if (progEl) progEl.style.display = 'none';
@@ -306,7 +349,13 @@
   }
 
   function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('open');
+    var overlay = document.getElementById('modalOverlay');
+    if (!overlay || !overlay.classList.contains('open')) return;
+    overlay.classList.add('modal-closing');
+    overlay.classList.remove('open');
+    window.setTimeout(function () {
+      overlay.classList.remove('modal-closing');
+    }, 180);
     document.body.style.overflow = '';
   }
 
@@ -369,7 +418,8 @@
         var target = document.querySelector(link.getAttribute('href'));
         if (target) {
           e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth' });
+          var behavior = window.AIFS_motion ? window.AIFS_motion.scrollBehavior() : 'smooth';
+          target.scrollIntoView({ behavior: behavior });
         }
       });
     });
@@ -382,7 +432,7 @@
       document.querySelectorAll('.reveal, .fade-in, .stat-row-bar').forEach(function (el) {
         el.classList.add('in-view', 'visible');
         var target = el.getAttribute('data-target-pct');
-        if (target !== null) el.style.setProperty('--bar-pct', target + '%');
+        if (target !== null) el.style.setProperty('--bar-scale', (Number(target) / 100).toFixed(4));
       });
       return;
     }
@@ -398,7 +448,7 @@
           el.classList.add('in-view', 'visible');
           var target = el.getAttribute('data-target-pct');
           if (target !== null) {
-            el.style.setProperty('--bar-pct', target + '%');
+            el.style.setProperty('--bar-scale', (Number(target) / 100).toFixed(4));
           }
           observer.unobserve(el);
         }

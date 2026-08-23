@@ -300,20 +300,15 @@
     createPaletteDOM();
     document.body.setAttribute(BODY_ATTR, '');
 
-    // Two-frame delay: first frame triggers transition, second ensures focus
-    requestAnimationFrame(function () {
-      var pal = _palEl();
-      if (pal) pal.classList.add('cp-open');
+    var pal = _palEl();
+    if (pal) pal.classList.add('cp-open');
 
-      requestAnimationFrame(function () {
-        var inp = _inputEl();
-        if (inp) {
-          inp.focus();
-          var q = inp.value.trim();
-          renderResults(q ? search(q) : []);
-        }
-      });
-    });
+    var inp = _inputEl();
+    if (inp) {
+      inp.focus();
+      var q = inp.value.trim();
+      renderResults(q ? search(q) : []);
+    }
   }
 
   function close() {

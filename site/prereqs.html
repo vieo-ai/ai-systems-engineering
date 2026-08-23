@@ -140,7 +140,7 @@
       stroke: var(--border);
       stroke-width: 2;
       rx: 12;
-      transition: fill 0.25s, stroke 0.25s, filter 0.25s;
+      transition: fill 0.25s, stroke 0.25s;
     }
 
     .node-group:hover .node-rect {
@@ -226,14 +226,42 @@
       padding: 28px 24px;
       box-shadow: var(--shadow-hard);
       display: none;
-      animation: panelSlideIn 0.35s ease;
+      opacity: 0;
+      transform: translateY(16px);
+      transition:
+        opacity var(--duration-ui) var(--ease-out),
+        transform var(--duration-ui) var(--ease-out),
+        display var(--duration-ui) var(--ease-out) allow-discrete;
     }
 
-    .detail-panel.open { display: block; }
+    .detail-panel.open {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-    @keyframes panelSlideIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @starting-style {
+      .detail-panel.open {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .detail-panel {
+        transition: opacity var(--duration-ui) var(--ease-out), display var(--duration-ui) var(--ease-out) allow-discrete;
+        transform: none;
+      }
+
+      .detail-panel.open {
+        transform: none;
+      }
+
+      @starting-style {
+        .detail-panel.open {
+          transform: none;
+        }
+      }
     }
 
     .detail-top {
@@ -1029,7 +1057,7 @@
         })(clickables[i]);
       }
 
-      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      panel.scrollIntoView({ behavior: window.AIFS_motion ? window.AIFS_motion.scrollBehavior() : 'smooth', block: 'nearest' });
     }
   })();
   </script>
