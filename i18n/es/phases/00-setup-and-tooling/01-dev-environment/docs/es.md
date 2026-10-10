@@ -16,7 +16,7 @@
 
 ## El problema
 
-Estás a punto de aprender ingeniería de IA en más de 200 clases usando Python, TypeScript, Rust y Julia. Si tu entorno se rompe, cada lección se convierte en una lucha contra la herramienta en lugar de aprender.
+Estás a punto de aprender ingeniería de IA en más de 500 lecciones usando Python, TypeScript, Rust y Julia. Si tu entorno se rompe, cada lección se convierte en una lucha contra la herramienta en lugar de aprender.
 
 La mayoría de la gente omite la configuración del entorno y luego pasa horas debujando errores de importación, conflictos de versiones y controladores de CUDA faltantes.
 
@@ -49,7 +49,7 @@ xcode-select --install
 brew install git curl wget
 
 # Ubuntu/Debian
-sudo apt update && sudo apt install -y build-essential git curl wget
+sudo apt update && sudo apt install -y build-essential git curl wget unzip
 
 # Windows (use WSL2)
 wsl --install -d Ubuntu-24.04
@@ -95,6 +95,8 @@ npm install -g pnpm
 
 node -e "console.log('Node', process.version)"
 ```
+
+El instalador de fnm comprueba si `unzip`Primero y sale con `Not installing fnm due to missing dependencies.`Cuando está ausente: en Linux desempaca un archivo zip, en macOS lo instala a través de Homebrew.`unzip`; Ubuntu, Debian y WSL2 lo obtienen desde la línea apt del Paso 1 (`sudo apt install -y unzip`si saltaste ese paso).
 
 **macOS / Apple Silicon (M1/M2/M3/M4):**Si el instalador deja de instalar `Error: Cannot install under Rosetta 2 in ARM default prefix (/opt/homebrew)`, su terminal está funcionando bajo Rosetta 2 (`arch`huellas`i386`Instálle el arm64 forzador de fnm, cablealo en su caparazón, y luego vuelva a ejecutar los comandos anteriores desde `fnm install 22`¿Qué es esto ?
 
@@ -154,17 +156,51 @@ if torch.cuda.is_available():
 
 No hay GPU? No hay problema. La mayoría de las clases funcionan en CPU. Para las clases pesadas de entrenamiento, utilice Google Colab o GPUs en la nube.
 
-### Paso 7: Verifique todo
+### Paso 7: Verifique la ruta que desea iniciar
 
-Ejecutar el guión de verificación:
+ejecuta cada comando en esta lección desde la raíz del repositorio, el directorio que
+contiene `README.md`y `phases/`El prevuelo sólo comprueba lo que necesitas .
+comienza la ruta seleccionada. Salta las herramientas posteriores por defecto para que un nuevo aprendiz vea
+una respuesta clara en lugar de un muro de advertencias.
+
+Comience la secuencia completa de principiantes:
 
 ```bash
-python phases/00-setup-and-tooling/01-dev-environment/code/verify.py
+python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner
+```
+
+O sólo compruebe la ruta que quieras:
+
+```bash
+python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route ml-foundations
+python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route llm-engineering
+python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route agents
+python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route mcp
+python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route agent-skills
+python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route certification
+```
+
+Añadir`--show-later`cuando se desea el mismo prevuelo para inspeccionar herramientas opcionales
+Una herramienta posterior que no haya sido utilizada nunca bloqueará la
+la ruta seleccionada.
+
+Cada verificación requerida fallida incluye el camino detectado o el error de importación y un
+Las habilidades de los agentes y las rutas de certificación también muestran
+las comprobaciones manuales del host porque un script Python no puede probar que un host de IA tiene
+Descubre una habilidad o que el alcance de habilidad que elijas es escritorio.
+
+Cuando el prevuelo de principiante pasa, imprime la primera lección ejecutable exacta:
+
+```text
+Ready to start Beginner course.
+Next: python3 phases/01-math-foundations/01-linear-algebra-intuition/code/vectors.py
 ```
 
 ## Usalo
 
-Su entorno está listo para cada lección de este curso.
+Su entorno está listo para comenzar la ruta que comprobó.
+Cuando una lección pide por ellos en lugar de bloquear su primera lección en su conjunto
+Esto es lo que usará en todo el plan de estudios:
 
 | Language | Used In | Package Manager |
 |----------|---------|-----------------|
