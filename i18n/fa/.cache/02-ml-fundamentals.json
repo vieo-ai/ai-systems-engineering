@@ -16,5 +16,8 @@
   "phases/02-ml-fundamentals/15-time-series/docs/en.md": "48ffca9e2410801a507c35ebc6769ba0ecf075a51bb943684c219198a75b9d81",
   "phases/02-ml-fundamentals/16-anomaly-detection/docs/en.md": "fd2418cd6ece3eb747a71ab926fe1b05f2c1c0e4fb07fafd8506081354a99106",
   "phases/02-ml-fundamentals/17-imbalanced-data/docs/en.md": "1c1f6a2ec1c61310c203298b1eed4eae0923c41764e4f5ced9d86d752b223f40",
-  "phases/02-ml-fundamentals/18-feature-selection/docs/en.md": "b4f79a2e5880be45c0b77713c11805a39b853b2852e15eda314ee1997a107161"
+  "phases/02-ml-fundamentals/18-feature-selection/docs/en.md": "b4f79a2e5880be45c0b77713c11805a39b853b2852e15eda314ee1997a107161",
+  "phases/02-ml-fundamentals/19-ml-system-design/docs/en.md": "4e7a93c271f20f99fc9514f2e1dece8cd17051694dc554174ae533e23d404fa8",
+  "phases/02-ml-fundamentals/20-model-monitoring-and-drift/docs/en.md": "5f0168d75b0100e1f69bceb27f1275570451e3ad328e02b5c3091e8649559446",
+  "phases/02-ml-fundamentals/21-feature-stores-and-training-serving-skew/docs/en.md": "4d63c14290d143ba7850ae4a6a15c3f6db968e2f9a3e1215c853c4e83cc623a5"
 }
