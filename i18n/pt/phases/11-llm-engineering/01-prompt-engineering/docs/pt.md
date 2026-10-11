@@ -1025,4 +1025,4 @@ O código Python (`code/prompt_engineering.py`O sistema de teste de interfaces d
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- usando LLM para otimizar automaticamente as instruções, a base da meta-promptação
 - [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- comparação ao vivo dos LLM onde você pode testar o mesmo prompt em todos os modelos e votar sobre qual resposta é melhor
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)- catálogo exaustivo de técnicas de "prompte" com exemplos (zero-shot, few-shot, CoT, ReAct, auto-consistência); os profissionais de referência usam para a superfície mais ampla de "ingenieria de "prompte".
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)- indicações de uso conhecidas, por caso de utilização; mostra os padrões estruturais que se enviam para a produção.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)A guia da Anthropic sobre a estrutura de prompt, com exemplos de trabalho, substituiu a biblioteca de prompt anterior.
