@@ -22,9 +22,10 @@
   "phases/17-infrastructure-and-production/21-ab-testing-llm-features/docs/en.md": "cb52fba426116a636f2d13ad6accb8c7237a8e973b0dba6da39ab8124249b1c6",
   "phases/17-infrastructure-and-production/22-load-testing-llm-apis/docs/en.md": "c1e295fcaa091d1c729005d2964d52e29321902f2630e80a663ad7f5fa004802",
   "phases/17-infrastructure-and-production/23-sre-for-ai/docs/en.md": "70af1683e56bf583059a01d153b808ad3ba0e76f89a811dc57d03cd6f108da01",
-  "phases/17-infrastructure-and-production/24-chaos-engineering-llm/docs/en.md": "cd452d8d62dd107244028e88aadbcffcc768cd58a78afe52f3d85a4906f4e79f",
+  "phases/17-infrastructure-and-production/24-chaos-engineering-llm/docs/en.md": "0f89430b3686b3016bf1d685e245ddee7bce7a9dee477764297f1b1c8ae5585d",
   "phases/17-infrastructure-and-production/25-security-secrets-audit/docs/en.md": "8fa0b2d28ab54c4c0cff0b90f08642aded7a71456dbef7011d96d0fbff11f467",
   "phases/17-infrastructure-and-production/26-compliance-frameworks/docs/en.md": "20cb93aee9790da3c61c0d106b955b01b033b90ec2262dbeb40dfdd803e4e686",
   "phases/17-infrastructure-and-production/27-finops-llms/docs/en.md": "1430e4cd6817449b618d6065ee9371aee75ed3cfbb05087a13b0c5db29827c34",
-  "phases/17-infrastructure-and-production/28-self-hosted-serving-selection/docs/en.md": "299fe1b15e8624a247d15ccf0cce2047462bb32b834714b9b60a238416ca4f2c"
+  "phases/17-infrastructure-and-production/28-self-hosted-serving-selection/docs/en.md": "299fe1b15e8624a247d15ccf0cce2047462bb32b834714b9b60a238416ca4f2c",
+  "phases/17-infrastructure-and-production/29-model-demo-interfaces/docs/en.md": "843375856e827b8e63619a29120120bd0d596eafd5111edebd1bf2a656179816"
 }
