@@ -1025,4 +1025,4 @@ Python kodu (`code/prompt_engineering.py`) bağımsız bir test harnesidir.`simu
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- otomatik olarak uyarıları optimize etmek için LLM'leri kullanmak, meta-yararın temelini oluşturur
 - [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- LLM'lerin canlı kör karşılaştırması, burada aynı soruyu farklı modellerde test edip hangi tepki daha iyi olduğuna oy verebilirsiniz
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)-- örneklerle birlikte hızlı tekniklerin eksiksiz katalogı (sıfır çekim, az çekim, CoT, ReAct, kendi kendine tutarlılık); referans uygulayıcıları daha geniş "Prompt mühendisliği" yüzeyine yönelik olarak kullanırlar.
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)-- Kullanımsal durumlar doğrultusunda kurate edilmiş, bilinen iyi bilgileri; üretimde gönderilen yapısal kalıpları gösterir.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)- Antropic'in hızlı yapı yönlendirmesi, çalışılmış örneklerle.
