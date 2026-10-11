@@ -1025,4 +1025,4 @@ if __name__ == "__main__":
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- استفاده از LLM برای بهینه سازی خودکار پیام ها، پایه ی پیام های متا
 - [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- مقایسه ی کور زنده ی LLM ها که می توانید یک سری از آن ها را در هر مدل آزمایش کنید و در مورد پاسخ بهتر رای دهید
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)-- فهرست کامل از تکنیک های فوری با نمونه هایی (صفر، چند، CoT، ReAct، خودآمرگی) ؛ تمرین کنندگان مرجع برای سطح گسترده تر "هندکاری فوری" استفاده می کنند.
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)-- نمونه های مشخص شده و شناخته شده از طریق مورد استفاده، الگوهای ساختاری را که در تولید عرضه می شوند نشان می دهد.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)-- راهنمايي "انترپيك" در مورد ساختار پرامپ، با نمونه هاي کاري
