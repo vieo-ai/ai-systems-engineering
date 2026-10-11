@@ -1025,4 +1025,4 @@ if __name__ == "__main__":
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- استخدام الـ LLM لتحسين الإشارات تلقائيًا، أساس الإشارة التلفزيونية
 - [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- مقارنة عمياء حية من LLM حيث يمكنك اختبار نفس الإستعراض عبر النماذج والتصويت على أي رد أفضل
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)-- قائمة شاملة من التقنيات السريعة مع أمثلة (صفر الصور، قليل الصور، CoT، ReAct، التوافق الذاتي) ؛ الممارسين المرجعيين يستخدمونها للمساحة الأوسع "الهندسة السريعة".
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)-- تحفيز، معروفة جيدة الإشارات حسب حالة الاستخدام؛ يظهر الأنماط الهيكلية التي تشحن في الإنتاج.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)-- توجيهات الأنثروبيك حول هيكل الإستعلام، مع أمثلة عملت.
