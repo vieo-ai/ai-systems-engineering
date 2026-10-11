@@ -1025,4 +1025,4 @@ Gemini सिस्टम निर्देशों को मॉडल कॉ
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- स्वचालित रूप से संकेतों को अनुकूलित करने के लिए LLM का उपयोग करना, मेटा-प्रॉम्प्टिंग की नींव
 - [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- LLM की प्रत्यक्ष अंधे तुलना जहां आप मॉडल के बीच एक ही संकेत का परीक्षण कर सकते हैं और किस प्रतिक्रिया को बेहतर है पर वोट कर सकते हैं
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)-- उदाहरणों के साथ शीघ्र तकनीक की एक विस्तृत सूची (शून्य-शॉट, कुछ-शॉट, CoT, ReAct, आत्म-समरूपता); संदर्भ प्रैक्टिशनर व्यापक "प्रॉम्प्ट इंजीनियरिंग" सतह के लिए उपयोग करते हैं।
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)-- उपयोग के मामले के अनुसार संकलित, ज्ञात-अच्छी सूचनाएं; उत्पादन में जहाज के संरचनात्मक पैटर्न दिखाता है।
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)-- मानवतावादी के निर्देश पर शीघ्र संरचना, काम उदाहरणों के साथ. यह पहले शीघ्र पुस्तकालय की जगह ले ली.
