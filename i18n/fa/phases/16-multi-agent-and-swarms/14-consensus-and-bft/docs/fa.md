@@ -148,7 +148,7 @@ python3 code/main.py
 
 ## خواندن بیشتر
 
-- [Castro & Liskov — Practical Byzantine Fault Tolerance (OSDI 1999)](https://pmg.csail.mit.edu/papers/osdi99.pdf) بنیاد
+- [Castro & Liskov — Practical Byzantine Fault Tolerance (OSDI 1999)](https://www.usenix.org/conference/osdi-99/practical-byzantine-fault-tolerance) بنیاد
 - [CP-WBFT — Confidence-Probe Weighted BFT](https://arxiv.org/abs/2511.10400) وزن رای با اعتماد
 - [DecentLLMs — leaderless multi-agent consensus](https://arxiv.org/abs/2507.14928) جمع بندی هندسی-وسط
 - [WBFT — Weighted BFT with Hierarchical Structure Clustering](https://arxiv.org/abs/2505.05103) تقسیم هسته/کوتاه برای تاخیر محدود
