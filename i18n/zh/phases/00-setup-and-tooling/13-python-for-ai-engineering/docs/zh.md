@@ -1029,6 +1029,18 @@ NumPy将两个形状从最后一个维度进行比较.当两个维度等于或�
 4. 写下`matvec(matrix, vector)`在纯 Python 和 NumPy 中测量它们.`best_time`在机器上, NumPy 变得更快的尺寸.
 5. 写出从概念的构建扫描.`ast.parse`其他`ast.walk`在每一个文件中`phases/*/*/code/*.py`计算包含的文件`ast.ListComp`现在`ast.Yield`其他`ast.With`现在,你和表表进行比较.
 
+### 暗示
+
+**Exercise 1.**进口`run_demo`其他`code/main.py`现在,我们要做什么?`seed=7`子`seed=8`然后打印两个结果`format_report`随机数据的值变化; 分类尺寸仅取决于`n`其他`test_fraction`它们仍然是相同的.
+
+**Exercise 2.**首先排列列表的副本,然后把中部项为奇数长度和中部项的平均值为偶数长度.`statistics.median`在列表中,如`[3, 1, 2]`其他`[4, 1, 3, 2]`两者都必须提供相同的数字.
+
+**Exercise 3.**阅读`load_records`在`code/main.py`,我不停地看着它,`yield`每个`Record`使用 `save_records`随着`make_dataset(200_000)`为了制作文件,然后比较`peak_bytes(lambda: load_records(path))`随着`peak_bytes(lambda: sum(1 for _ in your_generator(path)))`电源必须在电话机内消耗,或者`peak_bytes`只有创建,必须报告一个更小的峰值.
+
+**Exercise 4.**使用`dot`作为纯Python版本的模型,然后为每行打一个字,然后使用`np.array(matrix) @ np.array(vector)`时间与两个.`best_time`按每个尺寸打印一个表排列;在比较时间之前,两个结果必须是相同的.
+
+**Exercise 5.**阅读每个文件`Path.read_text`分析它.`ast.parse`,使用`any(isinstance(node, ast.ListComp) for node in ast.walk(tree))`计算每个文件一次,因为概念中的表计算文件.
+
 ## 关键词
 
 | Term | What people say | What it means |

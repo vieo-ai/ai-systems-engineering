@@ -245,6 +245,16 @@ python code/data_utils.py
 3. 将数据集转换为Parquet,并将文件大小进行比较为CSV
 4. 创建一个70/15/15火车/值/测试分区,使用固定种子,并验证尺寸
 
+### 暗示
+
+**Exercise 1.**电话`load_and_inspect("glue", "mrpc")`其他`code/data_utils.py`其他`load_dataset("glue", "mrpc")`直接打印`ds["train"][:5]`每个例子都必须有`sentence1`现在`sentence2`其他`label`其他地方
+
+**Exercise 2.**装载数据集`streaming=True`作为`stream_dataset`读取一个循环中的例子,`time.time()`打印数量,运行两次,因为第一次运行包括连接启动.
+
+**Exercise 3.**保存相同的数据集`to_csv`其他`to_parquet`作为`convert_format`它们的尺寸与`ls -lh`或`os.path.getsize`装备了帕克特文件.`load_from_parquet`检查列数没有变化.
+
+**Exercise 4.**使用`train_test_split`两次使用固定`seed`首先分开30%然后分开30%的分开.三个长度必须加起来到原始长度,第二次运行的种子必须在每个分开中产生相同的第一行.
+
 ## 关键词
 
 | Term | What people say | What it actually means |

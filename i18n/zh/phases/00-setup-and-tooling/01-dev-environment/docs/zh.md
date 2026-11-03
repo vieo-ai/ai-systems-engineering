@@ -220,3 +220,11 @@ Next: python3 phases/01-math-foundations/01-linear-algebra-intuition/code/vector
 1. 运行验证脚本,修复任何故障
 2. 创建一个Python虚拟环境,并安装PyTorch
 3. 在四种语言中写一个"世界好"并运行每一个
+
+### 暗示
+
+**Exercise 1.**跑步`python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner`在你查看下一个之前,你将从存储库根中修复第一个失败的行.
+
+**Exercise 2.**让环境变得更好`uv venv`在存储库根中,激活它,然后安装PyTorch,使用从第6步的命令来匹配你的硬件.`python -c "import torch; print(torch.__version__)"`在环境中;版本号码意味着安装工作.
+
+**Exercise 3.**使用概念中的四个运行时间:Python,Node.js上的TypeScript,Rust和Julia.`python3`现在`npx tsx`(Node.js不能运行一个`.ts`直接提交文件`cargo run`或`rustc`其他`julia`每次运行都必须打印你的消息,然后用0号码离开.

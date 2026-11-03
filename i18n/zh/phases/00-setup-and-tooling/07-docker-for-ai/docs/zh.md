@@ -375,6 +375,16 @@ docker logs -f <container_id>
 3. 加入`flask`运行一个简单的API服务器在端口5000.`-p 5000:5000`
 4. 通过 测量图像大小`docker images`试试把基图从`devel`为了`runtime`并且比较尺寸
 
+### 暗示
+
+**Exercise 1.**使用它来建立`docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`命令从课程,然后运行进口.`docker run --rm ai-dev`在Mac上,不要使用`--gpus all`收容器必须打印一个版本,`2.6.0`现在,我们要去.
+
+**Exercise 2.**跑步`docker compose up -d`在`code/`然后在文件中打开一个`ai-dev`服务`docker compose exec ai-dev bash`在里面,跑去`curl http://qdrant:6333/collections`;一个JSON答案意味着服务名称在编写网络上解决.
+
+**Exercise 3.**添加一个`RUN pip install flask`连接到Docker文件,重建,并启动服务器`host="0.0.0.0"`由于容器内部的服务器与本地主机联系在一起,无法从外部访问.`http://localhost:5000`在机器上确认端口映射是否有效.
+
+**Exercise 4.**跑步`docker images ai-dev`换个字母,然后写下大小列.`devel`为了`runtime`在`FROM`运行时间图像将编译器和标题排除在外.
+
 ## 关键词
 
 | Term | What people say | What it actually means |
