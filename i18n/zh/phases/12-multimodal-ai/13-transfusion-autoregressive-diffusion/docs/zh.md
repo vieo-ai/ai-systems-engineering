@@ -51,7 +51,7 @@
 M[i, j] = 1 if:
   (i is text and j is text and j <= i)   # causal for text
   OR (i is image and j is image and same_image_block(i, j))   # bidirectional within image
-  OR (i is text and j is image and j < i_image_end)   # text attends to previous images
+  OR (i is text and j is image and j < i)   # text attends to images that closed before it
   OR (i is image and j is text and j < i_image_start)   # image attends to preceding text
 ```
 
@@ -62,9 +62,9 @@ M[i, j] = 1 if:
 输出损失是标准的:添加噪音到图像补丁,要求模型预测噪音 (或清洁补丁,相等).输出版本使用流量匹配预测噪音到清洁的速度场.
 
 在培训期间:
-1. 对于每个图像补丁 x0 取一个随机时间步骤 t.
-2. 样本噪音 ε,计算xt = (1-t) * x0 + t * ε (用于流量匹配的线性插射).
-3. 变压器预测v_theta(xt,t);损失 = MSE(v_theta(xt,t), ε - x0).
+1. 对于每个图像补丁$x_0$随机时间步骤$t$现在,我们要去.
+2. 样本噪音$\epsilon$计算$x_t = (1-t) \cdot x_0 + t \cdot \epsilon$(用于流量匹配的线性插射).
+3. 变压器预测$v_\theta(x_t, t)$其他$\text{loss} = \mathop{\mathrm{MSE}}(v_\theta(x_t, t), \epsilon - x_0)$现在,我们要去.
 4. 随着相同序列的文字 NTP 损失.
 
 在推断下,生成是:
@@ -97,7 +97,7 @@ MMDiT的主要区别:
 
 简斯-普罗 (课 12.15) 通过分离视觉编码器来理解和生成一个,VQ用于另一个,同时共享变压器体.Show-o (课 12.14) 换取分散式扩散 (掩盖预测). 统一代家族在转化后迅速分支.
 
-2026年生产的VLM 发射图像 双子座3 Pro,GPT-5,克劳德·奥普斯4.7的图像生成路径 几乎肯定使用了该家族的一些后代.详细信息是专有.
+封闭的生产模型可以使用本土的图像,但它们的架构并未被公布,所以把任何这样的说法视为猜测.
 
 ```figure
 cfg-guidance-scale
@@ -111,7 +111,7 @@ cfg-guidance-scale
 - 图像是4×4字节的网格.
 - 配重线性投影的对作为变压器替代;文字的NTP损失,噪音的补丁的MSE损失.
 - 训练循环交换了两个损失,注意力面具是明确的.
-- 发行者在一个前进传输中生成一个文字标题和4×4图像.
+- 面具演示印出一个文本,图像,文本序列的区块三角形注意力模式.生成不会运行:一个真正的样本器会按代币解码文本代币,然后在许多步骤中删除图像补丁,因为下面的练习会计.
 
 转变器是一个玩具. 两损管道,注意力面具的构建,
 
