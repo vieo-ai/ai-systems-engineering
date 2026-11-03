@@ -375,6 +375,16 @@ docker logs -f <container_id>
 3. إضافة`flask`إلى ملف دوكر، إعادة بناء، وإدارة خادم API بسيط على ميناء 5000. خريطة البورط مع `-p 5000:5000`
 4. قياس حجم الصورة مع `docker images`حاولي تغيير الصورة الأساسية من`devel`إلى`runtime`و مقارنة الأحجام
 
+### إشارات
+
+**Exercise 1.**بناء مع `docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`القيادة من الدروس، ثم تشغيل الإستيراد داخل `docker run --rm ai-dev`على جهاز ماك، لا تترك`--gpus all`يجب أن تقوم الحاوية بطبع نسخة تبدأ بـ`2.6.0`. . .
+
+**Exercise 2.**أركض`docker compose up -d`في`code/`المجلد، ثم فتح قذيفة في `ai-dev`الخدمة مع `docker compose exec ai-dev bash`داخلها، والركض`curl http://qdrant:6333/collections`؛ يعني رد JSON أن اسم الخدمة يصل على شبكة التجميع.
+
+**Exercise 3.**إضافة`RUN pip install flask`الخط إلى الملف Docker، إعادة بناء، وبدء الخادم مع `host="0.0.0.0"`، لأن خادم متصل بمضيف محلي داخل الحاوية لا يمكن الوصول إليه من الخارج.`http://localhost:5000`على جهازك للتأكد من أن خريطة الميناء تعمل
+
+**Exercise 4.**أركض`docker images ai-dev`واكتب عمود "القياس"`devel`إلى`runtime`في`FROM`خط، بناء مع علامة جديدة، ومقارنة الحجمين؛ الصورة في الوقت التشغيل يترك المجمعين والرؤوس.
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |

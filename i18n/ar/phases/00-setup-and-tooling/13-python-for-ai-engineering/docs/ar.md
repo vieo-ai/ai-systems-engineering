@@ -1029,6 +1029,18 @@ print(norms.shape, (X / norms).shape)
 4. اكتب`matvec(matrix, vector)`في بيثون نقي و في NumPy. قياس كل منهما مع `best_time`تحديد الحجم الذي يصبح NumPy أسرع عليه على جهازك.
 5. اكتب مسح البناء من المفهوم.`ast.parse`و`ast.walk`في كل ملف في`phases/*/*/code/*.py`عد الملفات التي تحتوي`ast.ListComp`،`ast.Yield`و`ast.With`و قم بتقارن حساباتك مع الطاولة
 
+### إشارات
+
+**Exercise 1.**الاستيراد`run_demo`من`code/main.py`و أسميها بـ`seed=7`و مع`seed=8`، ثم طبع كلتا النتائج مع `format_report`. تتغير القيم التي تأتي من البيانات العشوائية ؛ تتمثل أحجام التقسيمات فقط في`n`و`test_fraction`، لذا فإنها تبقى نفسها.
+
+**Exercise 2.**قم بتصفيف نسخة من القائمة أولاً، ثم خذ العنصر الوسطى لعدد غير مساوي ووسط العنصرين الوسطى لعدد مساوي. مقارنة نتيجة مع `statistics.median`على قوائم مثل`[3, 1, 2]`و`[4, 1, 3, 2]`يجب أن يقدم كل منهما نفس الأرقام
+
+**Exercise 3.**اقرأ`load_records`في`code/main.py`واصلي خطوتها المتحسّنة، ولكن`yield`كل واحد`Record`بدلاً من إضافةها إلى قائمة.`save_records`مع`make_dataset(200_000)`لإنشاء الملف، ثم مقارنة `peak_bytes(lambda: load_records(path))`مع`peak_bytes(lambda: sum(1 for _ in your_generator(path)))`يجب استهلاك المولد داخل القابلة للاتصال، أو`peak_bytes`ويقوم بتحديد حجمها فقط، ويجب أن يبلغ عن ذروة أقل بكثير.
+
+**Exercise 4.**استخدام`dot`كنموذج للنسخة Python النقية ودعوه مرة واحدة لكل سطر، ثم استخدم `np.array(matrix) @ np.array(vector)`لـ (نومبي) ، الوقت مع كليهما`best_time`وطباعة صف واحد من الجدول لكل حجم، يجب أن تكون النتائج متساوية قبل مقارنة الزمن.
+
+**Exercise 5.**اقرأ كل ملف مع `Path.read_text`، تحليلها مع`ast.parse`، واستخدامها`any(isinstance(node, ast.ListComp) for node in ast.walk(tree))`إحصاء كل ملف مرة واحدة، لأن الجدول في المفهوم يعد الملفات.
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it means |

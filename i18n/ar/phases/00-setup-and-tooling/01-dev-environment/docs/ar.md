@@ -220,3 +220,11 @@ Next: python3 phases/01-math-foundations/01-linear-algebra-intuition/code/vector
 1. إشغال النص التحقق وإصلاح أي أخطاء
 2. قم بإنشاء بيئة افتراضية Python لهذا الدورة و قم بتثبيت PyTorch
 3. اكتب "مرحباً للعالم" بكلّ الألغات الأربعة و إشغلي كلّها
+
+### إشارات
+
+**Exercise 1.**أركض`python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner`من جذور مخزن وتصحيح أول سطر فشل قبل النظر في التالي. يتم التحقق عندما تشغيل النص مرة أخرى وكل المراقبة المطلوبة تمر.
+
+**Exercise 2.**اجعل البيئة مع`uv venv`في جذور مخزن، تنشرها، ثم تثبيت PyTorch مع الأوامر من الخطوة 6 التي تتطابق مع الأجهزة الخاصة بك.`python -c "import torch; print(torch.__version__)"`داخل البيئة، رقم النسخة يعني أن التثبيت قد تم.
+
+**Exercise 3.**استخدم أربعة أوقات تشغيل من كومة في المفهوم: Python، TypeScript على Node.js، Rust، وجوليا. اكتب ملفًا صغيرًا لكل منها وتشغيله مع `python3`،`npx tsx`(لا يمكن لـ Node.js تشغيل`.ts`الملف مباشرة)`cargo run`أو`rustc`و`julia`كل مرة يجب أن تقوم بطبع رسالتك وتخرج بالرمز 0

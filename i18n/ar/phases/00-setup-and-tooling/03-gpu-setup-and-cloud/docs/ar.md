@@ -55,7 +55,13 @@ s0-gpu-dispatch
 nvidia-smi
 ```
 
-قم بتثبيت PyTorch مع CUDA:
+قم بتثبيت PyTorch مع CUDA. على Linux تبعث عجلات الافتراض مع CUDA. على Windows، نسخ أمر CUDA من المختار على pytorch.org.
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+ثم تحقق من أن PyTorch يرى GPU:
 
 ```python
 import torch
@@ -129,6 +135,14 @@ if torch.cuda.is_available():
 1. قم بتشغيل المعيار المرجعي أعلاه ومقارنة CPU مقابل GPU
 2. إذا لم يكن لديك جهاز GPU، تشغيله على Google Colab ومقارنة
 3. تحقق من كمية ذاكرة GPU لديك وتقدير أكبر نموذج يمكنك إطلاقا (قاعدة الإبهام: 2 بايت لكل مبرمير ل fp16)
+
+### إشارات
+
+**Exercise 1.**قم بتشغيل الشفرة من قسم بناءها كما هي ، ثم اكتب وقت المعالجة المركزية ، وقت GPU ، وخط التسرع. قم بتشغيلها مرة أخرى ؛ تشغيل GPU الأول يتضمن تكلفة البدء ، لذلك الأرقام الثانية هي تلك التي يجب مقارنةها.
+
+**Exercise 2.**في Colab، حدد Runtime > Change runtime type > GPU، ثم ضغط على علامة الاستفتاء في خلية.`!nvidia-smi`في خلية أخرى أولاً؛ يجب أن يظهر اسم GPU قبل أن يعني نتيجة مقياس أي شيء.
+
+**Exercise 3.**اقرأ الذاكرة الكاملة مع `torch.cuda.get_device_properties(0).total_memory / 1e9`، مثل`code/gpu_check.py`. تقسيم الذاكرة في البايت ب 2 للحصول على عدد المعايير ل fp16, ثم الحفاظ على هامش، لأن التفعيلات والسياق CUDA أيضا استخدام الذاكرة.
 
 ## الشروط الرئيسية
 
