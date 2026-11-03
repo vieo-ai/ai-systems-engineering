@@ -21,9 +21,9 @@ Esta es la receta de la difusión estable. SD 1.x / 2.x usó una U-Net de 860M s
 
 **Two stages, separately trained.**
 
-1. **Stage 1 — VAE.**Encodificador`E(x) → z`, decodificador`D(z) → x`. Compresión objetivo: 8 veces muestra descendente en cada eje espacial + ajustar canales para que el tamaño latente total sea ~1/16 de la cantidad de píxeles. pérdida = reconstrucción (L1 + LPIPS perceptual) + KL (pequeño peso así `z`No es demasiado Gaussian, porque no necesitamos muestras exactas de`z`A menudo entrenados con una derrota adversaria, las imágenes descifradas son agudas.
+1. **Stage 1 — VAE.**Encodificador$E(x) \to z$, decodificador$D(z) \to x$. Compresión objetivo: 8 veces muestra descendente en cada eje espacial + ajustar canales para que el tamaño latente total sea ~1/16 de la cantidad de píxeles. pérdida = reconstrucción (L1 + LPIPS perceptual) + KL (pequeño peso así $z$No es demasiado Gaussian, porque no necesitamos muestras exactas de$z$A menudo entrenados con una derrota adversaria, las imágenes descifradas son agudas.
 
-2. **Stage 2 — diffusion on `z`.**Tratar`z = E(x_real)`En el caso de las redes de Internet, el sistema de comunicación de Internet (U-Net) puede ser utilizado para denegar la información.`z_t`En la inferencia: muestra`z_0`por difusión, entonces `x = D(z_0)`¿ Qué ?
+2. **Stage 2 — diffusion on $z$.**Tratar$z = E(x_{\text{real}})$En el caso de las redes de Internet, el sistema de comunicación de Internet (U-Net) puede ser utilizado para denegar la información.$z_t$En la inferencia: muestra$z_0$por difusión, entonces $x = D(z_0)$¿ Qué ?
 
 **Text conditioning.**Dos componentes adicionales: un codificador de texto congelado (CLIP-L para SD 1.x, CLIP-L+OpenCLIP-G para SD 2/XL, T5-XXL para SD3 y Flux).`[Q = image features, K = V = text tokens]`Los tokens son la única forma en que el texto influye en la imagen.
 
@@ -49,7 +49,7 @@ noise-schedule
 
 ## Construye el mismo
 
-`code/main.py`Esta prueba muestra que la misma pérdida de difusión funciona si se ejecuta con valores 1D o en valores codificados  la información clave.
+`code/main.py`Esta prueba muestra que la misma pérdida de difusión funciona si se ejecuta con valores 1D crudos o con valores codificados. Esa es la clave.
 
 ### Paso 1: codificador/decodificador
 
@@ -58,21 +58,21 @@ def encode(x):    return x * 0.5          # toy "compression" to smaller scale
 def decode(z):    return z * 2.0
 ```
 
-Para la pedagogía, este mapa lineal es suficiente para mostrar que la difusión opera en`z`sin importar el espacio de datos original.
+Para la pedagogía, este mapa lineal es suficiente para mostrar que la difusión opera en$z$sin importar el espacio de datos original.
 
 ### Paso 2: difusión en `z`- el espacio
 
-El mismo DDPM que la Lección 06.`z = E(x)`Después de tomar muestras`z_0`, decodificar con `D(z_0)`¿ Qué ?
+El mismo DDPM que la Lección 06.$z = E(x)$Después de tomar muestras$z_0$, decodificar con $D(z_0)$¿ Qué ?
 
 ### Paso 3: Guía sin clasificador
 
-Durante el entrenamiento, deje de escribir la etiqueta de clase el 10% de las veces (reemplaza con un token nulo).`ε_cond`y `ε_uncond`, entonces:
+Durante el entrenamiento, deje de escribir la etiqueta de clase el 10% de las veces (reemplaza con un token nulo).$\epsilon_{\text{cond}}$y $\epsilon_{\text{uncond}}$, entonces:
 
 ```python
 eps_cfg = (1 + w) * eps_cond - w * eps_uncond
 ```
 
-`w = 0`= no hay orientación (plena diversidad), `w = 3`= por defecto, `w = 7+`= saturado / demasiado nítido.
+$w = 0$= no hay orientación (plena diversidad), $w = 3$= por defecto, $w = 7+$= saturado / demasiado nítido.
 
 ### Paso 4: Condicionamiento de texto (concepto, no código)
 
@@ -90,7 +90,7 @@ Esta es la única diferencia sustancial entre un modelo de difusión con condici
 - **Text encoder silently wrong.**SD3 necesita T5-XXL con >=128 tokens, y el regreso a CLIP-solo es pérdida.`use_t5=True`o cráteres de fidelidad rápidos.
 - **Mixing latent spaces.**SDXL, SD3, Flux todos usan diferentes VAEs. Un LoRA entrenado en SDXL latente no funcionará en SD3.
 - **CFG too high.** `w > 10`La idea de la Comisión es que la Comisión debe tener en cuenta que el mercado de la información en el mercado interior es un mercado único.`w = 3-7`¿ Qué ?
-- **Negative prompts leaking.**El mensaje negativo vacío se convierte en el token nulo; un mensaje negativo lleno se convierte en el `ε_uncond`No son lo mismo; algunas tuberías silenciosamente se ponen en nulo.
+- **Negative prompts leaking.**El mensaje negativo vacío se convierte en el token nulo; un mensaje negativo lleno se convierte en el $\epsilon_{\text{uncond}}$No son lo mismo; algunas tuberías silenciosamente se ponen en nulo.
 
 ## Usalo
 
@@ -111,7 +111,7 @@ Salva .`outputs/skill-sd-prompter.md`. Skill toma un texto de respuesta + estilo
 
 ## Los ejercicios
 
-1. **Easy.**- ¿ Qué ?`code/main.py`con una guía`w ∈ {0, 1, 3, 7, 15}`- Registran la muestra media por clase.`w`¿Las clases de medios divergen más allá de los medios de datos reales?
+1. **Easy.**- ¿ Qué ?`code/main.py`con una guía$w \in \lbrace 0, 1, 3, 7, 15 \rbrace$- Registran la muestra media por clase.$w$¿Las clases de medios divergen más allá de los medios de datos reales?
 2. **Medium.**Cambiar el codificador lineal del juguete por un par de codificador/decodificador tanh-MLP con pérdida de reconstrucción. Retrain difusión en los nuevos latentes. ¿Cambia la calidad de la muestra?
 3. **Hard.**Configurar una verdadera inferencia de difusión estable con difusores: carga `sdxl-base`, ejecutar 30 pasos de Euler con CFG=7, tiempo. Ahora cambia a`sdxl-turbo`El mismo tema, diferente calidad  describir lo que cambió y por qué.
 
@@ -121,8 +121,8 @@ Salva .`outputs/skill-sd-prompter.md`. Skill toma un texto de respuesta + estilo
 |------|-----------------|-----------------------|
 | First stage | "The VAE" | Trained encoder/decoder pair; compresses 512² to 64². |
 | Second stage | "The U-Net" | Diffusion model over the latent space. |
-| CFG | "Guidance scale" | `(1+w)·ε_cond - w·ε_uncond`; tunes conditioning strength. |
-| Null token | "Empty prompt embed" | Unconditional embed used for `ε_uncond`. |
+| CFG | "Guidance scale" | $(1+w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$; tunes conditioning strength. |
+| Null token | "Empty prompt embed" | Unconditional embed used for $\epsilon_{\text{uncond}}$. |
 | Cross-attention | "How text gets in" | Each U-Net block attends to text tokens as K and V. |
 | DiT | "Diffusion Transformer" | Replace U-Net with a transformer over latent patches; scales better. |
 | MMDiT | "Multi-modal DiT" | SD3's architecture: text and image streams with joint attention. |
@@ -132,7 +132,7 @@ Salva .`outputs/skill-sd-prompter.md`. Skill toma un texto de respuesta + estilo
 
 La integración de Flux de referencia es la receta canónica "Tengo una GPU de consumo, ¿puedo enviar esto?" El truco es el mismo de tres botones de receta de producción de la literatura de inferencia listas aplicadas a una difusión DiT:
 
-1. **Staggered loading.**Flux tiene tres redes que nunca necesitan coexistir en VRAM: T5-XXL codificador de texto (~ 10 GB en fp32), CLIP-L (pequeño), el 12B MMDiT, y el VAE. Encode el prompt primero, *borrar* los codificadores, cargar el DiT, denoise, *borrar* el DiT, cargar el VAE, decodificar.
+1. **Staggered loading.**Flux tiene cuatro redes que nunca necesitan coexistir en VRAM: T5-XXL codificador de texto (~ 10 GB en fp32), CLIP-L (pequeño), el 12B MMDiT, y el VAE. Encode el prompt primero, *borrar* los codificadores, cargar el DiT, denoise, *borrar* el DiT, cargar el VAE, decodificar.
 2. **4-bit quantization via bitsandbytes.** `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)`En el codificador T5 y en el DiT. Cortando la memoria 8×, la caída de calidad es imperceptible para el texto a la imagen por los puntos de referencia de Aritra (enlazados en el cuaderno).
 3. **CPU offload.** `pipe.enable_model_cpu_offload()`automáticamente cambia los módulos entre la CPU y la GPU a medida que cada paso avanzado avanza. Agrega 10-20% de latencia pero hace que la tubería funcione en absoluto.
 
