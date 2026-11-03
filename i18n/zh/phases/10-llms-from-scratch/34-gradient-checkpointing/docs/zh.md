@@ -11,7 +11,7 @@
 
 培训变压器存储每个层次的每个操作的输入,分为后向:注意力输入,Q/K/V投影,软max输出,FFN输入,标准输出和残留流.`d`序列长度`L`批量`B`现在,这是为了`12 * B * L * d`的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,的,,的,,的,,,的,,,,,的,,,,,,的,,,,,的,,,
 
-为了`d=8192, L=8192, B=1`在BF16中,这相当于800MB/层. 64-层模型是51GB的激活,然后再乘以微量级,然后再添加注意力-软max中间体 (`L^2`在你考虑之前,
+为了`d=8192, L=8192, B=1` 64-层模型是大约 103 GB的激活,然后再乘以微量级,然后再添加注意力-软max 中介 (`L^2`在你考虑之前,
 
 双面账单:BF16重量加上优化器状态可能适合80GB,但激活会推你过去.渐进检查点 (也称为激活重新计算) 是标准的解决方案.放弃大多数激活;在向后重复前进以获得它们.成本:额外的FLOP. 益处:记忆量减少了检查点段与总层的比例.
 
@@ -37,13 +37,13 @@
 - 存储器:32层输入 (小) 与32 * (每个层的激活量) (巨大).
 - 额外计算:每段额外的前进1个,即前进FLOP总数增加了 ~33% (由于向后是前进2倍,完整步骤将成为1 + 1 + 2 = 4个单位而不是1 + 2 = 3).
 
-这就是陈等人2016年的原始食谱:每一个检查点`sqrt(L)`对于L=64,那就是8个检查点.
+这就是陈等人2016年的原始食谱:每一个检查点`sqrt(L)`为了平衡记忆和计算.$L=64$这就是8个检查站.
 
 ### 选择性检查 (科尔蒂坎蒂 2022)
 
 没有所有激活成本相同.`B*L*L*heads`随着序列长度的 * 方形化 * 增长.`B*L*4d`长序列中,软max 主导.
 
-选择性检查点将廉价的存储激活 (线性投影,残余) 保持,只会重新计算昂贵的激活 (注意).
+选择性检查点将廉价的存储激活 (线性预测,残余) 保持,只会重新计算昂贵的 (注意).$O(L^2)$记忆.
 
 梅加特龙-核心将其作为"选择性"激活重计算.
 
@@ -293,8 +293,8 @@ def should_recompute(layer_type, activation_bytes, recompute_flops_ratio):
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
-| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
+| Attention-softmax volume | "The O(L^2) problem" | $L^2 \cdot \text{heads} \cdot \text{batch}$ floats; dominates activation memory at long contexts |
 
 ## 进一步阅读
 
