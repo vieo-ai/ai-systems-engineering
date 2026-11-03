@@ -23,9 +23,11 @@
 
 **TF-IDF**任何文件中出现的单词都是非信息性的,所以缩小.一个词在整个文件中很少出现,但在单一文件中频繁的,是信号,所以缩小.
 
-```
-TF-IDF(w, d) = TF(w, d) * IDF(w)
-             = count(w in d) / |d| * log(N / df(w))
+```math
+\begin{aligned}
+\text{TF-IDF}(w, d) &= \text{TF}(w, d) \cdot \text{IDF}(w) \\
+&= \frac{\mathop{\mathrm{count}}(w \text{ in } d)}{|d|} \cdot \log\frac{N}{\mathop{\mathrm{df}}(w)}
+\end{aligned}
 ```
 
 在哪里?`TF`是文件中的术语频率,`df`是文件频率 (包含这个词的文件数量),`N`文件是全部的文件.`log`限制了人们使用无处不在的词语的重量.
@@ -124,7 +126,7 @@ def tfidf(bow_matrix):
 >>> tfidf(bow)
 ```
 
-文件,字母词 (`the`现在`cat`现在`sat`现在`dog`现在`ran`它们是`the`现在,它在三部都出现了,所以 IDF 很低.`dog`它们的向量很稀少 (大多数输入都是小的) 而歧视性的词则出现.
+文件,字母词 (`the`现在`cat`现在`sat`现在`dog`现在`ran`它们是`the`现在,它在三部都出现了,所以 IDF 很低.`dog`由于这些词汇的数量很高,这些向量很稀少 (大多数输入都是零).即使在这个玩具中,歧视性词语也会出现.
 
 ### 步骤 5: L2 规范行
 

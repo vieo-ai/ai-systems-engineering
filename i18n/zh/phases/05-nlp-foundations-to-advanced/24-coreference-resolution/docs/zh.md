@@ -36,7 +36,7 @@
 **Architectures.**
 
 1. **Rule-based (Hobbs, 1978).**语法规则的语法定量,基本线程很好,在代名词上难以击败.
-2. **Mention-pair classifier.**对于每一对提及 (m_i,m_j),预测它们是否更核心. 按过渡式关闭进行集群. 2016 年前标准.
+2. **Mention-pair classifier.**对于每一对提及$(m_i, m_j)$根据过渡关闭, 标准在2016年之前.
 3. **Mention-ranking.**对于每一个提及,排名候选人的前例 (包括"没有前例").
 4. **Span-based end-to-end (Lee et al., 2017).**变压器编码器. 列出所有候选人跨度到长度限制. 预测提及分数. 预测每个跨度的前例概率. 贪地集群. 现代默认.
 5. **Generative (2024+).**简单的案例,长文档和罕见的参考文件.
@@ -61,14 +61,14 @@ coref-links
 ```python
 import spacy
 nlp = spacy.load("en_coreference_web_trf")   # experimental model
-doc = nlp("Apple announced new products. The company said they would ship soon.")
+doc = nlp("Apple announced new products. The company said it would ship them soon.")
 for cluster in doc._.coref_clusters:
     print(cluster, "->", [m.text for m in cluster])
 ```
 
 在更长的文件上,你得到了这样的东西:
-- 集团1: [果,公司,他们]
-- 集团2: [新产品]
+- 集团1: [果,公司,它]
+- 集团2:[新产品,它们]
 
 ### 步骤2:基于规则的代名词解决器 (教学)
 
