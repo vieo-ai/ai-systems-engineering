@@ -97,7 +97,7 @@ python train.py > output.log 2> errors.log
 python train.py > train_full.log 2>&1
 ```
 
-Los tres redirecciones que necesitas:
+Las cuatro redirecciones y la tubería que necesitas:
 
 | Symbol | What it does |
 |--------|-------------|
@@ -335,6 +335,16 @@ Aquí está cuando cada herramienta entra en juego durante este curso:
 2. Añadir los alias de `code/shell_aliases.sh`Configurar y recargar con su carcasa`source ~/.zshrc`(o `~/.bashrc`¿Qué es lo que se hace?
 3. Crear un registro de entrenamiento falso con `for i in $(seq 1 100); do echo "epoch $i loss: $(echo "scale=4; 1/$i" | bc)"; sleep 0.1; done > fake_train.log`y luego usar `grep`¿ Qué ?`tail`, y `awk`para extraer sólo los valores de pérdida.
 4. Configurar una entrada de configuración SSH para un servidor al que tiene acceso (o utiliza `localhost`para practicar la sintaxis).
+
+### Indicios
+
+**Exercise 1.**Comience con`tmux new -s practice`, luego se divide con el prefijo`Ctrl+B`seguido por `"`y `%`, y moverse entre los paneles con `Ctrl+B`Y una llave de flecha.`Ctrl+B`Entonces ...`d`, correr`tmux ls`, y volver a unir con `tmux attach -t practice`Los tres programas deben seguir funcionando.
+
+**Exercise 2.**Copie las líneas de `code/shell_aliases.sh`hasta el final de`~/.zshrc`o `~/.bashrc`, luego corre .`source`En ese archivo.`alias`o `type <name>`para que uno de los nuevos alias confirme que la concha lo sabe.
+
+**Exercise 3.**La primera carrera .`tail -5 fake_train.log`para ver el formato de línea. Luego, filtra con `grep loss`y imprimir sólo el último campo con `awk '{print $NF}'`La salida debe ser de 100 números que se vuelven más pequeños.
+
+**Exercise 4.**Copie el `Host gpu`bloque de la lección en `~/.ssh/config`y el cambio`HostName`y `User`a su servidor, o a `localhost`y su nombre de usuario.`ssh -G gpu`Si tiene un servidor accesible de SSH que acepta su clave, ejecuta `ssh gpu`para conectarse.
 
 ## Términos clave
 

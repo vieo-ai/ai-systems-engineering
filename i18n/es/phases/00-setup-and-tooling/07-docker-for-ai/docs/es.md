@@ -375,6 +375,16 @@ Retirada de la`--gpus all`El contenedor todavía funciona para las clases basada
 3. Añadir`flask`a la Dockerfile, reconstruir, y ejecutar un servidor API simple en el puerto 5000.`-p 5000:5000`
 4. Mide el tamaño de la imagen con `docker images`Intentar cambiar la imagen de base de`devel`¿ Qué ?`runtime`y comparar los tamaños
 
+### Indicios
+
+**Exercise 1.**Construye con el `docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`mando de la lección, luego ejecuta la importación dentro `docker run --rm ai-dev`En un Mac, no lo hagas.`--gpus all`El contenedor debe imprimir una versión que comience con:`2.6.0`¿ Qué ?
+
+**Exercise 2.**- ¿ Qué ?`docker compose up -d`en el `code/`carpeta, luego abra una cáscara en el `ai-dev`servicio con `docker compose exec ai-dev bash`En el interior, corre.`curl http://qdrant:6333/collections`; una respuesta JSON significa que el nombre del servicio se resuelve en la red de composición.
+
+**Exercise 3.**Añadir un`RUN pip install flask`línea al archivo Docker, reconstruir, y iniciar el servidor con `host="0.0.0.0"`, porque un servidor vinculado a localhost dentro del contenedor no es accesible desde fuera.`http://localhost:5000`en su máquina para confirmar que el mapa de puerto funciona.
+
+**Exercise 4.**- ¿ Qué ?`docker images ai-dev`y escribe la columna tamaño.`devel`¿ Qué ?`runtime`en el `FROM`línea, construir con una nueva etiqueta, y comparar los dos tamaños; la imagen de tiempo de ejecución deja fuera los compiladores y encabezados.
+
 ## Términos clave
 
 | Term | What people say | What it actually means |
