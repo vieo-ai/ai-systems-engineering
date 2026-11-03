@@ -74,11 +74,13 @@ At each grid cell, every anchor emits (tx, ty, tw, th, obj, c_1, ..., c_C).
 
 कच्चे`tx, ty, tw, th`बॉक्स निर्देशांक नहीं हैं; वे प्रतिगमन लक्ष्य हैं जिन्हें ग्राफिंग से पहले परिवर्तित किया जाना हैः
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`सेल के अंदर केंद्र के ऑफसेट रखता है। `exp`एक संकेत फ्लिप के बिना लंगर से मुक्त रूप से चौड़ाई पैमाने अनुमति देता है। `stride`यह डिकोडिंग चरण v2 के बाद से हर YOLO संस्करण में एक ही है।
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 दो बॉक्स के बीच डिटेक्शन की सार्वभौमिक समानता मीट्रिकः
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 का अर्थ है समान; IoU = 0 का अर्थ है कोई ओवरलैप नहीं। भविष्यवाणी और ग्राउंड-सत्य बॉक्स के बीच IoU वह है जो यह तय करता है कि क्या एक भविष्यवाणी सही सकारात्मक (आमतौर पर IoU >= 0.5) के रूप में गिना जाता है। दो भविष्यवाणियों के बीच IoU वह है जो NMS डिडप्लिकेट करने के लिए उपयोग करता है।
+$\mathrm{IoU} = 1$समान अर्थ; $\mathrm{IoU} = 0$भविष्यवाणी और मूल सत्य बॉक्स के बीच IoU यह तय करता है कि क्या एक भविष्यवाणी एक सच्ची सकारात्मक (आमतौर पर) के रूप में गिना जाता है$\mathrm{IoU} \ge 0.5$) दो भविष्यवाणियों के बीच IoU है कि NMS deduplicate करने के लिए उपयोग करता है।
 
 ### अधिकतम से बाहर दबाए जाने
 
@@ -113,11 +115,13 @@ NMS(boxes, scores, iou_threshold):
 
 YOLO हानि वजन के साथ तीन हानि जोड़ दिया जाता हैः
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 केवल उन कोशिकाओं में जो किसी वस्तु को शामिल करते हैं, वे बॉक्स-रिक्श और वर्गीकरण हानि में योगदान देते हैं। वस्तुओं के बिना कोशिकाएं केवल वस्तुत्व हानि में योगदान देती हैं (मॉडल को चुप रहने के लिए सिखा रही हैं) ।`lambda_noobj`आमतौर पर छोटा होता है (~0.5) क्योंकि कोशिकाओं का विशाल बहुमत खाली होता है और अन्यथा कुल हानि पर हावी होता है।
@@ -199,8 +203,10 @@ def encode(box_xyxy, cell_x, cell_y, stride, anchor_wh):
     cy = 0.5 * (y1 + y2)
     w = x2 - x1
     h = y2 - y1
-    tx = cx / stride - cell_x
-    ty = cy / stride - cell_y
+    off_x = np.clip(cx / stride - cell_x, 1e-6, 1 - 1e-6)
+    off_y = np.clip(cy / stride - cell_y, 1e-6, 1 - 1e-6)
+    tx = np.log(off_x / (1 - off_x))
+    ty = np.log(off_y / (1 - off_y))
     tw = np.log(w / anchor_wh[0] + 1e-8)
     th = np.log(h / anchor_wh[1] + 1e-8)
     return np.array([tx, ty, tw, th])
@@ -219,7 +225,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 ```
 
-परीक्षणः एक बॉक्स को एन्कोड करें और फिर डिकोड करें  आपको मूल के बहुत करीब कुछ वापस मिलना चाहिए (जब तक सिग्मोइड उल्टा पूरी तरह से पलट नहीं जाता जब `tx`पोस्ट सिग्मोइड रेंज में नहीं है) ।
+परीक्षणः एक बॉक्स को एन्कोड करें जिसका केंद्र कक्ष के अंदर सख्ती से है, फिर डिकोड करें, और आपको मूल बॉक्स को फिर से फ्लोट त्रुटि के लिए वापस लेना चाहिए। `encode`एक लॉजिट के रूप में केंद्र ऑफसेट को संग्रहीत करता है, `sigmoid`में `decode`क्लिप लॉजिट को असीमित रखता है; सेल के किनारे पर एक केंद्र अधिकतम से आगे बढ़ता है`1e-6`कोशिकाएँ।`assign_targets`नीचे समान लॉजिट स्टोर करता है, तो सिर अंतरिक्ष में ट्रेनों है कि `decode`उम्मीद करता है।
 
 ### चरण 4: न्यूनतम YOLO सिर
 
@@ -269,8 +275,10 @@ def assign_targets(boxes_xyxy, classes, anchors, stride, grid_size, num_classes)
         best = int(np.argmax(ious))
         aw, ah = anchors[best]
 
-        target[gy, gx, best, 0] = cx / stride - gx
-        target[gy, gx, best, 1] = cy / stride - gy
+        off_x = np.clip(cx / stride - gx, 1e-6, 1 - 1e-6)
+        off_y = np.clip(cy / stride - gy, 1e-6, 1 - 1e-6)
+        target[gy, gx, best, 0] = np.log(off_x / (1 - off_x))
+        target[gy, gx, best, 1] = np.log(off_y / (1 - off_y))
         target[gy, gx, best, 2] = np.log(bw / aw + 1e-8)
         target[gy, gx, best, 3] = np.log(bh / ah + 1e-8)
         target[gy, gx, best, 4] = 1.0
@@ -315,7 +323,7 @@ def yolo_loss(pred, target, has_obj, lambda_coord=5.0, lambda_obj=1.0, lambda_no
                    "obj_neg": loss_obj_neg.item(), "cls": loss_cls.item()}
 ```
 
-पांच हाइपर-पैरामीटर जो हर YOLO ट्यूटोरियल या तो हार्ड कोड या स्वीप करता है। अनुपात मायने रखते हैंः`lambda_coord=5, lambda_noobj=0.5`मूल YOLOv1 कागज को दर्शाता है और अभी भी एक उचित डिफ़ॉल्ट के रूप में काम करता है।
+चार हानि वजन है कि हर YOLO ट्यूटोरियल या तो हार्ड कोड या स्वीप. अनुपात मायने रखते हैंः`lambda_coord=5, lambda_noobj=0.5`मूल YOLOv1 कागज को दर्शाता है और अभी भी एक उचित डिफ़ॉल्ट के रूप में काम करता है।
 
 ### चरण 7: इन्फेरेंस पाइपलाइन
 
