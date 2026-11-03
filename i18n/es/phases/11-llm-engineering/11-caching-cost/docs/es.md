@@ -21,7 +21,7 @@ Construye un chatbot RAG, funciona muy bien y a los usuarios les encanta.
 
 Entonces llega la factura.
 
-Los costes del GPT-5 $5 per million input tokens and $15 por millón de producción.$15 input / $75 de salida. Gemini 3 Pro cuesta $1.25 input / $5 de salida. GPT-5-mini es $0.25/$Los precios a continuación son ilustrativos; siempre compruebe la página de precios actual del proveedor.
+Los costes del GPT-5 $1.25 per million input tokens and $El coste de Claude Opus 4,7$5 input / $25 de salida. Gemini 3.1 Pro cuesta $2 input / $12 de salida (promete hasta 200K tokens). GPT-5-mini es $0.25/$2. GPT-4o, el modelo en las matemáticas de abajo, es $2.50/$10. Los precios son ilustrativos; siempre compruebe la página de precios actual del proveedor.
 
 Aquí está la matemática que mata a las startups:
 
@@ -863,7 +863,7 @@ La API de lote ofrece un descuento del 50% en todos los tokens. Los resultados l
 #     return None
 ```
 
-En la producción, reemplaza el escaneo lineal con un índice vectorial (Redis Vector Search, Pinecone o pgvector). El escaneo lineal funciona para <1,000 entradas.
+En la producción, reemplaza el escaneo lineal con un índice vectorial (Redis Vector Search, Pinecone o pgvector).$O(\log n)$- ¿Qué?
 
 ## Envío
 
