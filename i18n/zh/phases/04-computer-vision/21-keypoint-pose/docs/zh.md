@@ -50,8 +50,8 @@ flowchart LR
 
 没有退缩`(x, y)`直接预测一个`H x W`热地图每一个键点,一个位于真实位置的高斯斑点.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 在推断时,每个热图的 argmax 是预测的关键点位置.
@@ -60,7 +60,7 @@ target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
 
 ### 亚像素定位
 
-为了获得子像素精度,通过将抛物线与 argmax 和其邻居相连,或使用已知的偏移来精炼.`(dx, dy) = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1], ...)`方向.
+为了获得子像素精度,通过将抛物线安装在 argmax 和其邻居上进行精炼,或者将 argmax 转移到更高的邻居上.`dx = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1])`对于`dy`根据代码.
 
 ### 部分亲密性领域 (PAF)
 
