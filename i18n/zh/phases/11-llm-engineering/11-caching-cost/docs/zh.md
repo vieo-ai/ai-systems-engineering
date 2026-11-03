@@ -21,7 +21,7 @@
 
 然后收到账单.
 
-GPT-5成本$5 per million input tokens and $产量为每百万产量15美元.$15 input / $双子座3 Pro的成本$1.25 input / $输出5个.$0.25/$2. 下面的价格说明; 总是查看提供商的当前价格页面.
+GPT-5成本$1.25 per million input tokens and $产量为100万. 劳德奥普斯 4.7 成本$5 input / $双子座3.1Pro的成本$2 input / $输出12个输出 (高达200K代币).$0.25/$现在,我们可以看到一个模型.$2.50/$10. 价格是说明性的; 总是查看提供商的最新价格页面.
 
 这就是杀死初创公司的数学:
 
@@ -863,7 +863,7 @@ if __name__ == "__main__":
 #     return None
 ```
 
-在生产中,用向量索引 (Redis Vector Search,Pinecone,或pgvector) 取代线性扫描.线性扫描对<1,000条目工作.此外,使用ANN (近邻近) 搜索O(log n).
+在生产中,用向量指数 (Redis Vector Search,Pinecone或pgvector) 取代线性扫描.线性扫描对<1,000个输入工作.此外,使用ANN (近邻近) 来$O(\log n)$查看.
 
 ## 运送它
 
