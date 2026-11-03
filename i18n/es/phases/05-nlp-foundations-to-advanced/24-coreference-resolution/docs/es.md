@@ -36,7 +36,7 @@ Por qué importa en 2026:
 **Architectures.**
 
 1. **Rule-based (Hobbs, 1978).**Resolución de pronombres basados en árboles sintácticos usando reglas gramaticales. buena línea de base. sorprendentemente difícil de superar en pronombres.
-2. **Mention-pair classifier.**Para cada par de menciones (m_i, m_j), pronostica si son más básicas. Cluster por cierre transitivo. Norma pre-2016.
+2. **Mention-pair classifier.**Por cada par de menciones .$(m_i, m_j)$El sistema de control de las emisiones de gases de efecto invernadero (CIP) se ha convertido en un sistema de control de gases de efecto invernadero (CIP) con un sistema de control de gases de efecto invernadero (CIP) con un sistema de control de gases de efecto invernadero (CIP) con un sistema de control de gases de efecto invernadero (CIP) con un sistema de control de gases de efecto invernadero (CIP) con un sistema de control de gases de efecto invernadero (CIP) con un sistema de control de gases de efecto invernadero (CIP) con un sistema de control de gases de efecto invernadero (CIP) con un sistema de control de gases de efecto invernadero (CIP) con un sistema de control de efecto invernadero (CIP) con un sistema de control de efecto invernadero (CIP) con un sistema de control de efecto invernadero (CIP) con un sistema de control de efecto invernadero (CIP) con un sistema de control de efecto invernadero (CIP) con un sistema de efecto invernadero (CIP) de la CIP) de 2016.
 3. **Mention-ranking.**Para cada mención, clasifique antecedentes de candidatos (incluyendo "sin antecedentes").
 4. **Span-based end-to-end (Lee et al., 2017).**Encuentra todos los candidatos hasta un límite de longitud, predice las puntuaciones, predice la probabilidad de antecedentes para cada período, agrupar codiciosamente, el estándar moderno.
 5. **Generative (2024+).**Promover un LLM: "Enumera cada pronombre en este texto y su antecedente".
@@ -61,14 +61,14 @@ coref-links
 ```python
 import spacy
 nlp = spacy.load("en_coreference_web_trf")   # experimental model
-doc = nlp("Apple announced new products. The company said they would ship soon.")
+doc = nlp("Apple announced new products. The company said it would ship them soon.")
 for cluster in doc._.coref_clusters:
     print(cluster, "->", [m.text for m in cluster])
 ```
 
 En un documento más largo, se obtiene algo así:
-- Cluster 1: [Apple, la compañía, ellos]
-- Grupo 2: [productos nuevos]
+- Cluster 1: [Apple, la compañía, el]
+- Grupo 2: [productos nuevos, ellos]
 
 ### Paso 2: resolver de pronombres basados en reglas (ensensenación)
 

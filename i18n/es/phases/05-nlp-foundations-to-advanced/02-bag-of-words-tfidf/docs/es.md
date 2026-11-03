@@ -23,9 +23,11 @@ Esta lección construye una bolsa de palabras, luego TF-IDF, desde cero. Luego m
 
 **TF-IDF**Una palabra que aparece en cada documento es poco informativa, así que redujelo. Una palabra rara en todo el corpus pero frecuente en un solo documento es señal, así que redujelo.
 
-```
-TF-IDF(w, d) = TF(w, d) * IDF(w)
-             = count(w in d) / |d| * log(N / df(w))
+```math
+\begin{aligned}
+\text{TF-IDF}(w, d) &= \text{TF}(w, d) \cdot \text{IDF}(w) \\
+&= \frac{\mathop{\mathrm{count}}(w \text{ in } d)}{|d|} \cdot \log\frac{N}{\mathop{\mathrm{df}}(w)}
+\end{aligned}
 ```
 
 ¿ Dónde ?`TF`es la frecuencia de los términos en el documento, `df`es la frecuencia del documento (cuántos documentos contienen la palabra), `N`Es el total de documentos.`log`mantiene el peso limitado para las palabras omnipresentes.
@@ -124,7 +126,7 @@ def tfidf(bow_matrix):
 >>> tfidf(bow)
 ```
 
-Tres documentos, cinco palabras vocabularias (`the`¿ Qué ?`cat`¿ Qué ?`sat`¿ Qué ?`dog`¿ Qué ?`ran`¿ Qué es esto ?`the`aparece en los tres, así que su IDF es baja. `dog`Los vectores son escasos (la mayoría de las entradas son pequeñas) y las palabras discriminatorias pop.
+Tres documentos, cinco palabras vocabularias (`the`¿ Qué ?`cat`¿ Qué ?`sat`¿ Qué ?`dog`¿ Qué ?`ran`¿ Qué es esto ?`the`aparece en los tres, así que su IDF es baja. `dog`En el caso de los vehículos de guerra, el número de vehículos de guerra que aparecen en uno es alto.
 
 ### Paso 5: Normaliza las filas L2
 
