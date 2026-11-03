@@ -9,13 +9,13 @@
 
 ## El problema
 
-Un descifrador autoregresor ingenuo sí .`O(N²)`trabajo para generar `N`Tokens: en cada paso recalcula la atención sobre el prefijo completo. Para una respuesta de tokens 4K que es 16M operaciones de atención, la mayoría de ellos redundantes. Cada estado oculto de un token prefijo es determinista una vez calculado.
+Un descifrador autoregresor ingenuo sí .$O(N^2)$trabajo para generar $N$Tokens: en cada paso recalcula la atención sobre el prefijo completo. Para una respuesta de tokens 4K que es 16M operaciones de atención, la mayoría de ellos redundantes. Cada estado oculto de un token prefijo es determinista una vez calculado.
 
 Además, la atención misma mueve muchos datos. La atención estándar materializa una matriz de puntaje N×N, salida de N×d softmax, salida final N×d  demasiadas lecturas y escrituras a HBM. Para N≥2K, la atención se vuelve limitada a la memoria antes de que se convierta en FLOP-bound.
 
 Dos optimizaciones, ambas de Dao et al., empujaron la inferencia fronteriza de "lento" a "rápido":
 
-1. **KV cache.**Almacenar los vectores K y V de cada token prefijo. la atención de cada nuevo token es una consulta contra las claves almacenadas en caché.`O(N²)`¿ Qué ?`O(N)`por cada paso de generación.
+1. **KV cache.**Almacenar los vectores K y V de cada token prefijo. la atención de cada nuevo token es una consulta contra las claves almacenadas en caché.$O(N^2)$¿ Qué ?$O(N)$por cada paso de generación.
 2. **Flash Attention.**El cálculo de la atención se realiza con una tela de tela para que la matriz completa de N×N nunca alcance el HBM. Todo el softmax + matmul ocurre en SRAM. 24× velocidad del reloj de pared en A100; 510× en H100 con FP8.
 
 Para 2026 ambos son universales. Cada pila de inferencias de producción (vLLM, TensorRT-LLM, SGLang, llama.cpp) los asume.
@@ -26,32 +26,32 @@ Para 2026 ambos son universales. Cada pila de inferencias de producción (vLLM, 
 
 ### Matemáticas de caché de KV
 
-Por capa de decodificación, por token, por cabeza:
+Por capa de decodificación, por token, en todas las cabezas de KV:
 
 ```
-bytes_per_token_per_layer = 2 * d_head * dtype_size
+bytes_per_token_per_layer = 2 * n_kv_heads * d_head * dtype_size
                           ^
                           K and V
 ```
 
-Para un modelo 7B con 32 capas, 32 cabezas, d_head=128, fp16:
+Para un modelo 7B con 32 capas, 32 cabezas (todas utilizadas para K y V), d_head=128, fp16:
 
 ```
-per token per layer = 2 * 128 * 2 = 512 bytes
-per token (32 layers) = 16 KB
-per 32K context = 512 MB
+per token per layer = 2 * 32 * 128 * 2 = 16384 bytes (16 KiB)
+per token (32 layers) = 512 KiB
+per 32K context = 16 GiB
 ```
 
 Para Llama 3 70B (80 capas, d_head=128, GQA con 8 capas de KV):
 
 ```
-per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KB)
-per 32K context = 10.4 GB
+per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KiB)
+per 32K context = 10 GiB
 ```
 
-Ese 10 GB es por lo que Llama 3 70B en 128K contexto necesita la mayoría de un 40 GB A100 sólo para KV caché en el tamaño de lote 1.
+Ese 10 GiB en 32K crece a 40 GiB en 128K, que es el conjunto de un A100 de 40 GB sólo para el caché KV en el tamaño de lote 1.
 
-**GQA is the KV-cache win.**MHA con 64 cabezas sería de 32 GB. MLA comprime aún más.
+**GQA is the KV-cache win.**El MHA con 64 cabezas de KV sería 8 veces más grande, aproximadamente 80 GiB en 32K.
 
 Arraste las dimensiones y observa el tamaño de la caché. Empuje la longitud de la secuencia o lote hacia arriba y vea qué tan rápido se desvanece más allá de una sola GPU:
 
@@ -84,7 +84,7 @@ for each block of Q (tile size ~128 × 128):
     write O_tile to HBM
 ```
 
-Un viaje de HBM por baldosas.`O(N²)`¿ Qué ?`O(N)`. El pase hacia atrás recalcula algunos valores del pase hacia adelante en lugar de almacenarlos  otra ganancia de memoria.
+Un viaje de HBM por baldosas.$O(N^2)$¿ Qué ?$O(N)$. El pase hacia atrás recalcula algunos valores del pase hacia adelante en lugar de almacenarlos  otra ganancia de memoria.
 
 **Numerical trick.**El funcionamiento de softmax se mantiene `(max, sum)`La atención flash calcula la salida idéntica a la atención estándar (modulo fp16 no asociativa).
 
@@ -124,10 +124,14 @@ flash-attention-memory
 
 ## Construye el mismo
 
+```figure
+iso-machine {"machine":"kv-cache"}
+```
+
 ¿ Qué ?`code/main.py`Implementamos:
 
-1. Un ingenuo .`O(N²)`decodificador incremental.
-2. ¿ Qué es esto ?`O(N)`Descriptor de caché KV.
+1. Un ingenuo .$O(N^2)$decodificador incremental.
+2. ¿ Qué es esto ?$O(N)$Descriptor de caché KV.
 3. Una softmax de tejas que simula el algoritmo de ejecución máxima de Flash Attention.
 
 ### Paso 1: Caché de KV
@@ -172,9 +176,9 @@ def tiled_softmax_dot(q, K, V, tile=4):
 
 Una salida idéntica a bit `softmax(qK) V`en un solo disparo, pero en cualquier momento el juego de trabajo es un `tile × d_head`Bloqueo, no el completo `N × d_head`¿ Qué ?
 
-### Paso 3: Comparar la descifrado ingenuo vs caché en la generación de 100 tokens
+### Paso 3: Comparar la descifrado ingenuo con caché
 
-Cuenta las operaciones de atención.`O(N²)`= 5050. En caché: `O(N)`El código imprime ambas cosas.
+Cuenta las operaciones de atención. Ambos decodificadores hacen las mismas comparaciones de clave de consulta: paso `t`Asiste a la reunión .`t`los tokens, por lo que el total es 1 + 2 + ... + N = N(N+1)/2. El código utiliza N = 10 e imprime 55 para cada decodificador. Para una generación de 100 tokens, ambos hacen 5050 comparaciones. La caché guarda las proyecciones K y V. Sin una caché, cada paso calcula K y V de nuevo para el prefijo completo, así que una generación de 100 tokens calcula 5050 estados de tokens. Con la caché, los K y V de cada token se calculan una vez, por lo que la misma generación calcula 100 estados de los tokens.
 
 ## Usalo
 
