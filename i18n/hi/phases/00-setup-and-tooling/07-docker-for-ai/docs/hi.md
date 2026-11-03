@@ -375,6 +375,16 @@ docker logs -f <container_id>
 3. जोड़ें `flask`Docker फ़ाइल के लिए, पुनर्निर्माण, और बंदरगाह 5000 पर एक सरल एपीआई सर्वर चलाएं.`-p 5000:5000`
 4.  से छवि आकार मापें`docker images`.  से मूल छवि स्विच करने की कोशिश करें`devel``runtime`और आकारों की तुलना करें
 
+### संकेत
+
+**Exercise 1.**`docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`पाठ से कमांड, फिर आयात को अंदर चलाएं `docker run --rm ai-dev`मैक पर, छोड़ दें`--gpus all`कंटेनर को एक संस्करण प्रिंट करना चाहिए जो कि से शुरू होता है`2.6.0`. .
+
+**Exercise 2.**दौड़ें`docker compose up -d``code/`फ़ोल्डर, फिर खोल खोल `ai-dev`सेवा के साथ `docker compose exec ai-dev bash`अंदर, दौड़ें`curl http://qdrant:6333/collections`; एक JSON उत्तर का अर्थ है कि सेवा का नाम रचना नेटवर्क पर हल होता है।
+
+**Exercise 3.**एक जोड़ें `RUN pip install flask`Docker फ़ाइल पर लाइन, पुनर्निर्माण, और सर्वर शुरू करने के लिए `host="0.0.0.0"`, क्योंकि कंटेनर के अंदर स्थानीय होस्ट से जुड़ा एक सर्वर बाहर से पहुँचा जा सकता नहीं है. खुला `http://localhost:5000`अपनी मशीन पर पुष्टिकरण करने के लिए कि पोर्ट मानचित्रण काम करता है.
+
+**Exercise 4.**दौड़ें`docker images ai-dev`और आकार कॉलम लिखें। परिवर्तन `devel``runtime``FROM`लाइन, एक नए टैग के साथ निर्माण, और दो आकारों की तुलना; रनटाइम छवि संकलक और हेडर को छोड़ देता है।
+
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |
