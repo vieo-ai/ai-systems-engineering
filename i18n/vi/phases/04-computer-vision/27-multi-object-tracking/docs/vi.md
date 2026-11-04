@@ -61,7 +61,7 @@ Mỗi bộ theo dõi cổ điển sử dụng bộ lọc Kalman trong bước d�
 
 ### Algoritm Hungary
 
-Với một `M x N`Matrix chi phí (tracks x detections), tìm việc giao dịch một đối với một để giảm thiểu tổng chi phí.`1 - IoU(track_bbox, detection_bbox)`hoặc tương đồng âm tính của các tính năng xuất hiện. thời gian chạy là O(((M+N) ^ 3); cho M, N lên đến ~ 1000 nó đủ nhanh trong Python thông qua `scipy.optimize.linear_sum_assignment`- Tôi không biết.
+Với một `M x N`Matrix chi phí (tracks x detections), tìm việc giao dịch một đối với một để giảm thiểu tổng chi phí.`1 - IoU(track_bbox, detection_bbox)`hoặc tương đồng âm tính của các tính năng ngoại hình.$O((M+N)^3)$; vì $M, N$lên đến ~ 1000 nó đủ nhanh trong Python qua `scipy.optimize.linear_sum_assignment`- Tôi không biết.
 
 ### Ý tưởng chính của ByteTrack
 
@@ -69,7 +69,7 @@ Các máy theo dõi tiêu chuẩn cho thấy độ tự tin thấp (< 0, 5).**se
 
 ### SAM 2 theo dõi dựa trên bộ nhớ
 
-SAM 2 xử lý video bằng cách giữ một **memory bank**Các bộ nhớ được phân tích với các tính năng của khung mới, và bộ giải mã tạo ra một mặt nạ cho cùng một bản trong khung mới.
+SAM 2 xử lý video bằng cách giữ một **memory bank**Với một prompt (click, box, or mask) trên một khung, nó mã hóa các bản thể hiện vào bộ nhớ.
 
 Không bộ lọc Kalman, không có bài tập tiếng Hungary.
 

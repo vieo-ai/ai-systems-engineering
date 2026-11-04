@@ -74,11 +74,13 @@ Các máy dò hiện đại thường sử dụng FPN với các bộ neo khác 
 
 Các nguyên liệu`tx, ty, tw, th`không phải là các định vị hộp; chúng là các mục tiêu hồi quy phải được chuyển đổi trước khi vẽ:
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`giữ trung tâm của sự thay đổi bên trong tế bào. `exp`cho phép chiều rộng mở ra khỏi neo mà không cần một dấu hiệu đảo. `stride`Dành cách giải mã này là giống nhau trong mọi phiên bản YOLO kể từ v2.
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 Métric tương đồng phổ biến của phát hiện giữa hai hộp:
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 có nghĩa là giống hệt; IoU = 0 có nghĩa là không có sự chồng chéo. IoU giữa dự đoán và hộp thực tại cơ bản là điều quyết định liệu dự đoán có được tính là tích cực thực (thường là IoU > = 0,5). IoU giữa hai dự đoán là điều mà NMS sử dụng để giảm gấp đôi.
+$\mathrm{IoU} = 1$nghĩa là giống nhau; $\mathrm{IoU} = 0$IoU giữa dự đoán và hộp thực tại cơ bản là những gì quyết định liệu một dự đoán có được tính là một tích cực thực (thường là$\mathrm{IoU} \ge 0.5$IoU giữa hai dự đoán là những gì NMS sử dụng để deduplicate.
 
 ### Phong trào không tối đa
 
@@ -113,11 +115,13 @@ NMS(boxes, scores, iou_threshold):
 
 Lối mất YOLO là ba lỗ cộng với trọng lượng:
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 Chỉ có các tế bào chứa một đối tượng góp phần vào sự mất mát thu hồi và phân loại hộp. Các tế bào không có đối tượng chỉ góp phần vào sự mất mát đối tượng (đọc cho mô hình giữ im lặng). `lambda_noobj`thường nhỏ (~ 0,5) vì phần lớn các tế bào trống rỗng và nếu không sẽ thống trị tổng tổn thất.
@@ -199,8 +203,10 @@ def encode(box_xyxy, cell_x, cell_y, stride, anchor_wh):
     cy = 0.5 * (y1 + y2)
     w = x2 - x1
     h = y2 - y1
-    tx = cx / stride - cell_x
-    ty = cy / stride - cell_y
+    off_x = np.clip(cx / stride - cell_x, 1e-6, 1 - 1e-6)
+    off_y = np.clip(cy / stride - cell_y, 1e-6, 1 - 1e-6)
+    tx = np.log(off_x / (1 - off_x))
+    ty = np.log(off_y / (1 - off_y))
     tw = np.log(w / anchor_wh[0] + 1e-8)
     th = np.log(h / anchor_wh[1] + 1e-8)
     return np.array([tx, ty, tw, th])
@@ -219,7 +225,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 ```
 
-Thử nghiệm: mã hóa một hộp sau đó mã hóa  bạn nên lấy lại một cái gì đó rất gần với nguyên bản (trong khi ngược sigmoid không hoàn toàn đảo ngược khi `tx`không nằm trong phạm vi sau sigmoid).
+Thử nghiệm: mã hóa một hộp có trung tâm nằm nghiêm ngặt bên trong tế bào, sau đó giải mã, và bạn nên có được hộp gốc trở lại để lỗi nổi. `encode`lưu trữ trung tâm của sự thay đổi như một logit, ngược của `sigmoid`trong `decode`. clip giữ cho logit kết thúc; một trung tâm chính xác trên một cạnh của tế bào di chuyển qua tối đa `1e-6`Hành động của các tế bào.`assign_targets`bên dưới lưu trữ các logits tương tự, do đó đầu tàu trong không gian đó `decode`hy vọng.
 
 ### Bước 4: Một đầu YOLO tối thiểu
 
@@ -269,8 +275,10 @@ def assign_targets(boxes_xyxy, classes, anchors, stride, grid_size, num_classes)
         best = int(np.argmax(ious))
         aw, ah = anchors[best]
 
-        target[gy, gx, best, 0] = cx / stride - gx
-        target[gy, gx, best, 1] = cy / stride - gy
+        off_x = np.clip(cx / stride - gx, 1e-6, 1 - 1e-6)
+        off_y = np.clip(cy / stride - gy, 1e-6, 1 - 1e-6)
+        target[gy, gx, best, 0] = np.log(off_x / (1 - off_x))
+        target[gy, gx, best, 1] = np.log(off_y / (1 - off_y))
         target[gy, gx, best, 2] = np.log(bw / aw + 1e-8)
         target[gy, gx, best, 3] = np.log(bh / ah + 1e-8)
         target[gy, gx, best, 4] = 1.0
@@ -315,7 +323,7 @@ def yolo_loss(pred, target, has_obj, lambda_coord=5.0, lambda_obj=1.0, lambda_no
                    "obj_neg": loss_obj_neg.item(), "cls": loss_cls.item()}
 ```
 
-Năm siêu tham số mà mỗi hướng dẫn YOLO mã hóa hoặc xóa.`lambda_coord=5, lambda_noobj=0.5`Nhìn lại giấy YOLOv1 gốc và vẫn hoạt động như một mặc định hợp lý.
+Bốn trọng lượng mất mát mà mỗi hướng dẫn YOLO mã hóa hoặc lau.`lambda_coord=5, lambda_noobj=0.5`Nhìn lại giấy YOLOv1 gốc và vẫn hoạt động như một mặc định hợp lý.
 
 ### Bước 7: Đường ống dẫn dẫn
 

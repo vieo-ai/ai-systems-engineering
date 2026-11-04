@@ -173,8 +173,8 @@ RGB là định dạng chụp nhưng nó không phải lúc nào cũng là đạ
 
 Tỷ lệ xám từ RGB là một tổng số cân nặng, không phải là trung bình, bởi vì mắt con người nhạy cảm hơn với màu xanh lá cây hơn là màu đỏ hoặc xanh dương:
 
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
+```math
+Y = 0.299 R + 0.587 G + 0.114 B \qquad \text{(ITU-R BT.601, the classic weights)}
 ```
 
 ### Tỷ lệ khía cạnh, quy mô lại và phân cực
