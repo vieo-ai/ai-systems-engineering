@@ -38,40 +38,40 @@
 
 یک لایه ی واحد با ورودی های fan_in را در نظر بگیرید:
 
-```
-z = w1*x1 + w2*x2 + ... + w_n*x_n
-```
-
-اگر هر وزن wi از توزیع با ویرانس Var(w) گرفته شود و هر ورودی xi دارای ویرانس Var(x باشد، ویرانس خروجی:
-
-```
-Var(z) = fan_in * Var(w) * Var(x)
+```math
+z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n
 ```
 
-اگر Var(w) = 1 و fan_in = 512, متغیر خروجی 512x متغیر ورودی است. پس از 10 لایه: 512^10 = 1.2e27. سیگنال شما منفجر شده است.
+اگه هر وزن$w_i$از توزیع با تفاوت گرفته شده است$\mathrm{Var}(w)$و هر ورودی$x_i$تفاوت داره$\mathrm{Var}(x)$, تفاوت خروجی:
 
-اگر Var ((w) = 0.001، تفاوت خروجی 0.001 * 512 = 0.512 در هر لایه کاهش می یابد. پس از 10 لایه: 0.512^10 = 0.00013. سیگنال شما ناپدید شده است.
+```math
+\mathrm{Var}(z) = \text{fan}_{\text{in}} \cdot \mathrm{Var}(w) \cdot \mathrm{Var}(x)
+```
 
-هدف: انتخاب Var(w) به طوری که Var(z) = Var(x. شدت سیگنال در سراسر لایه ها ثابت باقی می ماند.
+اگه$\mathrm{Var}(w) = 1$و$\text{fan}_{\text{in}} = 512$، تفاوت خروجی 512 برابر تفاوت ورودی است. پس از 10 لایه: $512^{10} = 1.2 \times 10^{27}$. سیگنال شما منفجر شده
+
+اگه$\mathrm{Var}(w) = 0.001$، تفاوت خروجی به میزان $0.001 \cdot 512 = 0.512$بعد از 10 لایه:$0.512^{10} = 0.00013$. سیگنال شما ناپدید شده
+
+هدف: انتخاب کنید$\mathrm{Var}(w)$پس این$\mathrm{Var}(z) = \mathrm{Var}(x)$. شدت سیگنال در هر لایه ثابت باقی می ماند
 
 ### شروع کردن Xavier/Glorot
 
 گلوروت و بنگیو (2010) راه حل فعال سازی سیگمائید و تان را بدست آوردند. برای حفظ متغیر ثابت در هم پیش و هم عقب:
 
-```
-Var(w) = 2 / (fan_in + fan_out)
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}
 ```
 
 در عمل، وزنه ها از:
 
-```
-w ~ Uniform(-limit, limit)  where limit = sqrt(6 / (fan_in + fan_out))
+```math
+w \sim \text{Uniform}(-\text{limit}, \text{limit}) \quad \text{where } \text{limit} = \sqrt{\frac{6}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}
 ```
 
 یا:
 
-```
-w ~ Normal(0, sqrt(2 / (fan_in + fan_out)))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}\right)
 ```
 
 این کار به این دلیل است که سیگمائید و تانه تقریبا خطی نزدیک به صفر هستند، جایی که فعال سازی های اولیه به درستی زندگی می کنند.
@@ -82,27 +82,27 @@ ReLU نیمی از خروجی را می کشد (همه چیز منفی صفر م
 
 He et al. (2015) فرمول را اصلاح کرد:
 
-```
-Var(w) = 2 / fan_in
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}}}
 ```
 
 وزن ها از:
 
-```
-w ~ Normal(0, sqrt(2 / fan_in))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}}}}\right)
 ```
 
-عامل 2 تعویض برای ReLU صفر کردن نیمی از فعال سازی. بدون آن، سیگنال به ~ 0.5x در هر لایه کاهش می یابد. با 50 لایه: 0.5^50 = 8.8e-16.
+فاکتور 2 تعویض می کند که ReLU نیمی از فعال سازی ها را صفر کند. بدون آن، سیگنال به طور متوسط 0.5 برابر در هر لایه کاهش می یابد. با 50 لایه:$0.5^{50} = 8.8 \times 10^{-16}$کايمينگ اينيت از اين رو ميفکند
 
 ### شروع کردن ترانسفورماتور
 
 GPT-2 الگوی متفاوتی را معرفی کرد. اتصال های باقیمانده تولید هر لایه زیر را به ورودی اضافه می کنند:
 
-```
-x = x + sublayer(x)
+```math
+x = x + \text{sublayer}(x)
 ```
 
-هر اضافه کننده تفاوت را افزایش می دهد. با N لایه های باقیمانده، تفاوت متناسب با N رشد می کند. GPT-2 وزن لایه های باقیمانده را با 1/sqrt ((2N) مقیاس می دهد، جایی که N تعداد لایه ها است. این باعث می شود که شدت سیگنال جمع شده پایدار باشد.
+هر اضافه کردن تفاوت رو افزایش میده$N$لایه های باقیمانده، تفاوت متناسب با $N$. GPT-2 وزن لایه های باقیمانده را با $1/\sqrt{2N}$، کجا$N$این مقدار مقدار لایه ها است. این مقدار مقدار سیگنال جمع شده را ثابت نگه می دارد.
 
 لامای 3 (405B پارامتر، 126 لایه) از یک طرح مشابه استفاده می کند. بدون این مقیاس بندی، جریان باقیمانده از طریق 126 لایه توجه و بلوک های پیشرو بدون مرز رشد می کند.
 
@@ -341,7 +341,7 @@ nn.init.zeros_(layer.bias)
 
 وقتي که زنگ ميزني`nn.Linear(512, 256)`این دلیل است که اکثر شبکه های ساده "فقط کار می کنند" - PyTorch قبلاً انتخاب درست را انجام داده است. اما وقتی معماری سفارشی ایجاد می کنید یا بیش از 20 لایه را عمیق تر می کنید، باید بدانید چه اتفاقی می افتد و به طور بالقوه از پیش فرض رد کنید.
 
-برای ترانسفورماتورها، مدل های HuggingFace معمولاً شروع کردن در دستگاه های خود را مدیریت می کنند.`_init_weights`روش: پیاده سازی GPT-2 مقیاس رادای پیش بینی ها را با 1/sqrt ((N) می کند. اگر شما یک ترانسفورماتور را از نو می سازید، شما باید این را خودتان اضافه کنید.
+برای ترانسفورماتورها، مدل های HuggingFace معمولاً شروع کردن در دستگاه های خود را مدیریت می کنند.`_init_weights`روش: پیاده سازی GPT-2 پیش بینی های باقیمانده را تا $1/\sqrt{N}$اگه ميخواي از نو ترانسفورماتور بسازي بايد اينو خودت اضافه کني
 
 ## -باده
 
@@ -350,13 +350,13 @@ nn.init.zeros_(layer.bias)
 
 ## تمرینات
 
-1. اضافه کردن شروع کردن LeCun (Var = 1/fan_in، طراحی شده برای فعال سازی SELU). آزمایش 50 لایه را با LeCun init + tanh اجرا کنید و با Xavier + tanh مقایسه کنید.
+1. اضافه کردن شروع کردن LeCun ($\mathrm{Var} = 1/\text{fan}_{\text{in}}$آزمایش 50 لایه را با LeCun init + tanh اجرا کنید و با Xavier + tanh مقایسه کنید.
 
-2. پیاده سازی مقیاس باقیمانده GPT-2: تولید هر لایه را با 1/sqrt ((2*N) ضرب کنید قبل از اضافه کردن به جریان باقیمانده. 50 لایه را با و بدون مقیاس اجرا کنید، اندازه گیری کنید که میزان باقیمانده چقدر سریع رشد می کند.
+2. مقیاس باقیمانده GPT-2 را اجرا کنید: تولید هر لایه را با $1/\sqrt{2N}$قبل از اضافه کردن به جریان باقیمانده، 50 لایه را با و بدون مقیاس بندی اجرا کنید، اندازه گیری کنید که میزان باقیمانده چقدر سریع رشد می کند.
 
 3. یک تابع "تحقیق سلامت init" ایجاد کنید که ابعاد لایه و نوع فعال سازی یک شبکه را در نظر بگیرد، سپس شروع صحیح را توصیه می کند و هشدار می دهد که اگر init فعلی باعث مشکلات شود.
 
-4. آزمایش را با fan_in = 16 vs fan_in = 1024 اجرا کنید. Xavier و Kaiming به fan_in تطبیق می کنند، اما init تصادفی نمی کند. نشان دهید که چگونه فاصله بین "کار" و "پراکنده" با لایه های بزرگتر گسترش می یابد.
+4. آزمایش رو با$\text{fan} _{\text{in}} = 16$vs $\text{fan} _{\text{in}} = 1024$. Xavier و Kaiming با fan_in سازگار می شوند، اما init تصادفی نمی کند. نشان دهید که چگونه فاصله بین "کار" و "تعطیل" با لایه های بزرگتر گسترش می یابد.
 
 5. پیاده سازی ابتدایی orthogonal (تولید یک ماتریس تصادفی، محاسبه SVD آن، استفاده از ماتریس orthogonal U). مقایسه با Kaiming برای شبکه های ReLU در 50 لایه.
 
@@ -368,10 +368,10 @@ nn.init.zeros_(layer.bias)
 | Symmetry breaking | "Make neurons different" | Using random initialization to ensure neurons learn distinct features instead of computing identical functions |
 | Fan-in | "Number of inputs to a neuron" | The number of incoming connections, which determines how input variance accumulates in the weighted sum |
 | Fan-out | "Number of outputs from a neuron" | The number of outgoing connections, relevant for maintaining gradient variance during backpropagation |
-| Xavier/Glorot init | "The sigmoid initialization" | Var(w) = 2/(fan_in + fan_out), designed to preserve variance through sigmoid and tanh activations |
-| Kaiming/He init | "The ReLU initialization" | Var(w) = 2/fan_in, accounts for ReLU zeroing half the activations |
+| Xavier/Glorot init | "The sigmoid initialization" | $\mathrm{Var}(w) = 2/(\text{fan} _{\text{in}} + \text{fan} _{\text{out}})$, designed to preserve variance through sigmoid and tanh activations |
+| Kaiming/He init | "The ReLU initialization" | $\mathrm{Var}(w) = 2/\text{fan}_{\text{in}}$, accounts for ReLU zeroing half the activations |
 | Variance propagation | "How signals grow or shrink through layers" | The mathematical analysis of how activation variance changes layer by layer based on weight scale |
-| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by 1/sqrt(2N) to prevent variance growth through N transformer layers |
+| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by $1/\sqrt{2N}$ to prevent variance growth through $N$ transformer layers |
 | Dead network | "Nothing trains" | A network where poor initialization causes all gradients to be zero or all activations to saturate |
 | Exploding activations | "Values go to infinity" | When weight variance is too high, causing activation magnitudes to grow exponentially through layers |
 

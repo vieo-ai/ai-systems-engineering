@@ -26,7 +26,7 @@
 
 ### قانون زنجیره ای، برای شبکه ها اعمال می شود
 
-شما قانون زنجیره را در مرحله 01, درس 05 مشاهده کردید. خلاصه سریع: اگر y = f(g(x) ، پس dy/dx = f'(g(x)) * g'(x. شما مشتقات را در طول زنجیره ضرب می کنید.
+شما قانون زنجیره ای را در مرحله 01, درس 05 دیده اید. خلاصه سریع: اگر$y = f(g(x))$، پس$\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$شما مشتقات را در طول زنجیره ضرب می کنید.
 
 در یک شبکه عصبی، "سلسل" ردیف عملیات از ورودی به ضرر است. هر لایه وزن اعمال می کند، تعصب اضافه می کند، از طریق یک فعال سازی عبور می کند. تابع ضرر محصول نهایی را با هدف مقایسه می کند. پس از گسترش این زنجیره به عقب، محاسبه می کند که چگونه هر عمل به اشتباه کمک کرد.
 
@@ -45,9 +45,9 @@ graph LR
     y["target"] --> loss
 ```
 
-عبور جلو: ارزش ها از چپ به راست جریان می کنند. x و w z1 = w*x را تولید می کنند. b را اضافه کنید تا z2 را دریافت کنید. sigmoid فعال سازی a را می دهد. با استفاده از تابع از دست دادن a را با هدف y مقایسه کنید.
+عبور جلو: ارزش ها از چپ به راست جریان می کنند. $x$و$w$محصولات$z_1 = w x$. اضافه کردن$b$تا بدست بياي$z_2$. سيگمايد فعاليت ميکنه$a$. مقایسه کنید$a$هدف قرار دادن$y$با استفاده از تابع خسارت.
 
-رد به عقب: گرادیانت ها از راست به چپ جریان دارند. با dL/da شروع کنید (چگونه از دست دادن با فعال سازی تغییر می کند). با da/dz2 (تولید سیگمائید) ضرب کنید. این dL/dz2 را می دهد. به dL/dz2 تقسیم می شود (که برابر به dL/dz2 است، زیرا z2 = z1 + b) و dL/dz1 است. سپس dL/dw = dL/dz1 * x و dL/dx = dL/dz1 * w.
+رد به عقب: گرادینت ها از راست به چپ جریان دارند.$\partial L/\partial a$(چگونه خسارت با فعال شدن تغییر می کند)$\partial a/\partial z_2$(تولید سیگمائید) که می دهد$\partial L/\partial z_2$. به دو قسمت تقسیم شد$\partial L/\partial b$(که برابر است)$\partial L/\partial z_2$، از زمان$z_2 = z_1 + b$) و $\partial L/\partial z_1$پس$\partial L/\partial w = \partial L/\partial z_1 \cdot x$و$\partial L/\partial x = \partial L/\partial z_1 \cdot w$. .
 
 هر گره ای در نمودار یک کار در طول عبور عقب دارد: گرادینت را که از بالا می آید، بردارید، با مشتق محلی آن ضرب کنید و آن را به پایین منتقل کنید.
 
@@ -84,7 +84,7 @@ graph RL
     L1 -- "dL/dz1 = dL/da1 * sigmoid'(z1)" --> I["Input"]
 ```
 
-در هر لایه، گرادینت با مشتق سیگمائید ضرب می شود. مشتق سیگمائید یک * (1 - a) است که حداکثر 0.25 (وقتی a = 0.5) است. در سه لایه عمیق، گرادینت به حداکثر 0.25^3 = 0.0156 ضرب شده است. ده لایه عمیق: 0.25^10 = 0.000001.
+در هر لایه، گرادینت با مشتق سیگمائید ضرب می شود. مشتق سیگمائید $a(1 - a)$، که حداکثر 0.25 (وقتی$a = 0.5$) سه لایه عمیق، تراز به حداکثر چند برابر شده است$0.25^3 = 0.0156$. ده لایه عمق:$0.25^{10} = 0.000001$. .
 
 ### کاهش درجه بندی
 
@@ -102,32 +102,35 @@ After 10 layers:  gradient * 0.25^10 = 0.000001x original
 
 ### اخذ گرادینت ها برای شبکه دو لایه
 
-ریاضیات کامنت برای شبکه با ورودی x، لایه پنهان با sigmoid، لایه خروجی با sigmoid و از دست دادن MSE.
+ریاضیات مشخصی برای شبکه با ورودی $x$، لایه پنهان با سیگمائید، لایه خروجی با سیگمائید و از دست دادن MSE.
 
 گذرنامه جلو:
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
+
+```math
+\begin{aligned}
+z_1 &= W_1 x + b_1 \\
+a_1 &= \text{sigmoid}(z_1) \\
+z_2 &= W_2 a_1 + b_2 \\
+a_2 &= \text{sigmoid}(z_2) \\
+L &= (a_2 - y)^2
+\end{aligned}
 ```
 
 گذرگاه عقب (طبق قاعده زنجیره ای مرحله به مرحله):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
-
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
-
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
+```math
+\begin{aligned}
+\frac{\partial L}{\partial a_2} &= 2(a_2 - y) \\
+\frac{\partial a_2}{\partial z_2} &= a_2 (1 - a_2) \\
+\frac{\partial L}{\partial z_2} &= \frac{\partial L}{\partial a_2} \cdot \frac{\partial a_2}{\partial z_2} = 2(a_2 - y) \cdot a_2 (1 - a_2) \\[6pt]
+\frac{\partial L}{\partial W_2} &= \frac{\partial L}{\partial z_2} \cdot a_1 \\
+\frac{\partial L}{\partial b_2} &= \frac{\partial L}{\partial z_2} \\[6pt]
+\frac{\partial L}{\partial a_1} &= \frac{\partial L}{\partial z_2} \cdot W_2 \\
+\frac{\partial a_1}{\partial z_1} &= a_1 (1 - a_1) \\
+\frac{\partial L}{\partial z_1} &= \frac{\partial L}{\partial a_1} \cdot \frac{\partial a_1}{\partial z_1} \\[6pt]
+\frac{\partial L}{\partial W_1} &= \frac{\partial L}{\partial z_1} \cdot x \\
+\frac{\partial L}{\partial b_1} &= \frac{\partial L}{\partial z_1}
+\end{aligned}
 ```
 
 هر گرادينت محصولي از مشتقات محلي است که از بازيابي بازيابي شده است.
@@ -185,9 +188,9 @@ def __mul__(self, other):
     return out
 ```
 
-برای اضافه کردن: d(a+b) /da = 1، d(a+b) /db = 1. بنابراین هر دو ورودی به طور مستقیم گرادینت خروجی را دریافت می کنند.
+برای اضافه کردن: $\partial(a+b)/\partial a = 1$،$\partial(a+b)/\partial b = 1$پس هر دو ورودی به طور مستقیم گرادینت خروجی را دریافت می کنند.
 
-برای ضرب: d(a*b)/da = b, d(a*b)/db = a. هر ورودی مقدار دیگری را بر سر گرادینت خروجی دریافت می کند.
+برای ضرب: $\partial(ab)/\partial a = b$،$\partial(ab)/\partial b = a$هر ورودی مقدار ورودی دیگر را بر سر گرادینت خروجی بدست می آورد.
 
 .`+=`یک مقدار ممکن است در چندین عملیات استفاده شود. گرادینت آن مجموعه گرادینت های تمام مسیرها است.
 
@@ -209,7 +212,7 @@ def sigmoid(self):
     return out
 ```
 
-مشتق سیگمائید: سیگمائید ((x) * (1 - سیگمائید ((x)). ما سیگمائید ((x) = s را در طول عبور جلو محاسبه کردیم. آن را دوباره استفاده کنید. هیچ کار اضافی نیست.
+مشتق سیگمائید: $\text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))$ما محاسبه کردیم$\text{sigmoid}(x) = s$.در طول گذرگاه جلو استفاده کن دوباره کار اضافه ای نکن
 
 ```python
 def mse_loss(predicted, target):
@@ -217,7 +220,7 @@ def mse_loss(predicted, target):
     return diff * diff
 ```
 
-MSE برای یک محصول: (پیش بینی - هدف) ^2. ما معاینه را به عنوان جمع با یک ارزش منفی بیان می کنیم.
+MSE برای یک محصول: $(\text{predicted} - \text{target})^2$ما از معایب به عنوان جمع با یک ارزش منفی بیان می کنیم.
 
 ### مرحله چهارم: گذرگاه عقب
 
@@ -241,7 +244,7 @@ def backward(self):
         v._backward()
 ```
 
-از ضایعات شروع کنید (گرادیانت = 1.0، از آنجا که dL / dL = 1) ، از طریق نمودار مرتب شده به عقب بروید.`_backward`به بچه هاش فشار می دهد.
+از خسارت شروع کنید (گرادیانت = 1.0، از زمان $dL/dL = 1$. از طریق نمودار مرتب شده به عقب حرکت کنید. هر گره ای از`_backward`به بچه هاش فشار می دهد.
 
 ### مرحله 5: لایه و شبکه
 
@@ -301,7 +304,7 @@ class Network:
             p.grad = 0.0
 ```
 
-یک نورون ورودی را می گیرد، جمع وزن شده + تعصب را محاسبه می کند و سیگمائید را اعمال می کند. مقیاس های ابتدایی وزن توسط sqrt(2/n_inputs) برای جلوگیری از شتاب سیگمائید در شبکه های عمیق تر. یک لایه یک لیست از نورون ها است. یک شبکه یک لیست از لایه ها است.`parameters()`روش جمع آوری تمام ارزش های قابل یادگیری است تا بتوانیم آنها را به روز کنیم.
+یک نورون ورودی ها را می گیرد، جمع وزن شده + تعصب را محاسبه می کند و سیگمائید را اعمال می کند.$\sqrt{2/n_{\text{inputs}}}$برای جلوگیری از اشباع سیگمائید در شبکه های عمیق تر. یک لایه یک لیست از نورون ها است. یک شبکه یک لیست از لایه ها است.`parameters()`روش جمع آوری تمام ارزش های قابل یادگیری است تا بتوانیم آنها را به روز کنیم.
 
 ### مرحله 6: قطار در XOR
 
@@ -439,9 +442,9 @@ with torch.no_grad():
 
 ## تمرینات
 
-1. اضافه کنید`__sub__`روش به کلاس ارزش (a - b = a + (-1 * b)). سپس یک `__neg__`روش: بررسی کنید که گرادینت ها درست هستند با مقایسه با محاسبه دستی برای یک عبارت ساده مانند (a - b) ^ 2.
+1. اضافه کنید`__sub__`روش به کلاس ارزش $(a - b = a + (-1 \cdot b))$پس از آن یک`__neg__`روش: بررسی کنید که گرادینت ها درست هستند با مقایسه با محاسبه دستی برای یک عبارت ساده مانند $(a - b)^2$. .
 
-2. اضافه کنید`relu`روش به ارزش (خروجی حداکثر ((0, x) ، مشتق 1 است اگر x > 0, دیگر 0). جای sigmoid را با relue در لایه های پنهان و تمرین دوباره در XOR. سرعت تقابل. شما باید آموزش سریع تر را ببینید - این پیش نمایش درس 04.
+2. اضافه کنید`relu`روش به ارزش (خروجی)$\max(0, x)$, مشتق 1 است اگر $x \gt 0$در این مرحله، شما باید سرعت تعویض سریعتر را ببینید. این آموزش را در درس ۴ مشاهده می کنید.
 
 3. اجرای یک`__pow__`روش در مورد ارزش برای قدرتهای عدد کامل.`mse_loss`با یک مناسب`(predicted - target) ** 2`تعبير. ترازها را با اجراات اصلی مطابقت دهید.
 
@@ -453,14 +456,14 @@ with torch.no_grad():
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
+| Backpropagation | "The network learns" | An algorithm that computes $\partial L/\partial w$ for every weight by applying the chain rule backward through the computational graph |
 | Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
+| Chain rule | "Multiply the derivatives" | If $y = f(g(x))$, then $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$ -- the mathematical foundation of backpropagation |
 | Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
 | Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
 | Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
 | Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
+| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: $w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}$ |
 | Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
 | Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 

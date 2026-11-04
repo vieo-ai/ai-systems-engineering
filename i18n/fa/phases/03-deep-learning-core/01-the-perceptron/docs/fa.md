@@ -26,7 +26,7 @@
 
 ### یک نورون، یک تصمیم
 
-یک پرسپرتون n ورودی را می گیرد، هر یک را با وزن ضرب می کند، آنها را جمع می کند، یک تعصب اضافه می کند و نتیجه را از طریق یک تابع فعال سازی منتقل می کند.
+يه پرسپرتون ميخواد$n$ورودی ها، هر یک را با وزن ضرب می کند، آنها را جمع می کند، یک تعصب اضافه می کند و نتیجه را از طریق یک تابع فعال سازی منتقل می کند.
 
 ```mermaid
 graph LR
@@ -38,11 +38,10 @@ graph LR
     step --> out["output (0 or 1)"]
 ```
 
-تابع مرحله ای بی رحمانه است: اگر مقدار وزن شده به علاوه تعصب >=0 باشد، خروجی 1. در غیر این صورت خروجی 0.
+تابع مرحله ای بی رحمانه است: اگر مقدار وزن شده به علاوه تعصب $\ge 0$، خروجی 1 . در غیر این صورت خروجی 0
 
-```
-step(z) = 1  if z >= 0
-           0  if z < 0
+```math
+\text{step}(z) = \begin{cases} 1 & \text{if } z \ge 0 \\ 0 & \text{if } z < 0 \end{cases}
 ```
 
 این یک طبقه بندی خطی است. وزنه ها و تعصب یک خط (یا یک سطح بالا در ابعاد بالاتر) را تعریف می کنند که فضای ورودی را به دو منطقه تقسیم می کند.
@@ -80,7 +79,7 @@ For each training example (x, y_true):
     bias = bias + learning_rate * error
 ```
 
-اگر پیش بینی درست باشد، خطا = 0، هیچ تغییری نمی کند. اگر پیش بینی 0 باشد اما باید 1 باشد، وزنه ها افزایش می یابد. اگر پیش بینی 1 باشد اما باید 0 باشد، وزنه ها کاهش می یابد. نرخ یادگیری کنترل می کند که هر تنظیم چقدر بزرگ است.
+اگه پیش بینی درست باشه$\text{error} = 0$اگر پیش بینی 0 باشد اما باید 1 باشد، وزنهایی افزایش می یابد. اگر پیش بینی 1 باشد اما باید 0 باشد، وزنهایی کاهش می یابد. سرعت یادگیری کنترل می کند که هر تنظیم چقدر بزرگ است.
 
 ### مشکل XOR
 
@@ -213,7 +212,7 @@ for inputs, expected in xor_data:
 
 ### مرحله 4: XOR را با دو لایه حل کنید
 
-راه حل: XOR = (x1 OR x2) و نه (x1 AND x2)
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .$\text{XOR} = (x_1 \text{ OR } x_2) \text{ AND NOT } (x_1 \text{ AND } x_2)$. سه تا پرسپرتون رو ترکیب کنيد:
 
 ```mermaid
 graph LR
@@ -359,7 +358,7 @@ print([clf.predict([x])[0] for x in X])
 ## تمرینات
 
 1. یک پرسپرتون را روی یک دروازه NAND (دروازه جهانی - هر مدار منطقی می تواند از NAND ساخته شود) آموزش دهید. وزن و تعصب آن را یک مرز تصمیم گیری معتبر تشکیل دهید.
-2. کلاس Perceptron را تغییر دهید تا مرز تصمیم گیری (w1*x1 + w2*x2 + b = 0) را در هر دوره ردیابی کنید.
+2. تغییر کلاس Perceptron برای ردیابی مرز تصمیم گیری ($w_1 x_1 + w_2 x_2 + b = 0$) در هر دوره. چاپ کنید که خط در طول آموزش در دروازه AND چگونه تغییر می کند.
 3. یک perceptron 3 input را بسازید که تنها زمانی که حداقل 2 از 3 input 1 (یک تابع رای اکثریت) باشد، 1 را تولید کند. آیا این به صورت خطی قابل جداسازی است؟ چرا؟
 
 ## اصطلاحات کلیدی
@@ -372,7 +371,7 @@ print([clf.predict([x])[0] for x in X])
 | Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
 | Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
 | XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
+| Decision boundary | "Where the classifier switches" | The hyperplane $w \cdot x + b = 0$ that divides input space into two classes |
 | Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## خواندن بیشتر

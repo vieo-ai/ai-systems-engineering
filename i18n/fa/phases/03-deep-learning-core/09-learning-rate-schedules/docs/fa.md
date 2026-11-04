@@ -30,8 +30,8 @@
 
 ساده ترين روش، شماره اي انتخاب کن، و هر قدم رو ازش استفاده کن
 
-```
-lr(t) = lr_0
+```math
+\text{lr}(t) = \text{lr}_0
 ```
 
 به ندرت مطلوب است. یا برای پایان تمرین (تذبذب در حدود حداقل) یا برای شروع (حساب تلف شده در مراحل کوچک) بسیار پایین است. برای مدل های کوچک و اشکال زدایی خوب کار می کند. یک انتخاب وحشتناک برای هر چیزی که بیش از یک ساعت تمرین می کند.
@@ -40,11 +40,11 @@ lr(t) = lr_0
 
 روش مدرسه ی قدیمی از عصر ResNet. نرخ یادگیری را با یک عامل (معمولاً 10 برابر) در دوره های ثابت کاهش دهید.
 
-```
-lr(t) = lr_0 * gamma^(floor(epoch / step_size))
+```math
+\text{lr}(t) = \text{lr}_0 \cdot \gamma^{\lfloor \text{epoch} / \text{step\_size} \rfloor}
 ```
 
-جایی که گاما = 0.1 و step_size = 30 است: lr هر 30 دوره کاهش می یابد. ResNet-50 از این استفاده کرد -- lr = 0.1، کاهش 10 برابر در دوره های 30, 60 و 90.
+کجا$\gamma = 0.1$و step_size = 30 به این معنی است: lr هر 30 دوره 10 برابر کاهش می یابد. ResNet-50 از این استفاده کرد -- lr=0.1، کاهش 10 برابر در دوره های 30، 60 و 90.
 
 مشکل: نقاط فاضلاب مطلوب به مجموعه داده ها و معماری بستگی دارد. به یک مشکل مختلف بروید و باید زمانی که سقوط کنید را دوباره تنظیم کنید. انتقال ها ناگهانی هستند - وقتی نرخ ناگهانی تغییر می کند، از دست دادن می تواند افزایش یابد.
 
@@ -52,24 +52,24 @@ lr(t) = lr_0 * gamma^(floor(epoch / step_size))
 
 تجزیه نرم از حداکثر میزان یادگیری به حداقل، با دنبال کردن منحنی کوسین:
 
+```math
+\text{lr}(t) = \text{lr}_{\min} + 0.5 \cdot (\text{lr}_{\max} - \text{lr}_{\min}) \cdot \left(1 + \cos\left(\frac{\pi t}{T}\right)\right)
 ```
-lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T))
-```
 
-جایی که t مرحله فعلی است و T تعداد کل مراحل است.
+کجا$t$قدم فعلی است و$T$تعداد کل مراحل است.
 
-در t=0، اصطلاح کوسین 1 است، بنابراین lr = lr_max. در t=T، اصطلاح کوسین -1 است، بنابراین lr = lr_min. تجزیه در ابتدا نرمی است، در وسط تسریع می کند و در نزدیکی پایان دوباره نرمی می شود.
+در$t=0$، اصطلاح کوسین 1 است ، پس $\text{lr} = \text{lr} _{\max}$. در$t=T$، اصطلاح کوسین -1 است، پس $\text{lr} = \text{lr} _{\min}$در ابتدا زوال نرمی است، در وسط سرعت می گیرد و در اواخر دوباره نرمی می شود.
 
-این پیش فرض برای اکثر تمرینات مدرن است. هیچ پارامترهای هیپراتیری برای تنظیم فراتر از lr_max و lr_min وجود ندارد. شکل کوسین با مشاهدات تجربی مطابقت دارد که بیشتر یادگیری در وسط تمرین اتفاق می افتد - شما می خواهید اندازه های مناسب مرحله در این دوره حیاتی.
+این پیش فرض برای اکثر تمرینات مدرن است.$\text{lr} _{\max}$و$\text{lr} _{\min}$شکل کوسین با مشاهدات تجربی مطابقت دارد که بیشتر یادگیری در وسط آموزش اتفاق می افتد -- شما می خواهید اندازه های مناسب مرحله در این دوره حیاتی.
 
 ### گرم شدن: چرا از کوچک شروع می کنید
 
 آدم و سایر بهینه سازان سازنده ای تخمین های میانگین گرادینت و متغیر را در حال اجرا نگه می دارند. در مرحله 0، این تخمین ها به صفر آغاز می شوند. اولین چند بروزرسانی گرادینت بر اساس آمار زباله است. اگر میزان یادگیری شما در این دوره زیاد باشد، مدل گام های بزرگی و نامناسب را می گیرد.
 
-Warmup این مشکل را حل می کند. با یک نرخ یادگیری کوچک (معمولاً lr_max / warmup_steps یا حتی صفر) شروع کنید و به صورت خطی تا lr_max در طول مراحل اول N افزایش دهید. تا زمانی که به سرعت یادگیری کامل برسید، آمار آدم ثابت شده است.
+Warmup این مشکل را حل می کند. با یک سرعت یادگیری کوچک (معمولا lr_max / warmup_steps یا حتی صفر) شروع کنید و به صورت خطی به $\text{lr}_{\max}$در مورد اول$N$تا زمانی که به سرعت یادگیری کامل برسید، آمار آدم ثابت شده است.
 
-```
-lr(t) = lr_max * (t / warmup_steps)     for t < warmup_steps
+```math
+\text{lr}(t) = \text{lr}_{\max} \cdot \frac{t}{\text{warmup\_steps}} \quad \text{for } t < \text{warmup\_steps}
 ```
 
 گرمایش معمولی: 1-5% کل مراحل آموزش. Llama 3 برای حدود 1.8 تریلیون توکن آموزش داده و برای 2000 مرحله گرم شده است. GPT-3 بیش از 375 میلیون توکن گرم شده است.
@@ -398,13 +398,13 @@ scheduler = get_cosine_schedule_with_warmup(
 
 ## تمرینات
 
-1. انجام تجزیه نمایی: lr(t) = lr_0 * گاما^t جایی که گاما = 0.999. مقایسه با کوسین انیل در مجموعه داده دایره.
+1. اجرای انحلال نمایی: $\text{lr}(t) = \text{lr}_0 \cdot \gamma^t$کجا$\gamma = 0.999$با هم مقایسه کن با کوسینوس در مجموعه داده های دایره
 
 2. آزمایش محدوده سرعت یادگیری را پیاده سازی کنید (لسی اسمیت): چند صد مرحله تمرین کنید در حالی که LR را از 1e-7 به 1 افزایش می دهید.
 
 3. تمرین با گرم کردن + کوسین اما طول گرم کردن را تغییر دهید: 0٪، 1٪، 5٪، 10٪، 20٪ از کل مراحل. نقطه شیرین را پیدا کنید که تمرین پایدارترین است.
 
-4. اجرای بازپوشیدن کوسین با راه اندازی مجدد گرم (SGDR): سرعت یادگیری را به lr_max در هر مرحله T تنظیم کنید و دوباره تجزیه کنید.
+4. اجرای انیل کردن کوسین با شروع مجدد گرم (SGDR): سرعت یادگیری را به $\text{lr}_{\max}$هر$T$در مرحله ي آموزش بيشتر با مدل هاي استاندارد مقایسه کن
 
 5. یک "جراح برنامه" بسازید که از دست دادن تمرین نظارت کند و وقتی که از دست دادن ثابت می شود از گرم شدن به طور خودکار به کوسینوس تغییر می کند و اگر از دست دادن برای مدت طولانی کاهش یابد،
 
@@ -414,12 +414,12 @@ scheduler = get_cosine_schedule_with_warmup(
 |------|----------------|----------------------|
 | Learning rate | "How fast the model learns" | The scalar that multiplies the gradient to determine the parameter update size |
 | Schedule | "Change the LR over time" | A function that maps training step to learning rate, designed to optimize convergence |
-| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first N steps to stabilize optimizer statistics |
-| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from lr_max to lr_min over training |
+| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first $N$ steps to stabilize optimizer statistics |
+| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from $\text{lr} _{\max}$ to $\text{lr} _{\min}$ over training |
 | Step decay | "Drop LR at milestones" | Multiplying the LR by a factor (usually 0.1) at fixed epoch intervals |
 | 1cycle policy | "Up then down" | Leslie Smith's method of ramping LR up then down in a single cycle for faster convergence |
 | LR range test | "Find the best learning rate" | Training briefly while increasing LR to find the value where loss starts diverging |
-| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to lr_max and decaying again (SGDR) |
+| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to $\text{lr} _{\max}$ and decaying again (SGDR) |
 | Eta min | "The floor for the LR" | The minimum learning rate that the schedule decays to |
 | Peak learning rate | "The maximum LR" | The highest LR reached during training, typically after warmup |
 

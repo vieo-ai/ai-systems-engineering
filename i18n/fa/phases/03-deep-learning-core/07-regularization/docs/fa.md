@@ -41,21 +41,23 @@ graph LR
 
 ### ترک
 
-ساده ترين روش تنظيم با معجزه هاي انعکاسي در طول آموزش، به طور تصادفي، خروجي هر نورون به صفر با احتمال p
+ساده ترين روش تنظيم و تعبير با دقت و دقت$p$. .
 
+```math
+\text{output} = \text{activation}(z) \cdot \text{mask} \quad \text{where }\text{mask}[i] \sim \text{Bernoulli}(1 - p)
 ```
-output = activation(z) * mask    where mask[i] ~ Bernoulli(1 - p)
-```
 
-با p=0.5، نیمی از نورون ها در هر گذرگاه جلو صفر می شوند. شبکه باید نمایش های اضافی را یاد بگیرد چون نمی تواند پیش بینی کند که کدام نورون ها در دسترس هستند. این مانع از تطابق مشترک می شود - نورون ها یاد می گیرند که به نورون های خاص دیگری که در دسترس هستند اعتماد کنند.
+با$p = 0.5$نصف نورون ها در هر گذرگاه جلو صفر می شوند. شبکه باید نمایش های اضافی را یاد بگیرد چون نمی تواند پیش بینی کند کدام نورون ها در دسترس خواهند بود. این مانع از تطابق هم می شود. نورون ها یاد می گیرند که به نورون های خاص دیگری که در دسترس هستند اعتماد کنند.
 
-تفسیر مجموعه: یک شبکه با N نورون و ترک ایجاد 2^N زیر شبکه ممکن (هر ترکیب از نورون ها فعال یا خاموش است). آموزش با ترک تقریبا تمام زیر شبکه های 2N را همزمان در دسته های مختلف ترانز می کند. در زمان آزمون، تمام نورون ها را (بدون تخفیف) استفاده می کنید و مقدار تولیدات را با (1 - p) اندازه گیری می کنید تا با مقدار انتظار شده در طول تمرین مطابقت داشته باشد. این معادل متوسط پیش بینی های زیر شبکه های 2^N است -- مجموعه ای عظیم از یک مدل.
+تفسیر مجموعه: یک شبکه با $N$نورون ها و تخفیف ایجاد می کند$2^N$زیر شبکه های احتمالی (هر ترکیب از نورون ها فعال یا غیر فعال است) آموزش با ترک تقریبا تمام قطار ها را می کند.$2^N$در زمان آزمون، شما تمام نورون ها را (بدون تخفیف) استفاده می کنید و از طریق$(1 - p)$این معادل متوسط پیش بینی های $2^N$شبکه های فرعی -- مجموعه ی عظیم از یک مدل.
 
 در عمل، مقیاس گذاری در زمان آموزش به جای آزمایش (پایز برگشت) اعمال می شود:
 
-```
-During training:  output = activation(z) * mask / (1 - p)
-During testing:   output = activation(z)   (no change needed)
+```math
+\begin{aligned}
+\text{During training:} \quad & \text{output} = \text{activation}(z) \cdot \text{mask} / (1 - p) \\
+\text{During testing:} \quad & \text{output} = \text{activation}(z) \quad \text{(no change needed)}
+\end{aligned}
 ```
 
 این تمیز تر است چون کد تست نیازی به دانستن در مورد ترک در تمام نیست.
@@ -66,15 +68,15 @@ During testing:   output = activation(z)   (no change needed)
 
 به اندازه مربع تمام وزن ها اضافه کنید:
 
-```
-total_loss = task_loss + (lambda / 2) * sum(w_i^2)
+```math
+\text{total\_loss} = \text{task\_loss} + \frac{\lambda}{2} \sum_i w_i^2
 ```
 
-گرادینت اصطلاح تنظیم lambda * w است. این بدان معنی است که در هر مرحله، هر وزن به سمت صفر با یک بخش متناسب با شدت آن کاهش می یابد. وزن های بزرگ بیشتر مجازات می شوند. مدل به سمت راه حل هایی که هیچ وزن واحد تسلط ندارد، فشار می یابد.
+گرادینت اصطلاح تنظیمات$\lambda w$این بدان معنی است که در هر مرحله، هر وزن به سمت صفر با یک بخش متناسب با شدت آن کاهش می یابد. وزن های بزرگ بیشتر مجازات می شوند. مدل به سمت راه حل هایی که هیچ وزن واحد تسلط ندارد، فشار می یابد.
 
 چرا این به عمومی سازی کمک می کند: مدل های overfit به طور کلی دارای وزنهای بزرگ هستند که در داده های آموزش شور را تقویت می کنند. کاهش وزن وزن وزن را کوچک نگه می دارد، که ظرفیت موثر مدل را محدود می کند و آن را مجبور می کند به جای ویژگی های قابل به خاطر آمده، به ویژگی های قوی و عمومی اعتماد کند.
 
-هائپر پارامتر لامبدا قدرت را کنترل می کند.
+.$\lambda$هائپر پارامتر کنترل قدرت می کند.
 
 - 0.01 برای AdamW در ترانسفورماتورها
 - 1e-4 برای SGD در سی ان ان
@@ -88,16 +90,18 @@ total_loss = task_loss + (lambda / 2) * sum(w_i^2)
 
 برای یک دسته کوچک از فعال سازی در برخی لایه ها:
 
-```
-mu = (1/B) * sum(x_i)           (batch mean)
-sigma^2 = (1/B) * sum((x_i - mu)^2)   (batch variance)
-x_hat = (x_i - mu) / sqrt(sigma^2 + eps)   (normalize)
-y = gamma * x_hat + beta        (scale and shift)
+```math
+\begin{aligned}
+\mu &= \frac{1}{B} \sum_i x_i && \text{(batch mean)} \\
+\sigma^2 &= \frac{1}{B} \sum_i (x_i - \mu)^2 && \text{(batch variance)} \\
+\hat{x} &= \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} && \text{(normalize)} \\
+y &= \gamma \hat{x} + \beta && \text{(scale and shift)}
+\end{aligned}
 ```
 
 گاما و بتا پارامترهای قابل یادگیری هستند که به شبکه اجازه می دهند که عادی سازی را اگر مطلوب باشد، رد کند. بدون آنها، شما می خواهید هر لایه تولید شود تا صفر متوسط واحد-فرق باشد، که ممکن است چیزی نباشد که شبکه می خواهد.
 
-**Training vs inference split:**در طول تمرین، mu و sigma از دسته کوچک فعلی می آیند. در طول نتیجه گیری، شما از میانگین های اجرا جمع شده در طول تمرین استفاده می کنید (متوسط متحرک تعرضی با حرکت = 0.1, یعنی 90٪ قدیمی + 10٪ جدید).
+**Training vs inference split:**در طول آموزش$\mu$و$\sigma$در طول نتیجه گیری، شما از میانگین های اجرا جمع آوری شده در طول تمرین استفاده می کنید (متوسط متحرک تعرضی با حرکت = 0.1، یعنی 90٪ قدیمی + 10٪ جدید).
 
 چرا BatchNorm کار می کند هنوز بحث می شود. مقاله اصلی ادعا کرد که "تبدیل کوویریات داخلی" را کاهش می دهد (توزعه ورودی لایه ها با بروز رسانی لایه های قبلی تغییر می کند). سنتورکر و همکاران (2018) نشان داد این توضیح اشتباه است. دلیل اصلی: باتچ نورم باعث می شود که وضعیت خسارت هموار تر شود. گرادینت ها پیش بینی بیشتری دارند، ثابت های لیپسکیتز کوچکتر هستند و بهینه کننده می تواند گام های بزرگتر را به طور ایمن انجام دهد. به همین دلیل است که BatchNorm به شما اجازه می دهد از نرخ یادگیری بالاتر استفاده کنید و سریعتر به هم نزدیک شوید.
 
@@ -107,14 +111,16 @@ BatchNorm دارای محدودیت اساسی است: این بستگی به آ
 
 برای یک نمونه ی واحد:
 
-```
-mu = (1/D) * sum(x_j)           (feature mean)
-sigma^2 = (1/D) * sum((x_j - mu)^2)   (feature variance)
-x_hat = (x_j - mu) / sqrt(sigma^2 + eps)
-y = gamma * x_hat + beta
+```math
+\begin{aligned}
+\mu &= \frac{1}{D} \sum_j x_j && \text{(feature mean)} \\
+\sigma^2 &= \frac{1}{D} \sum_j (x_j - \mu)^2 && \text{(feature variance)} \\
+\hat{x} &= \frac{x_j - \mu}{\sqrt{\sigma^2 + \epsilon}} \\
+y &= \gamma \hat{x} + \beta
+\end{aligned}
 ```
 
-D ابعاد ویژگی است. هر نمونه به طور مستقل عادی می شود - هیچ وابستگی به اندازه دسته ای نیست. به همین دلیل ترانسفورماتورها از LayerNorm به جای BatchNorm استفاده می کنند. دنباله ها دارای طول متغیر هستند، اندازه دسته اغلب کوچک است (یا 1 در طول تولید) و محاسبه بین آموزش و نتیجه گیری یکسان است.
+$D$هر نمونه به طور مستقل عادی می شود - هیچ وابستگی به اندازه دسته ای نیست. به همین دلیل ترانسفورماتورها از LayerNorm به جای BatchNorm استفاده می کنند. دنباله ها دارای طول متغیر هستند، اندازه دسته اغلب کوچک است (یا 1 در زمان تولید) و محاسبه بین آموزش و نتیجه گیری یکسان است.
 
 LayerNorm در ترانسفورماتورها پس از هر بلوک خود توجه و هر بلوک ارسال (پوس-LN) یا قبل از آنها (Pre-LN) اعمال می شود که برای آموزش پایدارتر است.
 
@@ -122,9 +128,11 @@ LayerNorm در ترانسفورماتورها پس از هر بلوک خود ت�
 
 LayerNorm بدون معادلات متوسط. پیشنهاد شده توسط Zhang & Sennrich (2019).
 
-```
-rms = sqrt((1/D) * sum(x_j^2))
-y = gamma * x / rms
+```math
+\begin{aligned}
+\text{rms} &= \sqrt{\frac{1}{D} \sum_j x_j^2} \\
+y &= \gamma \cdot \frac{x}{\text{rms}}
+\end{aligned}
 ```
 
 این است. هیچ محاسبات متوسط، هیچ پارامتر بتا. مشاهده: بازمرکز (حاشیه متوسط) در LayerNorm به عملکرد مدل بسیار کم کمک می کند، اما هزینه محاسبات است. حذف آن به دقت مشابه با حدود 10 درصد هزینه های عمومی کمتر می دهد.
@@ -515,8 +523,8 @@ LayerNorm نه BatchNorm. droput p=0.1، نه p=0.5. اینها پیش فرض ت
 |------|----------------|----------------------|
 | Overfitting | "Model memorized the data" | When a model's training performance significantly exceeds its test performance, indicating it learned noise rather than signal |
 | Regularization | "Preventing overfitting" | Any technique that constrains model complexity to improve generalization: dropout, weight decay, normalization, augmentation |
-| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability p, forcing redundant representations; equivalent to training an ensemble |
-| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting lambda * w at each step; penalizes complexity through weight magnitude |
+| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability $p$, forcing redundant representations; equivalent to training an ensemble |
+| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting $\lambda w$ at each step; penalizes complexity through weight magnitude |
 | Batch normalization | "Normalize per batch" | Normalizing layer outputs across the batch dimension using batch statistics during training and running averages during inference |
 | Layer normalization | "Normalize per sample" | Normalizing across features within each sample; batch-independent, used in transformers where batch size varies |
 | RMSNorm | "LayerNorm without the mean" | Root mean square normalization; drops the mean subtraction from LayerNorm for 10% speedup with equal accuracy |

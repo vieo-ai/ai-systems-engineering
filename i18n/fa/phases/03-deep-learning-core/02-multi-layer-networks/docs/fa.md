@@ -75,8 +75,8 @@ graph LR
 
 در حال حاضر، فعاليت سيگمايد است:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\text{sigmoid}(z) = \frac{1}{1 + e^{-z}}
 ```
 
 سیگمائید هر عدد را به محدوده (0,1) می کند. ورودی های مثبت بزرگ به سمت ۱ حرکت می کنند. ورودی های منفی بزرگ به سمت صفر حرکت می کنند. نقشه های صفر به 0.5 می رسند. این منحنی صاف است که یادگیری را ممکن می کند - برخلاف مرحله سخت پرسپرتون، سیگمائید در همه جا گرادینت دارد.
@@ -99,9 +99,11 @@ graph TD
 
 در هر لایه سه عمل در یک ترتیب انجام می شود:
 
-```
-z = W * input + b       (linear transformation)
-a = sigmoid(z)           (activation)
+```math
+\begin{aligned}
+z &= W \cdot \text{input} + b \quad \text{(linear transformation)} \\
+a &= \text{sigmoid}(z) \quad \text{(activation)}
+\end{aligned}
 ```
 
 خروجی یک لایه به ورودی بعدی تبدیل می شود. این کل گذرگاه پیش رو است.
@@ -112,13 +114,13 @@ a = sigmoid(z)           (activation)
 
 | Step | Operation | Dimensions | Result Shape |
 |------|-----------|------------|-------------|
-| Input | x | -- | (2,) |
-| Hidden linear | W1 * x + b1 | W1: (3, 2), b1: (3,) | (3,) |
-| Hidden activation | sigmoid(z1) | -- | (3,) |
-| Output linear | W2 * h + b2 | W2: (1, 3), b2: (1,) | (1,) |
-| Output activation | sigmoid(z2) | -- | (1,) |
+| Input | $x$ | -- | (2,) |
+| Hidden linear | $W_1 x + b_1$ | $W_1$: (3, 2), $b_1$: (3,) | (3,) |
+| Hidden activation | $\text{sigmoid}(z_1)$ | -- | (3,) |
+| Output linear | $W_2 h + b_2$ | $W_2$: (1, 3), $b_2$: (1,) | (1,) |
+| Output activation | $\text{sigmoid}(z_2)$ | -- | (1,) |
 
-قانون: ماتریس وزن W در لایه k دارای شکل است (نورون ها_در لایه_ک، نورون ها_در لایه_ک_منوس_1). صف ها با لایه فعلی مطابقت دارند. ستون ها با لایه قبلی مطابقت دارند. اگر اشکال به هم خط نمی کنند، شما یک خط خطا دارید.
+قانون: ماتریس وزن$W$در لایه$k$شکل دارد (neurons_in_layer_k، neurons_in_layer_k_minus_1). ردیف ها با لایه فعلی مطابقت دارند. ستون ها با لایه قبلی مطابقت دارند. اگر اشکال به هم خط نمی کنند، شما یک خط خطا دارید.
 
 ### نظریه نزدیک شدن جهانی
 
@@ -168,7 +170,7 @@ def sigmoid(x):
 
 ### مرحله دوم: طبقه طبقه
 
-مهم ترین عملیات در تمام یادگیری عمیق ضرب ماتریکس است. هر لایه، هر سر توجه، هر عبور جلو، تمام راه به پایین ماتمول است. یک لایه خطی یک ویکتور ورودی را می گیرد، آن را با یک ماتریکس وزن ضرب می کند و یک ویکتور تعصب اضافه می کند: y = Wx + b. این معادله ی تکانه 90 درصد محاسبه در یک شبکه عصبی است.
+مهم ترین عملیات در تمام یادگیری عمیق ضرب ماتریکس است. هر لایه، هر سر توجه، هر عبور جلو، تمام راه پایین ماتمول است. یک لایه خطی یک ویکتور ورودی را می گیرد، آن را با یک ماتریکس وزن ضرب می کند و یک ویکتور تعصب را اضافه می کند:$y = Wx + b$اين معادله ي يکتا 90 درصد از حساب در يک شبکه عصبي است
 
 یک لایه دارای ماتریکس وزن و یک ویکتور تعصب است. روش پیشروی آن یک ویکتور ورودی را می گیرد و خروجی فعال را باز می گرداند.
 
@@ -204,7 +206,7 @@ class Layer:
 
 ### مرحله سوم: کلاس شبکه
 
-یک شبکه یک لیست از لایه ها است. گذر جلو آنها را زنجیره می کند: خروجی از لایه k به لایه k + 1 تغذیه می کند.
+شبکه یک لیست از لایه ها است. گذر جلو آنها را زنجیره می کند: خروجی لایه $k$به لایه ای تغذیه می کند$k+1$. .
 
 ```python
 class Network:
@@ -346,11 +348,11 @@ print(output)
 | Hidden layer | "The middle part" | Any layer between input and output whose values are not directly observed in the data |
 | Multi-layer network | "A deep neural network" | Layers of neurons stacked sequentially, where each layer's output feeds the next layer's input |
 | Activation function | "The nonlinearity" | A function applied after the linear transformation that introduces curves into the decision boundary |
-| Sigmoid | "The S-curve" | sigma(z) = 1/(1+e^(-z)), squashes any real number to (0,1), smooth and differentiable everywhere |
-| Weight matrix | "The parameters" | A matrix W of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
+| Sigmoid | "The S-curve" | $\sigma(z) = 1/(1+e^{-z})$, squashes any real number to (0,1), smooth and differentiable everywhere |
+| Weight matrix | "The parameters" | A matrix $W$ of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
 | Bias vector | "The offset" | A vector added after the matrix multiply that lets neurons activate even when all inputs are zero |
 | Universal approximation | "Neural nets can learn anything" | A single hidden layer with enough neurons can approximate any continuous function -- but "enough" can mean billions |
-| Linear transformation | "The matrix multiply step" | z = W * x + b, the computation before activation, which maps inputs to a new space |
+| Linear transformation | "The matrix multiply step" | $z = W x + b$, the computation before activation, which maps inputs to a new space |
 | Decision boundary | "Where the classifier switches" | The surface in input space where the network output crosses the classification threshold |
 
 ## خواندن بیشتر
