@@ -49,15 +49,14 @@ Xây dựng `(N, N)`Matrix tương đồng cosine giữa các hình ảnh và b�
 
 ### BLEU-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 Ở đâu `p_n`là độ chính xác n-gram được sửa đổi (đếm số n-gram được tạo ra trong bất kỳ tham chiếu nào, chia bằng tổng n-gram được tạo ra), và `BP`là hình phạt ngắn hạn:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 Mới lỏng là cần thiết cho các mẫu nhỏ nơi một số `p_n`thực hiện sử dụng Chen và Cherry "chế độ 1" (làm thêm 1 cho số và tên cho bất kỳ số không), đó là mặc định an toàn nhất cho chế độ số thấp.
@@ -109,7 +108,7 @@ Kết quả: bảng số trước/sau cho thấy việc lấy lại cải thiệ
 
 Mỗi số liệu chỉ số được lập trực tiếp trên một chỉ số chuẩn sản xuất:
 
-- **Retrieval.**MS-COCO 5K val, Flickr30K, ImageNet zero-shot là tất cả các vấn đề R@K trên cùng một matrix tương tự. Thay thế các tập tin thực với các tập tin tổng hợp và chữ ký chức năng không thay đổi.
+- **Retrieval.**MS-COCO 5K val và Flickr30K là các vấn đề R@K trên cùng một matrix tương đồng. ImageNet zero-shot cũng sử dụng matrix đó, với một prompt được nhúng mỗi lớp, nhưng nó báo cáo độ chính xác phân loại top-1, đó là R@1 trên class prompt. Thay thế eval tổng hợp bằng các tập tin thực và chữ ký chức năng không thay đổi.
 - **VQA.**VQA v2, GQA, OK-VQA sử dụng cùng một hình dạng phù hợp chính xác (với acc mềm thay vì EM trả lời đơn cho VQA v2).
 - **BLEU-4.**MS-COCO captioning, NoCaps, Flickr30K captioning tất cả sử dụng BLEU-4 cộng với CIDEr và METEOR.
 
@@ -142,7 +141,7 @@ python3 -m unittest code/test_main.py
 
 4. Lập trung bình tính toán cấp độ tương đối (MRR) bên cạnh R@K. MRR nhạy cảm với nơi mục chính xác rơi ra ngoài K trên; R@K nhạy cảm với việc liệu nó rơi vào K trên.
 
-5. Thực hiện đánh giá trên mô hình tại năm điểm kiểm soát trong quá trình đào tạo (giải 0, 10, 20, 30, 40, 50) và vẽ đường cong học tập.
+5. Thực hiện đánh giá trên mô hình tại sáu điểm kiểm soát trong quá trình đào tạo (giải 0, 10, 20, 30, 40, 50) và vẽ đường cong học tập.
 
 ## Các điều khoản chính
 
