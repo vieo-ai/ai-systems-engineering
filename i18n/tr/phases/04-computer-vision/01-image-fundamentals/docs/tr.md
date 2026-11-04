@@ -173,8 +173,8 @@ RGB, yakalama biçimidir ancak bir model için her zaman en yararlı temsil değ
 
 RGB'den gri ölçek, ortalama değil, ağırlıklı bir toplamdır, çünkü insan gözü kırmızı veya maviye göre yeşilye daha duyarlıdır:
 
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
+```math
+Y = 0.299 R + 0.587 G + 0.114 B \qquad \text{(ITU-R BT.601, the classic weights)}
 ```
 
 ### Göreç oranı, boyut değiştirme ve interpolasyon

@@ -50,8 +50,8 @@ Yukarı-yukarı (HRNet, ViTPose) doğruluk lideri; alt yukarı (OpenPose, Higher
 
 Geri çekilmek yerine`(x, y)`Doğrudan, bir tahmin`H x W`Anahtar noktası başına bir sıcaklık haritası gerçek konuma odaklanan Gaussian bir bulut ile.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 Sonuç olarak, her bir ısıtma haritasının argmax'i tahmin edilen anahtar nokta konumudur.
@@ -60,7 +60,7 @@ Sıcaklık haritalarının doğrudan gerilemeden daha iyi çalışmasının nede
 
 ### Alt piksel yerleşimi
 
-Argmax tam sayı koordinatları verir. Alt piksel hassasiyeti için, argmax ve komşularına bir parabola yerleştirerek veya bilinen ofset kullanarak mükemmelleştirin `(dx, dy) = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1], ...)`Yön.
+Argmax tam sayı koordinatları verir. Alt piksel hassasiyeti için, argmax ve komşularına bir parabola yerleştirerek veya argmax'ı daha yüksek komşuya doğru değiştirerek arşın.`dx = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1])`Ve aynı şey için .`dy`, kodun yaptığı gibi.
 
 ### Bölüm Affinity Alanları (PAF)
 

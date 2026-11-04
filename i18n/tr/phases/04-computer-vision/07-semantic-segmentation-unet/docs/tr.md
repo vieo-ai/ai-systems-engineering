@@ -87,10 +87,10 @@ Her ikisi de vahşi bir ortamda ortaya çıkıyor. İlk U-Net için, binaylı da
 
 ### Bir piksel şebekesinde çapraz entropi
 
-C sınıfları ile semantik segmentasyon için, model çıkışı `(N, C, H, W)`Hedef `(N, H, W)`Tüm sayılardaki sınıf kimlikleri ile.
+ ile semantik segmentasyon için$C$sınıflar, model çıkışı `(N, C, H, W)`Hedef `(N, H, W)`Tüm sayılardaki sınıf kimlikleri ile.
 
-```
-Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]] )
+```math
+\text{Loss} = \mathop{\mathrm{mean}}\limits_{(n, h, w)} \left[ -\log\left( \mathop{\mathrm{softmax}}(\text{logits}[n, :, h, w])[\text{target}[n, h, w]] \right) \right]
 ```
 
 `F.cross_entropy`PyTorch'da bu şekli doğuştan kullanıyor.
@@ -101,17 +101,19 @@ Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]]
 
 Çöp kaybı bunu öngörülen ve gerçek maske arasındaki örtüşmeyi doğrudan optimize ederek çözüyor:
 
-```
-Dice(p, y) = 2 * sum(p * y) / (sum(p) + sum(y) + epsilon)
-Dice_loss = 1 - Dice
+```math
+\begin{aligned}
+\mathop{\mathrm{Dice}}(p, y) &= \frac{2 \sum (p \cdot y)}{\sum p + \sum y + \epsilon} \\
+\text{Dice}_{\text{loss}} &= 1 - \text{Dice}
+\end{aligned}
 ```
 
 nerede`p`bir sınıf için sigmoid/softmax olasılık haritasıdır ve `y`Bu da bir diğer deyişle, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitsizliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir sınıfın eşitliği, bir eşitliği, bir eşitliği, bir eşitliği, bir eşitliği, birliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birikliği, birliği, birikliği, birikliği,
 
 Bu konuda **combined loss**- ...
 
-```
-L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
+```math
+L = L_{\text{cross\_entropy}} + \lambda \cdot L_{\text{dice}} \qquad (\lambda \approx 1)
 ```
 
 Çarşı entropi, eğitim başında istikrarlı dereceler verir; Dice, eğitim kuyruğunu aslında maske şekline eşleştirmeye odaklar. Bu kombinasyon tıbbi görüntüleme standartıdır ve herhangi bir sınıf dengesiz veri kümesinde yenilmek zor.
@@ -120,14 +122,14 @@ L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
 
 - **Pixel accuracy**%2'nin doğru tahmin edildiği pikseller.
 - **IoU per class** her sınıfın maskesinin birliği üzerinde kesişim; sınıflar arasındaki ortalama = mIoU.
-- **Dice (F1 on pixels)** IoU'ya benzer; `Dice = 2 * IoU / (1 + IoU)`Tıp görüntülemeyi Dice, sürücü topluluğu IoU tercih eder.
+- **Dice (F1 on pixels)** IoU'ya benzer; $\text{Dice} = 2 \cdot \text{IoU} / (1 + \text{IoU})$Tıp görüntülemeyi Dice, sürücü topluluğu IoU tercih eder.
 - **Boundary F1** tahmin edilen sınırların yerçekimsel gerçeklik sınırlarına ne kadar yakın olduğunu ölçer, küçük değişikliklere bile cezalandırır.
 
 Ortalama bir sınıf %15'te, dokuz sınıf %85'teyken gizlenir.
 
 ### Giriş çözümü pazarlaması
 
-U-Net'in kodlayıcı çözünürlüğünü dört kat ikiye katlar, bu nedenle giriş 16 ile bölünebilir olmalıdır. Tıp görüntüleri genellikle 512x512 veya 1024x1024'dir.`H * W * C_max`, ve 1024x1024'e 1024 şişek boynuz kanalları ile ön geçiş zaten VRAM'ın gigabaytlarını kullanıyor.
+U-Net'in kodlayıcı çözünürlüğünü dört kat azaltır, bu nedenle atış bağlantıları sadece giriş 16 ile bölünürken sıraya geçiyor. Diğer boyutlara yükleme veya yukarı blokta boyut değiştirme gereklidir (Adım 2). Tıbbi görüntüler genellikle 512x512 veya 1024x1024'dir. Otonom sürücü ürünler 2048x1024'dir.`H * W * C_max`, ve 1024x1024'e 1024 şişek boynuz kanalları ile ön geçiş zaten VRAM'ın gigabaytlarını kullanıyor.
 
 İki standart çözüm yolu:
 1. Girme  işlemi 256x256 kapsamlı ve dikişli kapsamlı kapsamlı kapsamlı kapsamlı.

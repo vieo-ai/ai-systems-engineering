@@ -52,18 +52,20 @@ Bu döngünün her satırı bir böcek yaşayabileceği bir yer.`model(x).softma
 
 Bir sınıflandırıcı üretir `C`Logit olarak adlandırılan bir görüntü başına sayı. Softmax uygulaması onları olasılık dağılımına dönüştürür:
 
-```
-softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```math
+\mathop{\mathrm{softmax}}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
 ```
 
 Çarşı entropi doğru sınıfın negatif log olasılığını ölçer:
 
-```
-CE(z, y) = -log( softmax(z)_y )
-        = -z_y + log( sum_j exp(z_j) )
+```math
+\begin{aligned}
+\mathrm{CE}(z, y) &= -\log\left( \mathop{\mathrm{softmax}}(z)_y \right) \\
+&= -z_y + \log\left( \sum_j \exp(z_j) \right)
+\end{aligned}
 ```
 
-Sağdaki form sayısal olarak sabit olan (log-sum-exp) PyTorch'ın `nn.CrossEntropyLoss`softmax + NLL'i bir çalışmada birleştirir ve doğrudan çiğ logitleri alır. softmax'ı önce kendiniz uygulayarak neredeyse her zaman bir hata  log(softmax(softmax(z)) hesaplarsınız), anlamsız bir miktar.
+Sağdaki form sayısal olarak sabit olan (log-sum-exp) PyTorch'ın `nn.CrossEntropyLoss`Softmax + NLL'i bir seferde birleştirir ve doğrudan ham logitleri alır.$\log(\mathop{\mathrm{softmax}}(\mathop{\mathrm{softmax}}(z)))$, anlamsız bir miktar.
 
 ### Neden artış işe yarıyor?
 
@@ -98,14 +100,14 @@ Neden işe yarıyor: model, dikenli bir-sıcak hedefleri hatırlamayı bırakır
 
 ### Etiket düzeltme
 
-Karışık bir kuzen.`[0, 0, 1, 0, 0]`, karşı tren`[eps/C, eps/C, 1-eps, eps/C, eps/C]`Küçük bir şey için .`eps`Bu, modelin keyfi keskinliklerle keskin bir şekilde keskin bir şekilde üretmesini engeller ve kalibrasyonu neredeyse hiç bir maliyetle iyileştirir.`nn.CrossEntropyLoss(label_smoothing=0.1)`PyTorch 1.10'dan beri.
+Karışık bir kuzen.`[0, 0, 1, 0, 0]`, karşı tren`[eps/C, eps/C, 1-eps+eps/C, eps/C, eps/C]`Küçük bir şey için .`eps`Bu, modelin keyfi keskin logit üretmesini engeller ve kalibrasyonu neredeyse hiç bir maliyetle iyileştirir.`nn.CrossEntropyLoss(label_smoothing=0.1)`PyTorch 1.10'dan beri.
 
 ### Düzgünlüğü aşan değerlendirme
 
 Toplam doğruluk dengesizliği saklar. 90-10 ikili sınıflandırıcı her zaman çoğunluk sınıfının puanını tahmin eder.
 
 - **Per-class accuracy** sınıf başına bir sayı; hemen düşük performanslı kategoriler ortaya çıkar.
-- **Confusion matrix** C x C çizgi i col j = sınıf j olarak öngörülen gerçek sınıfın sayısı; diyagonal doğru, diyagonal dışı diyagonallar modelinizin yaşadığı yerdir.
+- **Confusion matrix** $C \times C$Satırlı bir ağ $i$Kol .$j$= gerçek sınıf sayımı $i$Sınıf olarak tahmin edildi $j$Diyagonal doğru, diyagonal dışı modelin yaşadığı yer.
 - **Top-1 / Top-5** doğru sınıfın en iyi 1 veya en iyi 5 tahminte olup olmadığını; Top-5'ün ImageNet için önemli olduğu "Norwich terrier" vs "Norfolk terrier" gibi sınıflar gerçekten belirsiz olduğu için.
 - **Calibration (ECE)** 0.8 güven tahminleri zamanın %80'inde doğru mu? Modern ağlar sistematik olarak aşırı güvenlidir; sıcaklık ölçeklendirilmesi veya etiket düzeltmesi ile düzeltin.
 
@@ -413,7 +415,7 @@ Bu ders şunları ortaya çıkarır:
 | DataLoader | "The batcher" | Wraps a dataset with shuffling, batching, and (optional) multi-worker loading; gets blamed for half of training bugs |
 | Augmentation | "Random transforms" | Any pixel-level transform at training time that preserves the label; teaches invariances the CNN does not have natively |
 | Mixup / Cutmix | "Mix two images" | Blend both inputs and labels so the classifier learns smooth interpolations instead of hard boundaries |
-| Label smoothing | "Softer targets" | Replace one-hot with (1-eps, eps/(C-1), ...); improves calibration and slightly boosts accuracy |
+| Label smoothing | "Softer targets" | Replace one-hot with (1-eps+eps/C, eps/C, ...); improves calibration and slightly boosts accuracy |
 | Top-k accuracy | "Top-5" | The correct class is in the k highest-probability predictions; used on datasets with genuinely ambiguous classes |
 | Confusion matrix | "Where errors live" | C x C table where entry (i, j) counts images of true class i predicted as j; diagonal is right, off-diagonal tells you what to fix |
 

@@ -61,7 +61,7 @@ Her klasik izleyici hareket tahmin adımında Kalman filtre kullanır.
 
 ### Macar algoritması
 
-Bir `M x N`maliyet matrisi (yollar x tespitler), toplam maliyeti en aza indirgenen bir-bir görevi bul.`1 - IoU(track_bbox, detection_bbox)`O(((M+N) ^3); M, N için ~ 1000'e kadar Python'da yeterince hızlıdır `scipy.optimize.linear_sum_assignment`- Evet .
+Bir `M x N`maliyet matrisi (yollar x tespitler), toplam maliyeti en aza indirgenen bir-bir görevi bul.`1 - IoU(track_bbox, detection_bbox)`veya görünüm özelliklerinin negatif kozine benzerliği.$O((M+N)^3)$ için$M, N$Python'da 1000'e kadar hızlıdır.`scipy.optimize.linear_sum_assignment`- Evet .
 
 ### ByteTrack'in anahtar fikri
 
@@ -69,7 +69,7 @@ Standart izleyici düşük güven tespitlerini düşürür (< 0, 5).**second-sta
 
 ### SAM 2 hafıza tabanlı izleme
 
-SAM 2 bir **memory bank**Bir çerçeve üzerinde bir istasyon (klik, kutu, metin) verildiğinde, istasyon hafıza içine kodlanır. Sonraki çerçevelerde, hafıza yeni çerçeve özelliklerine karşı çapraz olarak katılır ve dekodör yeni çerçeve içinde aynı istasyon için bir maska üretir.
+SAM 2 bir **memory bank**Bir çerçeve üzerinde bir istasyon (klik, kutu veya maske) verildiğinde, istasyon hafıza içine kodlanır. Sonraki çerçevelerde, hafıza yeni çerçeve özelliklerine karşı çapraz olarak katılır ve dekodör yeni çerçeve içinde aynı istasyon için bir maske üretir.
 
 Kalman filtre yok, Macar görev yok.
 
