@@ -1,6 +1,6 @@
 # Visão de qualquer resolução: Patch-n'-Pack e NaFlex
 
-> Imagens reais não são 224x224 quadrados. Um recibo é 9:16, um gráfico é 16:9, uma varredura médica pode ser 4096x4096, uma captura de tela móvel é 9:19.5. A resposta VLM pré-2024  redimensionar tudo para um quadrado fixo  jogou fora o sinal que faz OCR, compreensão de documentos e análise de cena de alta resolução trabalhar. NaViT (Google, 2023) mostrou que você pode embalar patches de resolução variável em um único lote de transformador com mascaramento de diagonal de bloco. O M-RoPE (2024) do Qwen2-VL desistiu completamente das tabelas de posições absolutas. AnyRes do LLaVA-NeXT enrolaram imagens de alta resolução em uma base + sub-imagens. A variante NaFlex (2025) do SigLIP 2 é agora o codificador padrão para VLMs abertos que querem um único ponto de verificação para atender a cada relação de aspecto. Esta lição implementa patch-n'-pack de ponta a ponta.
+> Imagens reais não são 224x224 quadrados. Um recibo é 1: 3, um gráfico é 16: 9, uma varredura médica pode ser 4096x4096, uma captura de tela móvel é 9:19.5. A resposta VLM pré-2024  redimensionar tudo para um quadrado fixo  jogou fora o sinal que faz OCR, compreensão de documentos e análise de cena de alta resolução trabalhar. NaViT (Google, 2023) mostrou que você pode embalar patches de resolução variável em um único lote de transformador com mascaramento de diagonal de bloco. O M-RoPE (2024) do Qwen2-VL desistiu completamente das tabelas de posições absolutas. AnyRes do LLaVA-NeXT enrolaram imagens de alta resolução em uma base + sub-imagens. A variante NaFlex (2025) do SigLIP 2 é agora o codificador padrão para VLMs abertos que querem um único ponto de verificação para atender a cada relação de aspecto. Esta lição implementa patch-n'-pack de ponta a ponta.
 
 **Type:** Build
 **Languages:** Python (stdlib, patch packer + block-diagonal mask)
@@ -55,7 +55,7 @@ O AnyRes da LLaVA-NeXT é a alternativa pragmática. Dada uma imagem de alta res
 
 Para uma imagem 672x672 em 2x2 grade mais miniatura: 4 * 576 + 576 = 2880 tokens visuais.
 
-AnyRes é a rota de escolha quando o seu codificador está congelado e suporta apenas uma resolução. Ele explode a contagem de tokens para imagens grandes (uma imagem de 1344x1344 em 4x4 grade é 9216 + 576 ≈ 9800 tokens, que preenche a maior parte de um contexto LLM de 8k).
+AnyRes é a rota de escolha quando o seu codificador está congelado e suporta apenas uma resolução. Ele explode a contagem de tokens para imagens grandes (uma imagem de 1344x1344 em 4x4 grade é 9216 + 576 ≈ 9800 tokens, que supera um contexto de LLM de 8k antes de qualquer texto chegar).
 
 ### M-RoPE (Qwen2-VL)
 
@@ -63,7 +63,7 @@ Qwen2-VL introduziu a Embedding Multimodal Rotary Positioning. Em vez das posiç
 
 M-RoPE envia resolução dinâmica nativa sem reformulação. Na inferência de você alimentar qualquer imagem HxW, o inseridor de patch produz tokens H/14 x W/14, cada token obtém sua posição (t=0, r=row, c=col), RoPE gira a atenção com as frequências certas, feito. Qwen2.5-VL e Qwen3-VL continuam assim. V2PE do InternVL3 é a mesma ideia com codificação variável por modalidade.
 
-Ao contrário de AnyRes, M-RoPE é O(H x W / P^2) tokens em resolução nativa  sem sobrecarga de azulejos multiplicativos. Ao contrário de NaViT, ele ainda espera uma única imagem por avanço. Batching em resoluções ainda precisa de patch-n'-pack no topo.
+Ao contrário do AnyRes, o M- RoPE é $O(H \times W / P^2)$O software de partilha de dados é um sistema de partilha de dados que permite a transferência de dados para outros dispositivos.
 
 ### NaFlex (SigLIP 2)
 
