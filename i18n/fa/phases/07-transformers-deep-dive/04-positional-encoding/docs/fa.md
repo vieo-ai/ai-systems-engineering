@@ -29,25 +29,25 @@
 
 پیش از حساب کردن ماتریکس ثابت`PE`شکل`(max_len, d_model)`:
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
+```math
+\begin{aligned}
+PE_{(pos, 2i)} &= \sin\left(pos / 10000^{2i / d_{\text{model}}}\right) \\
+PE_{(pos, 2i+1)} &= \cos\left(pos / 10000^{2i / d_{\text{model}}}\right)
+\end{aligned}
 ```
 
 پس`X' = X + PE[:N]`هر ابعاد یک سینوساید در فرکانس متفاوت است. مدل یاد می گیرد موقعیت را از الگوی فاز بخواند.`max_len`: هیچ چیزی به مدل نگفت که در موقعیت 2048 چه اتفاقی می افتد وقتی فقط موقعیت 02047 را می بیند.
 
 ### رپی
 
-قطعات Q و K را (نه گنجانده ها) برای یک جفت ابعاد چرخید `(2i, 2i+1)`:
+قطعات Q و K را (نه گنجانده ها) برای یک جفت ابعاد چرخید $(2i, 2i+1)$:
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
-
-θ_i = base^(-2i / d_head),  base = 10000 by default
+```math
+\begin{bmatrix} q'_{2i} \\ q'_{2i+1} \end{bmatrix} = \begin{bmatrix} \cos(pos \cdot \theta_i) & -\sin(pos \cdot \theta_i) \\ \sin(pos \cdot \theta_i) & \cos(pos \cdot \theta_i) \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+\qquad \theta_i = \text{base}^{-2i / d_{\text{head}}}, \quad \text{base} = 10000 \text{ by default}
 ```
 
-به کلید های با موقعیت مشابهی روی آن ها روی کنید `pos_k`. محصول نقطه`q'_m · k'_n`تبدیل به یک تابع از`(m - n)`تنها، یعنی:**the attention score depends only on the relative distance**، با وجود اينکه چرخش رو از موقعيت هاي مطلق باز کرد
+به کلید های با موقعیت مشابهی روی آن ها روی کنید `pos_k`. محصول نقطه$q'_m \cdot k'_n$تبدیل به یک تابع از$(m - n)$تنها، یعنی:**the attention score depends only on the relative distance**، با وجود اينکه چرخش رو از موقعيت هاي مطلق باز کرد
 
 گسترش RoPE: `base`Llama 3 از 8K به 128K زمینه گسترش یافته است.
 
@@ -55,11 +55,11 @@ PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
 
 . از ترفند "بند" رد شو
 
-```
-attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|
+```math
+\text{attn\_score}[i, j] = \frac{q_i \cdot k_j}{\sqrt{d}} - m_h \cdot |i - j|
 ```
 
-کجا`m_h`یک منحنی خاص سر است (به عنوان مثال `1 / 2^(8·h/H)`) توکن های نزدیک تر افزایش می یابند؛ توکن های دور مجازات می شوند. هیچ هزینه زمانی آموزش نیست. مقاله نشان می دهد که استخراج طول از سینوسوائید و مطابقت با RoPE در طول آموزش اولیه اش است.
+کجا$m_h$یک منحنی خاص سر است (به عنوان مثال $1 / 2^{8h/H}$) توکن های نزدیک تر افزایش می یابند؛ توکن های دور مجازات می شوند. هیچ هزینه زمانی آموزش نیست. مقاله نشان می دهد که استخراج طول از سینوسوائید و مطابقت با RoPE در طول آموزش اولیه اش است.
 
 ### چه چیزی را در سال 2026 انتخاب کنیم
 
@@ -113,7 +113,7 @@ def apply_rope(x, pos, base=10000):
     return out
 ```
 
-مهم: همان تابع را در موقعیت Q اعمال کنید `m`و K در موقعیت`n`. محصولشون يه نقطه رو ميگيره`cos((m-n)·θ_i)`توجه به موقعیت نسبي به صورت رایگان یاد می گیرد.
+مهم: همان تابع را در موقعیت Q اعمال کنید $m$و K در موقعیت$n$. محصولشون يه نقطه رو ميگيره$\cos((m-n) \cdot \theta_i)$توجه به موقعیت نسبي به صورت رایگان یاد می گیرد.
 
 ### مرحله سوم: منحنیات و تعصب ALiBi
 
@@ -168,7 +168,7 @@ model = AutoModel.from_pretrained("meta-llama/Llama-3.2-3B")
 | Positional encoding | "Tells attention about order" | Any signal added to embeddings or attention that encodes position. |
 | Sinusoidal | "The original one" | `sin/cos` at geometric frequencies added to embeddings; doesn't extrapolate. |
 | RoPE | "Rotary embeddings" | Rotate Q, K by position-dependent angle; dot product encodes relative distance. |
-| ALiBi | "Linear bias trick" | Add `-m·\|i-j\|` to attention scores; no embedding needed, great extrapolation. |
+| ALiBi | "Linear bias trick" | Add $-m \cdot \lvert i-j \rvert$ to attention scores; no embedding needed, great extrapolation. |
 | base | "RoPE's knob" | The frequency scaler in RoPE; increase to extend context at inference. |
 | NTK-aware | "A RoPE scaling trick" | Rescale `base` so high-frequency dims aren't squeezed when context expands. |
 | YaRN | "The fancy one" | Per-dimension interpolation+extrapolation that preserves attention entropy. |

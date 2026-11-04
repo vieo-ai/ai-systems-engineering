@@ -23,14 +23,13 @@ GPT-1 (2018), GPT-2 (2019), GPT-3 (2020), GPT-4 (2023), GPT-5 (2025), Claude, Ll
 
 ### ماسک
 
-با توجه به طولي که در آن قرار دارد`N`، ساخت یک`N × N`ماتریکس:
+با توجه به طولي که در آن قرار دارد$N$، ساخت یک$N \times N$ماتریکس:
 
-```
-M[i, j] = 0       if j <= i
-M[i, j] = -inf    if j > i
+```math
+M_{ij} = \begin{cases} 0 & \text{if } j \le i \\ -\infty & \text{if } j > i \end{cases}
 ```
 
-اضافه کردن`M`تا نمرات توجه خام قبل از softmax. `exp(-inf) = 0`هر ردیف ماتریس توجه توزیع احتمال نسبت به موقعیت های قبلی است.
+اضافه کردن`M`تا نمرات توجه خام قبل از softmax. $\exp(-\infty) = 0$هر ردیف ماتریس توجه توزیع احتمال نسبت به موقعیت های قبلی است.
 
 هزینه اجرای: یک `torch.tril()`زمان محاسبه: نانوسکندها. تاثیر بر روی زمین: همه چیز.
 
@@ -38,7 +37,7 @@ M[i, j] = -inf    if j > i
 
 ماسک معمولا به عنوان یک پیچ روی توجه ارائه می شود. مشتق را به سمت دیگر اجرا کنید و آن را از غرضی بودن متوقف می کند: توجه سومین اصلاح یک میانگین پیشگویی است و مثلث مرزهای حلقه آن میانگین است، به عنوان ماتریک نوشته شده است.
 
-**Stage 1 — prefix average.**احمقانه ترين خلاصه علليه اي از يه دنباله: موقعیت`i`به عنوان متوسط موقعیت ها تبدیل می شود`0…i`. به عنوان یک حلقه ، که است`out[i] = X[:i+1].mean(0)`. همان محاسبه یک ماتریس ضرب می شود. یک ماتریس مثلث پایین از یک را بگیرید، هر ردیف را با تعداد آن تقسیم کنید، ضرب کنید:
+**Stage 1 — prefix average.**احمقانه ترين خلاصه علليه اي از يه دنباله: موقعیت$i$به عنوان متوسط موقعیت ها تبدیل می شود$0 \ldots i$. به عنوان یک حلقه ، که است`out[i] = X[:i+1].mean(0)`. همان محاسبه یک ماتریس ضرب می شود. یک ماتریس مثلث پایین از یک را بگیرید، هر ردیف را با تعداد آن تقسیم کنید، ضرب کنید:
 
 ```python
 import numpy as np
@@ -48,7 +47,7 @@ A = A / A.sum(axis=1, keepdims=True)
 out = A @ X
 ```
 
-خط`i`از`A`.`[1/(i+1), …, 1/(i+1), 0, …, 0]`صفر ها بالای قطب قطبی علت هستند هیچ چیزی در مورد آینده پنهان نشده است، آینده هرگز در مجموع نبود.
+خط$i$از$A$.$[1/(i+1), \ldots, 1/(i+1), 0, \ldots, 0]$صفر ها بالای قطب قطبی علت هستند هیچ چیزی در مورد آینده پنهان نشده است، آینده هرگز در مجموع نبود.
 
 **Stage 2 — learned weights.**یک متوسط یکسانی با هر توکن گذشته به عنوان یکسانی مرتبط است.`S`. حالا صف ها دیگر با ساخت یک را جمع نمی کنند، بنابراین هر ردیف را با نرم ماکس به جای تقسیم با شمارش عادی کنید. نرم ماکس هرگز صفر دقیق را خارج نمی کند، که باعث شکستن علت است  مگر اینکه نمره های آینده به عنوان `-inf`، چون`exp(-inf) = 0`:
 
@@ -166,7 +165,7 @@ print(tok.decode(out[0]))
 
 زیر کوپ`generate()`هر دسته نتیجه گیری LLM تولید (vLLM، TensorRT-LLM، llama.cpp، Ollama، MLX) همان حلقه را با بهینه سازی سنگین  prefill دسته بندی، دسته بندی مداوم، KV cache paging، رمزگذاری حدس و گمان اجرا می کند.
 
-**GPT vs BERT, one line each:**پیش بینی GPT`P(x_t | x_{<t})`. برت پيش بيني ميکنه`P(x_masked | x_unmasked)`. از دست دادن مشخص می کنه که مدل می تونه تولید کنه
+**GPT vs BERT, one line each:**پیش بینی GPT$P(x_t \mid x_{<t})$. برت پيش بيني ميکنه$P(x_{\text{masked}} \mid x_{\text{unmasked}})$. از دست دادن مشخص می کنه که مدل می تونه تولید کنه
 
 ## -باده
 
@@ -186,8 +185,8 @@ print(tok.decode(out[0]))
 | Next-token prediction | "The loss" | Cross-entropy of the model's distribution against the true next token at every position. |
 | Autoregressive | "Generate one at a time" | Feed output back as input; parallelism only during training, not during generation. |
 | Logits | "Pre-softmax scores" | Raw output of the LM head before softmax; sampling happens on these. |
-| Temperature | "Creativity knob" | Divide logits by T; T→0 = greedy, T→∞ = uniform. |
-| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to ≥p; sample from what remains. |
+| Temperature | "Creativity knob" | Divide logits by $T$; $T \to 0$ = greedy, $T \to \infty$ = uniform. |
+| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to $\ge p$; sample from what remains. |
 | Min-p | "Better than top-p" | Keep tokens where `p ≥ min_p × max_p`; adapts cutoff to sharpness of distribution. |
 | Speculative decoding | "Draft + verify" | Cheap model proposes N tokens; big model verifies in parallel. |
 | Teacher forcing | "Training trick" | During training, feed the true previous token, not the model's prediction. Standard for every seq2seq LM. |

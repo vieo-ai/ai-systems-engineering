@@ -25,13 +25,13 @@
 
 ![RNN sequential compute vs Transformer parallel attention](../assets/rnn-vs-transformer.svg)
 
-**Recurrence as a bottleneck.**یک RNN حساب می کنه`h_t = f(h_{t-1}, x_t)`هر مرحله به مرحله ي قبل بستگی داره`h_5`قبل از`h_4`در GPU های مدرن با 10000+ هسته موازی، این 99 درصد از سیلیکون را در یک سری طولانی از بین می برد.
+**Recurrence as a bottleneck.**یک RNN حساب می کنه$h_t = f(h_{t-1}, x_t)$هر مرحله به مرحله ي قبل بستگی داره$h_5$قبل از$h_4$در GPU های مدرن با 10000+ هسته موازی، این 99 درصد از سیلیکون را در یک سری طولانی از بین می برد.
 
-**Attention as a broadcast.**حسابات توجه به خود`output_i = sum_j(a_ij * v_j)`برای هر جفت`(i, j)`تمام ماتریکس توجه N×N در یک دسته می پر شود هیچ مرحله ای به دیگری بستگی ندارد GPU ها عاشقش هستند
+**Attention as a broadcast.**حسابات توجه به خود`output_i = sum_j(a_ij * v_j)`برای هر جفت$(i, j)$تمام ماتریکس توجه N×N در یک دسته می پر شود هیچ مرحله ای به دیگری بستگی ندارد GPU ها عاشقش هستند
 
-**The speedup is not a constant.**فرق بين`O(N)`عمق سریال و`O(1)`در عمل، ترانسفورماتورها در هر دوره با سخت افزار مشابه در N=512 510x سریع تر تمرین می کنند و شکاف با طول ردیف تا زمانی که شما به `O(N²)`دیوار حافظه توجه (که Flash Attention بعداً اصلاح کرد)
+**The speedup is not a constant.**فرق بين$O(N)$عمق سریال و$O(1)$در عمل، ترانسفورماتورها در هر دوره با سخت افزار مشابه در N=512 510x سریع تر تمرین می کنند و شکاف با طول ردیف تا زمانی که شما به $O(N^2)$دیوار حافظه توجه (که Flash Attention بعداً اصلاح کرد)
 
-**What transformers cost.**توجه حافظه به شکل`O(N²)`برای زمینه 2K، خوب. برای زمینه 128K، شما نیاز به پنجره های شیفت، استثمار RoPE، فلش توجه تایلینگ، یا متغیر توجه خطی دارید. تکرار بود.`O(N)`در زمان و حافظه هم، ترانسفورماتورها زمان را با حافظه عوض می کنند و سپس زمان را از طریق موازی باز می کنند.
+**What transformers cost.**توجه حافظه به شکل$O(N^2)$برای زمینه 2K، خوب. برای زمینه 128K، شما نیاز به پنجره های شیفت، استثمار RoPE، فلش توجه تایلینگ، یا متغیر توجه خطی دارید. تکرار بود.$O(N)$در زمان و حافظه هم، ترانسفورماتورها زمان را با حافظه عوض می کنند و سپس زمان را از طریق موازی باز می کنند.
 
 **The inductive bias shift.**RNN ها محل و تازه بودن را فرض می کنند. ترانسفورماتورها هیچ چیز را فرض نمی کنند. هر جفت برای توجه است. به همین دلیل ترانسفورماتورها برای آموزش خوب نیاز به داده های بیشتری دارند اما پس از آن مقیاس بیشتری دارند. چینچیلا (2022) این را رسمی کرد: با توجه به توکن های کافی، یک ترانسفورماتور همیشه RNN با تعداد پارامتر برابر را شکست می دهد.
 
@@ -58,7 +58,7 @@ def attention_style(xs):
     return sum(xs) / len(xs)  # every x is independent
 ```
 
-ما هر دو را در دنباله ها تا ۱۰۰ هزار عنصر زمان می دهیم. نسخه RNN O(N) و یک لوله CPU واحد است. حتی در پایتون خالص، کاهش سبک توجه در طول ≥ ۱۰۰۰ را از دست می دهد زیرا پایتون `sum()`در C اجرا می شود و بدون هزینه مترجم در هر مرحله تکرار می شود.
+ما هر دو رو در دنباله ها تا 100 هزار عنصر زمان می گیریم$O(N)$حتی در پایتون خالص، کاهش توجه به سبک آن در طول ≥ 1000 به دلیل پایتون`sum()`در C اجرا می شود و بدون هزینه مترجم در هر مرحله تکرار می شود.
 
 ### مرحله دوم: حساب عملیات نظری
 
@@ -66,7 +66,7 @@ def attention_style(xs):
 
 ### مرحله 3: مقیاس بندی تجربی در دنباله های طولانی
 
-ما یک جدول زمان بندی چاپ می کنیم که شکاف O  N را قابل مشاهده می کند. در لپ تاپ مک 2026، دنباله های زیر 1000 عنصر برای اندازه گیری خیلی سریع است. دنباله های 100,000 نشان دهنده اسکن خطی تمیز است. این را به یک تراکنشگر 16،384 توکن با معادل LSTM 12 لایه مقیاس کنید و می بینید که چرا ساعت دیواری آموزش در سال 2016 یک مانع بود.
+ما يه جدول زماني چاپ مي کنيم که باعث ميشه$O(N)$در یک لپ تاپ مک ۲۰۲۶، دنباله های زیر ۱۰۰۰ عنصر برای اندازه گیری خیلی سریع است. دنباله های ۱۰۰۰۰۰ یک اسکن خطی تمیز را نشان می دهد. این را به یک تراکنشگر ۱۶۳۸۴ توکن با معادل ۱۲ لایه LSTM مقیاس کنید و می بینید که چرا ساعت دیواری آموزش در سال ۲۰۱۶ یک مانع بود.
 
 ## ازش استفاده کن
 
@@ -79,7 +79,7 @@ def attention_style(xs):
 | Edge device with no matmul accelerator | Depthwise-separable RNN still wins on FLOPs/watt |
 | Anything else (training, batched inference, context up to 128K) | Transformer |
 
-مدل های فضایی دولتی (SSM) مانند Mamba اساسا RNN با پارامترسازی ساختاری هستند که به آنها بهترین از هر دو را می دهد: `O(N)`حافظه اسکن، آموزش موازی از طریق اسکن انتخابی. آنها 90% از کیفیت ترانسفورم را با مقیاس بندی طولانی بهتر بهبود می بخشند. در سال 2026 بیشتر آزمایشگاه های مرزی مدل های ترانسفورم های هیبریدی SSM + را آموزش می دهند (به عنوان مثال Jamba، Samba)
+مدل های فضایی دولتی (SSM) مانند Mamba اساسا RNN با پارامترسازی ساختاری هستند که به آنها بهترین از هر دو را می دهد: $O(N)$حافظه اسکن، آموزش موازی از طریق اسکن انتخابی. آنها 90% از کیفیت ترانسفورم را با مقیاس بندی طولانی بهتر بهبود می بخشند. در سال 2026 بیشتر آزمایشگاه های مرزی مدل های ترانسفورم های هیبریدی SSM + را آموزش می دهند (به عنوان مثال Jamba، Samba)
 
 ## -باده
 
@@ -97,11 +97,11 @@ def attention_style(xs):
 |------|-----------------|-----------------------|
 | Recurrence | "RNNs are sequential" | Computation where step `t` depends on step `t-1`, forcing serial execution along the time axis. |
 | Serial depth | "How deep the graph is" | Longest chain of dependent ops; bounds wall-clock even on infinite hardware. |
-| Attention | "Let tokens look at each other" | Weighted sum `sum_j a_ij v_j` where `a_ij` comes from a similarity score between positions i and j. |
+| Attention | "Let tokens look at each other" | Weighted sum $\sum_j a_{ij} v_j$ where $a_{ij}$ comes from a similarity score between positions $i$ and $j$. |
 | Context window | "How much the model sees" | Number of positions an attention layer can take as input; quadratic memory cost scales here. |
 | Inductive bias | "Assumptions baked into the architecture" | Prior about what the data looks like; CNNs assume translation invariance, RNNs assume recency. |
 | State-space model | "RNN with algebra behind it" | Recurrence parameterized for parallel training via structured state-space matrices. |
-| Quadratic bottleneck | "Why context costs so much" | Attention memory = `O(N²)` in sequence length; Flash Attention hides the constants, not the scaling. |
+| Quadratic bottleneck | "Why context costs so much" | Attention memory = $O(N^2)$ in sequence length; Flash Attention hides the constants, not the scaling. |
 
 ## خواندن بیشتر
 

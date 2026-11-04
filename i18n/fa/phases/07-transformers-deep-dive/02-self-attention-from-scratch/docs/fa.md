@@ -11,7 +11,7 @@
 
 - پیاده سازی خود توجه محصول نقطه در مقیاس از ابتدا با استفاده از فقط NumPy، از جمله پیش بینی های جستجو/کليد/قيمة و مبلغ وزن شده نرمmax
 - یک لایه توجه چند سر بسازید که سر را تقسیم کند، توجه موازی را محاسبه کند و نتایج را به هم متصل کند
-- ردیابی چگونگی جذب رابطه های نشانه ها در ماتریس توجه و توضیح اینکه چرا مقیاس بندی توسط sqrt(d_k) مانع اش از شتاب نرمmax می شود
+- ردیابی چگونگی جذب رابطه های رمزنگاری شده توسط ماتریس توجه و توضیح اینکه چرا مقیاس بندی توسط $\sqrt{d_k}$از شتاب نرمmax جلوگیری می کند
 - استفاده از ماسک علت برای تبدیل توجه دو جهت به توجه خودکشی (طریقه دیکودر)
 
 ## مشکل
@@ -109,10 +109,10 @@ attention-matrix
 
 ### چرا مقیاس؟
 
-محصولات نقطه ای با ابعاد dk رشد می کنند. اگر dk = 64، محصولات نقطه ای می توانند در محدوده ده ها باشند، و نرمmax را به مناطقی که گرادینت ها ناپدید می شوند فشار می دهند.
+محصولات نقطه ای با اندازه رشد می کنند$d_k$اگه$d_k = 64$، محصولات نقطه ای می توانند در محدوده ده ها باشند، و نرمترین را به مناطقی که در آن گرادینت ها ناپدید می شوند فشار می دهند.$\sqrt{d_k}$. .
 
-```
-Scaled scores = (Q @ K^T) / sqrt(dk)
+```math
+\text{Scaled scores} = \frac{Q K^T}{\sqrt{d_k}}
 ```
 
 این مقدار را در محدوده ای نگه می دارد که نرم ماکس gradients مفید را تولید می کند.
@@ -159,8 +159,8 @@ flowchart LR
 
 فرمول در یک خط:
 
-```
-Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
+```math
+\text{Attention}(Q, K, V) = \mathop{\mathrm{softmax}}\left( \frac{Q K^T}{\sqrt{d_k}} \right) V
 ```
 
 ```figure
@@ -168,6 +168,10 @@ softmax-attention-scaling
 ```
 
 ## آن را بسازید
+
+```figure
+iso-machine {"machine":"self-attention"}
+```
 
 ### مرحله ی اول: Softmax از ابتدا
 
@@ -302,7 +306,7 @@ print(f"\nAttn weights (averaged over heads):")
 print(attn_weights[0].detach().numpy().round(3))
 ```
 
-تفاوت کلیدی: توجه چند سر چندین عملکرد توجه را به طور موازی اجرا می کند، هر کدام با طرح های Q، K، V خود از اندازه dk = d_model / n_heads، سپس نتایج را به هم متصل می کند. این به مدل اجازه می دهد تا به انواع مختلف رابطه همزمان توجه کند.
+تفاوت اصلی: توجه چند سر چندین عملکرد توجه را به طور موازی اجرا می کند، هر کدام با طرح های اندازه Q، K، V خود $d_k = d_{\text{model}} / n_{\text{heads}}$این اجازه می دهد که مدل به انواع مختلف رابطه همزمان توجه کند.
 
 ## -باده
 
@@ -322,7 +326,7 @@ print(attn_weights[0].detach().numpy().round(3))
 | Query (Q) | "The question vector" | A learned projection of the input that represents what information this token is looking for |
 | Key (K) | "The label vector" | A learned projection that represents what information this token contains, matched against queries |
 | Value (V) | "The content vector" | A learned projection carrying the actual information that gets aggregated based on attention scores |
-| Scaled dot-product attention | "The attention formula" | softmax(QK^T / sqrt(dk)) @ V - scaling prevents softmax saturation in high dimensions |
+| Scaled dot-product attention | "The attention formula" | $\mathop{\mathrm{softmax}}(QK^T / \sqrt{d_k}) V$ - scaling prevents softmax saturation in high dimensions |
 | Self-attention | "The token looks at itself and others" | Attention where Q, K, V all come from the same sequence, letting every position attend to every other position |
 | Attention weights | "How much focus" | A probability distribution over positions, produced by softmax over scaled dot products |
 | Multi-head attention | "Parallel attention" | Running multiple attention functions with different projections, then concatenating results for richer representations |

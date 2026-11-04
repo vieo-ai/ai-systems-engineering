@@ -11,7 +11,7 @@
 
 یک سر توجه به خود یک ماتریس توجه را محاسبه می کند. این ماتریس یک نوع رابطه را ضبط می کند. معمولاً آن رابطه را که از دست دادن هر سیگنال آموزشی به حداقل می رساند. اگر داده های شما دارای توافق موضوع و فعل، مرجع، گفتار طولانی مدت و ترکیب بندی ترکیب شده است، یک سر آنها را به یک توزیع نرم حداکثر واحد می کند و نیمی از سیگنال را از دست می دهد.
 
-اصلاح از مقاله Vaswani 2017: چندین عملکرد توجه را به طور موازی اجرا کنید، هر کدام با طرح های Q، K، V خود، و تولیدات را یک زنجیره ای کنید. هر سر در یک فرعی کوچک تر از ابعاد عمل می کند `d_model / n_heads`. پارامترهای کل یکسان باقی می مانند . قدرت بیانگر بالا می رود
+اصلاح از مقاله Vaswani 2017: چندین عملکرد توجه را به طور موازی اجرا کنید، هر کدام با طرح های Q، K، V خود، و تولیدات را یک زنجیره ای کنید. هر سر در یک فرعی کوچک تر از ابعاد عمل می کند $d_{\text{model}} / n_{\text{heads}}$. پارامترهای کل یکسان باقی می مانند . قدرت بیانگر بالا می رود
 
 توجه چند سر پیش فرض هر ترانسفورماتور در 2026 کشتی است. تنها استدلال در مورد *چقدر* سر و اینکه آیا کلید ها و ارزش ها طرح های مشترک (گرگوده شده توجه سوال، توجه چند سوال، توجه چند سر پنهان) است.
 
@@ -19,7 +19,7 @@
 
 ![Multi-head attention splits, attends, concatenates](../assets/multi-head-attention.svg)
 
-**Split.**اینو بگیر`X`شکل`(N, d_model)`. پروژه به Q، K، V هرکدوم شکل`(N, d_model)`. دوباره به`(N, n_heads, d_head)`کجا`d_head = d_model / n_heads`. به`(n_heads, N, d_head)`. .
+**Split.**اینو بگیر`X`شکل`(N, d_model)`. پروژه به Q، K، V هرکدوم شکل`(N, d_model)`. دوباره به`(N, n_heads, d_head)`کجا$d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$. به`(n_heads, N, d_head)`. .
 
 **Attend in parallel.**در هر سر توجه نقطه ای را تولید کنید.`(N, d_head)`سر ها در فرعي مکان هاي مختلف از گنجينه ها عمل ميکنن و هرگز در طول حساب توجه صحبت نميکنن
 
@@ -36,7 +36,7 @@
 | Grouped-query (GQA) | N | G (e.g. N/8) | Llama 2 70B, Llama 3+, Qwen 2+, Mistral |
 | Multi-head latent (MLA) | N | compressed to low-rank | DeepSeek-V2, V3 |
 
-GQA استاندارد پیش فرض مدرن است زیرا حافظه KV-cache را به یک عامل از `N/G`در حالی که کیفیت تقریبا کامل را حفظ می کند. MLA با فشرده سازی K / V به یک فضای پنهان، سپس پیش بینی مجدد در زمان محاسبه  هزینه FLOPs، ذخیره حافظه بسیار بیشتر می کند.
+GQA استاندارد پیش فرض مدرن است زیرا حافظه KV-cache را به یک عامل از $N/G$در حالی که کیفیت تقریبا کامل را حفظ می کند. MLA با فشرده سازی K / V به یک فضای پنهان، سپس پیش بینی مجدد در زمان محاسبه  هزینه FLOPs، ذخیره حافظه بسیار بیشتر می کند.
 
 ```figure
 multihead-split
@@ -129,7 +129,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 | Large (~1B) | 2048 | 16 | 128 |
 | Frontier (~70B) | 8192 | 64 | 128 |
 
-`d_head`تقریبا همیشه در 64 یا 128 فرود می آید. این واحد از مقدار یک سر می تواند "بینند". زیر 32 سقوط و سر شروع به مبارزه با عامل مقیاس بندی.`sqrt(d_head)`؛ بالاتر از 256 می رسی و مزایای "بسیاری از متخصصین کوچک" را از دست می دهی.
+`d_head`تقریبا همیشه در 64 یا 128 فرود می آید. این واحد از مقدار یک سر می تواند "بینند". زیر 32 سقوط و سر شروع به مبارزه با عامل مقیاس بندی.$\sqrt{d_{\text{head}}}$؛ بالاتر از 256 می رسی و مزایای "بسیاری از متخصصین کوچک" را از دست می دهی.
 
 ## -باده
 
@@ -145,7 +145,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Head | "A single attention circuit" | One Q/K/V projection of dimension `d_head = d_model / n_heads` with its own attention matrix. |
+| Head | "A single attention circuit" | One Q/K/V projection of dimension $d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$ with its own attention matrix. |
 | d_head | "Head dimension" | Per-head hidden width; almost always 64 or 128 in production. |
 | Split / combine | "Reshape tricks" | `(N, d_model) ↔ (n_heads, N, d_head)` reshape+transpose around attention. |
 | W_o | "Output projection" | `(d_model, d_model)` matrix applied after concatenating heads; where heads mix. |
