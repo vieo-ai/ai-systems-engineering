@@ -11,7 +11,7 @@
 ## اهداف یادگیری
 
 - پیاده سازی LoRA با تزریق ماتریس های آداپتور درجه پایین (A و B) به لایه های توجه مدل پیش از آموزش
-- محاسبه صرفه جویی پارامتر LoRA در مقابل تنظیم کامل: رتبه r با d_model dimension trains 2*r*d parameters به جای d^2
+- محاسبه صرفه جویی پارامتر LoRA در مقابل تنظیم کامل: رتبه $r$با$d_{\text{model}}$اندازه قطار ها$2 \cdot r \cdot d$پارامتر ها به جای $d^2$
 - تنظیم دقیق یک مدل با استفاده از QLoRA (4 بیت پایه کوانتزی + آداپتورهای LoRA) برای قرار دادن در حافظه GPU مصرف کننده
 - وزن های LoRA را به مدل پایه برای استفاده برگردانید و سرعت نتیجه گیری را با و بدون آداپتور مقایسه کنید
 
@@ -37,21 +37,21 @@
 
 این ریاضی است. یک لایه خطی استاندارد محاسبه می کند:
 
-```
+```math
 y = Wx
 ```
 
-در جایی که W یک ماتریس d_out x d_in است. برای یک 4096x4096 پروژکتور توجه، این 16،777,216 پارامتر است.
+کجا$W$یک$d_{\text{out}} \times d_{\text{in}}$برای یک 4096×4096 پروژکتور توجه، این 16،777,216 پارامتر است.
 
-LoRA W را منجمد می کند و تجزیه درجه پایین را اضافه می کند:
+لورا منجمد شده$W$و اضافه می کند یک تجزیه درجه پایین:
 
-```
+```math
 y = Wx + BAx
 ```
 
-جایی که B (d_out x r) و A (r x d_in) است. رتبه r بسیار کوچکتر از d است - معمولا 8, 16 یا 32.
+کجا$B$.$(d_{\text{out}} \times r)$و$A$.$(r \times d_{\text{in}})$. رتبه$r$خیلی کوچکتر از$d$-- معمولاً ۸، ۱۶ یا ۳۲
 
-برای r=16 در لایه 4096x4096:
+برای$r=16$در لایه 4096x4096:
 - پارامترهای اصلی: 4096 x 4096 = 16،777،216
 - پارامترهای LoRA: (4096 x 16) + (16 x 4096) = 65536 + 65536 = 131 072
 - کاهش: 131 072 / 16 777 216 = 0.78%
@@ -76,18 +76,18 @@ A با یک Gaussian تصادفی شروع می شود. B به صفر شروع �
 
 ### فاکتور مقیاس بندی: آلفا
 
-LoRA یک فاکتور مقیاس بندی الفا را معرفی می کند که کنترل می کند که تا چه اندازه بروزرسانی درجه پایین بر خروجی تأثیر می گذارد:
+لورا فاکتور مقیاس بندی را معرفی می کند$\alpha$که کنترل می کند که تا چه اندازه بروزرسانی درجه پایین بر محصول تاثیر می گذارد:
 
-```
-y = Wx + (alpha / r) * BAx
+```math
+y = Wx + \frac{\alpha}{r} \cdot BAx
 ```
 
-هنگامی که آلفا = r، مقیاس 1x است. هنگامی که آلفا = 2r (پیش فرض رایج) ، مقیاس 2x است. این هیپر پارامتر سرعت یادگیری مسیر LoRA را مستقل از سرعت یادگیری پایه کنترل می کند.
+چه وقت$\alpha = r$، مقیاس 1x است .$\alpha = 2r$این هیپر پارامتر سرعت یادگیری مسیر LoRA را مستقل از سرعت یادگیری پایه کنترل می کند.
 
 راهنمایی های عملی:
-- آلفا = 2 * رتبه یک کنوانسیون مشترک جامعه است (رنج اصلی استفاده شده در اکثر آزمایش ها آلفا = رتبه)
-- الف = رتبه 1x مقیاس بندی، محافظه کار اما پایدار
-- آلفا بالاتر به معنای بروزرسانی های بزرگتر در هر مرحله است که می تواند به سرعت به هم نزدیک شود یا باعث عدم ثبات شود
+- $\alpha = 2 \cdot \text{rank}$یک کنوانسیون مشترک جامعه است (وراق اصلی استفاده شده)$\alpha = \text{rank}$در اکثر آزمایشات)
+- $\alpha = \text{rank}$اندازه گیری 1x، محافظه کار اما پایدار
+- بالاتر$\alpha$یعنی بروزرسانی های بزرگتر در هر مرحله که می تواند به سرعت به هم نزدیک شود یا باعث عدم ثبات شود.
 
 ### کجا باید LoRA را بکار ببرید
 
@@ -104,7 +104,7 @@ y = Wx + (alpha / r) * BAx
 
 ### انتخاب رتبه
 
-رتبه r بیانگرانه ی سازگاری را کنترل می کند:
+رتبه$r$کنترل بیانگر بودن سازگاری:
 
 | Rank | Trainable Params (per layer) | Best For |
 |------|---------------------------|----------|
@@ -115,7 +115,7 @@ y = Wx + (alpha / r) * BAx
 | 64 | 524,288 | Diminishing returns for most tasks |
 | 128 | 1,048,576 | Rarely justified |
 
-Hu et al. نشان داد که r=4 در حال حاضر بیشتر سازگاری را برای وظایف ساده ضبط می کند. r=8 و r=16 رایج ترین انتخاب ها در عمل هستند. فراتر رفتن از r=64 به ندرت کیفیت را بهبود می بخشد و شروع به از دست دادن مزیت حافظه LoRA می کند.
+هوو و همکارانش این را نشان دادند$r=4$در حال حاضر بیشتر از سازگاری برای وظایف ساده را ضبط می کند. $r=8$و$r=16$این انتخاب ها در عمل رایج ترین انتخاب هستند.$r=64$به ندرت کیفیت را بهبود می بخشد و شروع به از دست دادن مزیت حافظه LoRA می کند.
 
 ### QLoRA: ۴ بیت کوانتزی + LoRA
 
@@ -148,7 +148,7 @@ QLoRA سه سهم فنی دارد:
 | QLoRA r=16 (NF4) | 47.5 | 6.61 | 13.4 |
 | QLoRA r=64 (NF4) | 48.1 | 6.70 | 14.2 |
 
-LoRA در r=16 در حدود 1٪ از تنظیم کامل در اکثر معیارها است. QLoRA در r=16 بخش دیگری از یک درصد را از دست می دهد. QLoRA در r=64 اساسا با تنظیم کامل مطابقت دارد در حالی که 90٪ حافظه کمتری استفاده می کند.
+لورا در$r=16$در حدود 1٪ از تنظیم کامل در اکثر شاخص های مرجع است.$r=16$در واقع، در هر زمان که یک درصد از دست دادن، یک بخش دیگر از یک درصد از دست می دهد.$r=64$اساساً با تنظیم کامل و با استفاده از ۹۰ درصد حافظه کمتر مطابقت دارد.
 
 ### هزینه های واقعی
 
@@ -183,7 +183,7 @@ QLoRA در یک GPU مصرف کننده کمتر از ناهار است. به ه
 
 1. **Keep them separate**: مدل پایه را بارگذاری کنید، آداپتور را بالا بارگذاری کنید. آداپتورهای مختلف را برای وظایف مختلف تغییر دهید. این روش چندین نوع اصلاح شده از یک مدل پایه را ارائه می دهید.
 
-2. **Merge them permanently**: محاسبه W' = W + (alpha/r) * BA و ذخیره نتیجه به عنوان یک مدل کامل جدید. مدل ادغام شده اندازه مشابه اصلی است. هیچ هزینه اخلاصی نیست. هیچ آداپتور برای مدیریت.
+2. **Merge them permanently**: محاسبه$W' = W + (\alpha/r) \cdot BA$و نتیجه را به عنوان یک مدل کامل جدید ذخیره کنید. مدل ادغام شده اندازه اصلی است. هیچ هزینه ای برای برداشت نیست. هیچ آداپتور برای مدیریت نیست.
 
 برای انجام وظایف متعدد (آداپتور پشتیبانی از مشتری، آداپتور کد، آداپتور ترجمه) ، آنها را جداگانه نگه دارید. برای انتشار یک مدل تخصصی، ترکیب کنید.
 
@@ -531,11 +531,11 @@ model.save_pretrained("./lora-adapter")
 | LoRA | "Efficient fine-tuning" | Low-Rank Adaptation: freeze base weights, train two small matrices A and B whose product approximates the full weight update |
 | QLoRA | "Fine-tune on a laptop" | Quantized LoRA: load the base model in 4-bit NF4, train LoRA adapters in fp16 on top, enabling 7B fine-tuning in 6GB VRAM |
 | Rank (r) | "How much the model can learn" | The inner dimension of the A and B matrices; controls expressiveness vs. parameter count |
-| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; alpha/r scales the adaptation's contribution to the final output |
+| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; $\alpha/r$ scales the adaptation's contribution to the final output |
 | NF4 | "4-bit quantization" | Normal Float 4: a 4-bit data type with quantization levels at normal distribution quantiles, optimal for neural network weights |
 | Adapter | "The small trained part" | The LoRA A and B matrices saved as a separate file (10-100MB), loadable on top of any copy of the base model |
 | Target modules | "Which layers to LoRA" | The specific linear layers (q_proj, v_proj, etc.) where LoRA adapters are injected |
-| Merging | "Bake it in" | Computing W + (alpha/r) * BA and replacing the original weight, eliminating the adapter overhead at inference |
+| Merging | "Bake it in" | Computing $W + (\alpha/r) \cdot BA$ and replacing the original weight, eliminating the adapter overhead at inference |
 | Paged optimizers | "Don't OOM during training" | Offloading optimizer states (Adam momentum, variance) to CPU when GPU memory is exhausted |
 | Catastrophic forgetting | "Fine-tuning broke everything else" | When updating all weights causes the model to lose previously learned capabilities |
 

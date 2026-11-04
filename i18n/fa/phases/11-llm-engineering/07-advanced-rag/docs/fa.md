@@ -89,7 +89,7 @@ graph LR
 - Jina-Reranker-v2 چند زبانی: وزن باز، بیش از 100 زبان
 - bge-reanker-v2-m3: وزن باز، خط پایه قوی
 - کراس کدر/ms-marco-MiniLM-L-6-v2: وزن باز، روی CPU برای نمونه سازی اجرا می شود
-- ColBERTv2 / Jina-ColBERT-v2: تعدد مجدد متریزی متقابل با تعدد دیر  O(توکین ها) نه O(دک) در زمان امتیاز
+- ColBERTv2 / Jina-ColBERT-v2: متقابل عمل دیرین رینکرهای چند متری$O(\text{tokens})$نه$O(\text{docs})$در زمان سنجش
 
 ### سوال تغییر
 

@@ -100,20 +100,20 @@ MTEB (Masssive Text Embedding Benchmark) v2 100+ کار را در سراسر ب�
 
 **Cosine similarity**: کوسین زاویه بین دو متری. از -1 (قابل) تا 1 (جهای یکسان) متفاوت است. اندازه را نادیده می گیرد - یک جمله 10 کلمه و یک سند 500 کلمه می تواند 1.0 را به دست آورد اگر آنها به سمت مشابه اشاره کنند. این پیش فرض برای 90٪ موارد استفاده است.
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**: محصول داخلی خام دو متری. مشابهی با مشابهی کوسین هنگامی که متری ها عادی می شوند (طول واحد). سریعتر برای محاسبه. گنجانده های OpenAI عادی می شوند، بنابراین محصول نقطه و کوسین رتبه بندی مشابه را می دهند.
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **Euclidean (L2) distance**: فاصله خط مستقیم در فضای بردار. کوچکتر = مشابهتر. حساس به تفاوت های بزرگی. زمانی استفاده کنید که موقعیت مطلق در فضا مهم باشد، نه فقط جهت.
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 چه زمانی باید از آن استفاده شود:
@@ -134,7 +134,7 @@ L2(a, b) = sqrt(sum((a_i - b_i)^2))
 2. لایه های بالای آن ها کمیاب هستند - ارتباطات طولانی بین خوشه های دور
 3. لایه های پایین باریک هستند - ارتباطات ذره ای نازک بین متری های نزدیک
 4. جستجو از طبقه بالا شروع می شود، به طمع به سمت پایین می رود تا بهبود یابد
-5. نتایج top-k را در زمان O(log n) به جای O(n) باز می آورد
+5. نتایج نزدیک به top-k را در $O(\log n)$زمان عوض از$O(n)$
 
 HNSW با کاهش دقت کوچک (معمولا 95 تا 99٪ بازپس) به افزایش سرعت عظیم معامله می کند. در 10 میلیون متری، نیروی خام ثانیه طول می کشد. HNSW میلی ثانیه طول می کشد.
 
@@ -491,7 +491,7 @@ embeddings = model.encode(["semantic search query", "another document"])
 | Embedding | "Text to numbers" | A dense vector where geometric proximity encodes semantic similarity |
 | Word2Vec | "The OG embedding" | 2013 model that learned word vectors by predicting context words; proved vector arithmetic encodes meaning |
 | Cosine similarity | "How similar are two vectors" | Cosine of the angle between vectors; 1 = identical direction, 0 = orthogonal, -1 = opposite |
-| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling O(log n) approximate nearest neighbor search |
+| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling $O(\log n)$ approximate nearest neighbor search |
 | Bi-encoder | "Embed separately, compare fast" | Encodes query and document independently into vectors; enables pre-computation and fast retrieval |
 | Cross-encoder | "Slow but accurate reranker" | Processes query-document pair jointly through the full model; higher accuracy, no pre-computation |
 | Matryoshka embeddings | "Truncatable vectors" | Embeddings trained so the first N dimensions capture the most important information, enabling variable-size storage |
