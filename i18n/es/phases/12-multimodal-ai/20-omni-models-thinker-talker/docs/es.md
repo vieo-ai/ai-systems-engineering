@@ -12,7 +12,7 @@
 - Divide la línea de inferencia en Pensador (razón del texto) y Hablador (sintesis del habla) y explique por qué funciona la transmisión paralela.
 - Calcular el presupuesto de tiempo a primer byte de audio (TTFAB) para una interacción de conversación, componente por componente.
 - Describa la posición de TMRoPE en línea con el tiempo codificando en la visión, el audio y el texto dentro del Pensador.
-- Nombren los tres patrones de conversación en tiempo real: medio duplex, turno, doble completo.
+- Nombre los dos patrones de conversación en tiempo real, medio duplex y doble completo, y explicar cómo el cambio de turno de VAD impulsa la transmisión de medio duplex.
 
 ## El problema
 
@@ -41,10 +41,10 @@ La separación es importante. El pensador tiene que ser grande para un buen razo
 
 Correr ambos en paralelo:
 
-1. El pensador emite un token de texto.
-2. El hablante consume t_i (a través de streaming) y emite tokens de habla s_i, s_{i+1}, ..., s_{i+k}.
+1. El pensador emite un token de texto .$t_i$¿ Qué ?
+2. El hablador consume .$t_i$(a través de transmisión) y emite tokens de voz $s_i, s_{i+1}, \ldots, s_{i+k}$¿ Qué ?
 3. El decodificador de voz consume tokens de voz a medida que vienen y emite muestras de audio.
-4. Para cuando Thinker esté en el token de texto, Talker ya ha transmitido audio para t_0..t_{i+2}.
+4. Para cuando el Pensador esté en el token de texto .$t_{i+3}$, Talker ya ha transmitido audio para$t_0, \ldots, t_{i+2}$¿ Qué ?
 
 ### Posiciones multimodal TMRoPE  alineadas en el tiempo
 
@@ -85,7 +85,7 @@ Para una interacción de transmisión típica:
 - Descodificación residual-VQ: 30 ms.
 - Descodificación de la forma de onda de habla: 50-80 ms.
 
-TTFAB total: 320-510ms en 7B, 600-900ms en 70B. La calidad fronteriza generalmente significa 70B +; de ahí la brecha de latencia fronteriza.
+TTFAB total: 320-490 ms en 7B, 600-900 ms en 70B. La calidad fronteriza generalmente significa 70B +; de ahí la brecha de latencia fronteriza.
 
 ### Matemáticas de la tasa de tokens
 
