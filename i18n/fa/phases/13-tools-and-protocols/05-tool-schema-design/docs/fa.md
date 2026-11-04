@@ -84,7 +84,7 @@ notes_search(query)
 ### طراحی پارامتر
 
 - **Enum every closed set.** `units: "celsius" | "fahrenheit"`نه`units: string`اينومها به مدل جهان ارزش هاي قابل قبول را ميگه
-- **Required vs optional.**حداقل مورد نیاز را مشخص کنید. همه چیز دیگر اختیاری است. حالت سخت OpenAI نیاز به هر زمینه در`required`؛ اضافه کردن یک `is_default: true`قانون قانون شما و اجازه دهید مدل آن را حذف کند.
+- **Required vs optional.**حداقل مورد نیاز را مشخص کنید. همه چیز دیگر اختیاری است. حالت سخت OpenAI نیاز به هر زمینه در`required`، پس مدل نمی تواند یکی را حذف کند. یک فیلد اختیاری را به عنوان یک اتحادیه با `null`و اجازه بده مدل بفرست`null`وقتی که ارزشش نیست.
 - **Typed IDs.** `note_id: string`خوبه ولی یه اضافه کنید`pattern`(`^note-[0-9]{8}$`) تا هالوژيني ها رو پيدا کنه
 - **No overly flexible types.**از اين اجتناب کن`type: any`مدل شکل ها رو تو ذهنش تحليل ميکنه
 - **Describe the field.** `{"type": "string", "description": "ISO 8601 date in UTC, e.g. 2026-04-22"}`. وصف بخشی از دستورات مدل است
