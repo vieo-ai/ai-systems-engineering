@@ -52,18 +52,20 @@ flowchart LR
 
 إن تصنيف ينتج `C`أرقام لكل صورة تسمى اللوجيتس. تطبيق softmax يحولها إلى توزيع الاحتمالات:
 
-```
-softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```math
+\mathop{\mathrm{softmax}}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
 ```
 
 القياس المتقاطع للاندروبي يقيس احتمال السجل السلبي للفئة الصحيحة:
 
-```
-CE(z, y) = -log( softmax(z)_y )
-        = -z_y + log( sum_j exp(z_j) )
+```math
+\begin{aligned}
+\mathrm{CE}(z, y) &= -\log\left( \mathop{\mathrm{softmax}}(z)_y \right) \\
+&= -z_y + \log\left( \sum_j \exp(z_j) \right)
+\end{aligned}
 ```
 
-النموذج اليمنى هو المستقر عدديا (الدوج-جميع-exp).`nn.CrossEntropyLoss`يضم softmax + NLL في عملية واحدة و يأخذ اللغات الخام مباشرة. تطبيق softmax بنفسك أولاً هو دائمًا تقريبًا خطأ  تقوم بحساب log(softmax(softmax(z)) ، كمية بلا معنى.
+النموذج اليمنى هو المستقر عدديا (الدوج-جميع-exp).`nn.CrossEntropyLoss`يضبط softmax + NLL في عملية واحدة و يأخذ اللوجيتات الخام مباشرة. تطبيق softmax بنفسك أولاً هو دائماً خطأ  تقوم بالحساب $\log(\mathop{\mathrm{softmax}}(\mathop{\mathrm{softmax}}(z)))$كمية لا معنى لها
 
 ### لماذا يعمل التوسع
 
@@ -98,14 +100,14 @@ Cutmix:
 
 ### تسليح اللوحات
 
-ابن عم الخلط بدلاً من التدريب ضد`[0, 0, 1, 0, 0]`، القطار ضد`[eps/C, eps/C, 1-eps, eps/C, eps/C]`لفترة صغيرة`eps`مثل 0.1. يمنع النموذج من إنتاج اللوجيتات الحادة التعسفي وتحسين التصفية دون تكلفة تقريبًا.`nn.CrossEntropyLoss(label_smoothing=0.1)`منذ "بيتورك 1.10".
+ابن عم الخلط بدلاً من التدريب ضد`[0, 0, 1, 0, 0]`، القطار ضد`[eps/C, eps/C, 1-eps+eps/C, eps/C, eps/C]`لفترة صغيرة`eps`مثل 0.1 (الهدف الحار واحد مختلط مع توزيع متساوي، لذلك لا يزال يصل إلى 1). يمنع النموذج من إنتاج اللوجيتات الحادة التعسفي وتحسين التصفية دون تكلفة تقريبًا.`nn.CrossEntropyLoss(label_smoothing=0.1)`منذ "بيتورك 1.10".
 
 ### تقييم خارج دقة
 
 الدقة الإجمالية تخفي عدم التوازن. تصنيف ثنائي 90-10 الذي يتوقع دائماً درجة الأغلبية 90٪. الأدوات التي تخبرك بالفعل بما يحدث:
 
 - **Per-class accuracy** رقم واحد لكل فئة؛ يظهر على الفور فئات أقل أداءً.
-- **Confusion matrix** شبكة C x C مع صف i col j = عدد من الفئة الحقيقية i المتوقعة كفئة j؛ والشوارع هي الصحيحة، والشوارع خارجها هي حيث يعيش نموذجك.
+- **Confusion matrix** $C \times C$شبكة مع صف $i$العقيد$j$= العدد الحقيقي للطبقة$i$متوقعة كدرجة$j$؛ المقطع هو الصحيح، خارج المقطع هو حيث يعيش نموذجك.
 - **Top-1 / Top-5** ما إذا كانت الفئة الصحيحة في أول 1 أو أفضل 5 توقعات ؛ Top-5 مهمة ل ImageNet لأن الفئات مثل "نورويتش تيريير" مقابل "نورفولك تيريير" هي غامضة حقا.
 - **Calibration (ECE)**هل توقعات الوقوف على الوقوف 0.8 تحصل على الصلاحية 80٪ من الوقت؟ الشبكات الحديثة أكثر ثقة منهجياً.
 
@@ -413,7 +415,7 @@ val_ds   = CIFAR10(root="./data", train=False, download=True, transform=eval_tf)
 | DataLoader | "The batcher" | Wraps a dataset with shuffling, batching, and (optional) multi-worker loading; gets blamed for half of training bugs |
 | Augmentation | "Random transforms" | Any pixel-level transform at training time that preserves the label; teaches invariances the CNN does not have natively |
 | Mixup / Cutmix | "Mix two images" | Blend both inputs and labels so the classifier learns smooth interpolations instead of hard boundaries |
-| Label smoothing | "Softer targets" | Replace one-hot with (1-eps, eps/(C-1), ...); improves calibration and slightly boosts accuracy |
+| Label smoothing | "Softer targets" | Replace one-hot with (1-eps+eps/C, eps/C, ...); improves calibration and slightly boosts accuracy |
 | Top-k accuracy | "Top-5" | The correct class is in the k highest-probability predictions; used on datasets with genuinely ambiguous classes |
 | Confusion matrix | "Where errors live" | C x C table where entry (i, j) counts images of true class i predicted as j; diagonal is right, off-diagonal tells you what to fix |
 

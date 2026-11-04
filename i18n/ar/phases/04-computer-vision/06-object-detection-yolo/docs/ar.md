@@ -74,11 +74,13 @@ At each grid cell, every anchor emits (tx, ty, tw, th, obj, c_1, ..., c_C).
 
 الخام`tx, ty, tw, th`ليست إحداثيات مربع، بل هي أهداف تراجع يجب تحويلها قبل التخطيط:
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`يحتفظ بالتعديلات المركزية داخل الخلية. `exp`يسمح للمقياس العريض بحرية من المرسوم دون تحويل إشارة. `stride`يُقَدِّم خطوات الشبكة إلى بيكسلات. هذه الخطوة في فك الشفرة هي نفسها في كل إصدار من YOLO منذ v2.
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 المقياس الشبيه العالمي للكشف بين مربعتين:
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 يعني متطابقة؛ IoU = 0 يعني عدم التداخل. IoU بين التنبؤ والصندوق الحقيقي الأساسي هو ما يقرر ما إذا كان التنبؤ يعتبر إيجابيًا صحيحًا (عادة IoU > = 0.5). IoU بين التنبؤين هو ما يستخدمه NMS للتقليص.
+$\mathrm{IoU} = 1$تعني نفس الشيء$\mathrm{IoU} = 0$يعني عدم التداخل. IoU بين التنبؤ والصندوق الحقيقي الأساسي هو ما يقرر ما إذا كان التنبؤ يعتبر إيجابيا حقيقيا (عادة$\mathrm{IoU} \ge 0.5$(). إن المعدل بين توقعاتين هو ما يستخدمه NMS للتقليد.
 
 ### القمع غير القصوى
 
@@ -113,11 +115,13 @@ NMS(boxes, scores, iou_threshold):
 
 خسارة YOLO هي ثلاثة خسائر مضافة مع الوزن:
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 تساهم الخلايا التي تحتوي على كائن فقط في خسائر التراجعة والتصنيف. تساهم الخلايا التي لا تحتوي على كائن فقط في خسارة الكائن (تعليم النموذج على الصمت). `lambda_noobj`عادة ما تكون صغيرة (~ 0.5) لأن الغالبية العظمى من الخلايا فارغة وإلا سيهيمن على الخسارة الكلية.
@@ -199,8 +203,10 @@ def encode(box_xyxy, cell_x, cell_y, stride, anchor_wh):
     cy = 0.5 * (y1 + y2)
     w = x2 - x1
     h = y2 - y1
-    tx = cx / stride - cell_x
-    ty = cy / stride - cell_y
+    off_x = np.clip(cx / stride - cell_x, 1e-6, 1 - 1e-6)
+    off_y = np.clip(cy / stride - cell_y, 1e-6, 1 - 1e-6)
+    tx = np.log(off_x / (1 - off_x))
+    ty = np.log(off_y / (1 - off_y))
     tw = np.log(w / anchor_wh[0] + 1e-8)
     th = np.log(h / anchor_wh[1] + 1e-8)
     return np.array([tx, ty, tw, th])
@@ -219,7 +225,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 ```
 
-الاختبار: تشفير مربع ثم فك تشفير يجب أن تحصل على شيء قريب جدا من الأصلي (حتى العكس sigmoid ليس قابلا للتحويل بشكل كامل عندما `tx`ليس في النطاق بعد السجماوي).
+الاختبار: تشفير مربع مركزها داخل الخلية، ثم فك تشفير، ويجب أن تحصل على مربع الأصلي مرة أخرى إلى خطأ العائمة. `encode`تخزين المقاطع المركزية كمناسبة، والعكس من `sigmoid`في`decode`. المقطوعة تبقي اللغز محدودة ؛ مركز على حافة الخلية تحرك أكثر من`1e-6`الخلايا`assign_targets`تحتها تخزن نفس المواقع، لذلك الرأس تدير في الفضاء الذي `decode`يتوقع
 
 ### الخطوة الرابعة: رأس يولو الحد الأدنى
 
@@ -269,8 +275,10 @@ def assign_targets(boxes_xyxy, classes, anchors, stride, grid_size, num_classes)
         best = int(np.argmax(ious))
         aw, ah = anchors[best]
 
-        target[gy, gx, best, 0] = cx / stride - gx
-        target[gy, gx, best, 1] = cy / stride - gy
+        off_x = np.clip(cx / stride - gx, 1e-6, 1 - 1e-6)
+        off_y = np.clip(cy / stride - gy, 1e-6, 1 - 1e-6)
+        target[gy, gx, best, 0] = np.log(off_x / (1 - off_x))
+        target[gy, gx, best, 1] = np.log(off_y / (1 - off_y))
         target[gy, gx, best, 2] = np.log(bw / aw + 1e-8)
         target[gy, gx, best, 3] = np.log(bh / ah + 1e-8)
         target[gy, gx, best, 4] = 1.0
@@ -315,7 +323,7 @@ def yolo_loss(pred, target, has_obj, lambda_coord=5.0, lambda_obj=1.0, lambda_no
                    "obj_neg": loss_obj_neg.item(), "cls": loss_cls.item()}
 ```
 
-خمسة مُعايير فائقة التي يُحرم بها كل دراسة "يوولو" أو تُسحفها`lambda_coord=5, lambda_noobj=0.5`يعكس ورقة YOLOv1 الأصلية ومازال يعمل كخفض معقول.
+أربعة أوزان خسارة كل دراسة يوولو إما تشفير أو مسح.`lambda_coord=5, lambda_noobj=0.5`يعكس ورقة YOLOv1 الأصلية ومازال يعمل كخفض معقول.
 
 ### الخطوة 7: خط أنابيب الإستدلال
 
