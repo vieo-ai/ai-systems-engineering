@@ -49,15 +49,14 @@ Her bir (resim, soru, cevap) için, resmini kodlayın, soruyu yerleştirin, deko
 
 ### BLEU-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 Nerede ?`p_n`değiştirilmiş n-gram doğruluğu (herhangi bir referansta bulunan üretilen n-gramların toplam üretilen n-gram ile bölünmüş kesilmiş sayısı) ve `BP`Kısa süreli ceza:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 Küçük örnekler için yumuşatma gerekir.`p_n`Uygulama, düşük sayımlı rejimler için en güvenli varsayılan olan Chen ve Cherry "metodu 1" (herhangi bir sıfır sayımı için sayıcı ve isimlendiriciye 1 ekle) kullanır.
@@ -109,7 +108,7 @@ python3 code/main.py
 
 Her metrik doğrudan bir üretim referans değerine yerleştirir:
 
-- **Retrieval.**MS-COCO 5K val, Flickr30K, ImageNet sıfır çekim hepsi aynı benzerlik matrisinde R@K sorunlarıdır.
+- **Retrieval.**MS-COCO 5K val ve Flickr30K aynı benzerlik matrisi üzerinde R@K sorunlarıdır. ImageNet sıfır çekim aynı matrisi de kullanır, her sınıf için bir istek yerleştirme ile, ancak sınıf isteklerine göre R@1 olan üst-1 sınıflandırma doğruluğunu bildirir. Sentetik eval'i gerçek dosyalarla değiştirin ve işlev imzası değişmez.
 - **VQA.**VQA v2, GQA, OK-VQA aynı tam eşleşen şekli kullanır (VQA v2 için tek cevap EM yerine yumuşak acc ile).
 - **BLEU-4.**MS-COCO başlıklı, NoCaps, Flickr30K başlıklı hepsi BLEU-4 artı CIDEr ve METEOR kullanıyor. CIDEr eklemek bir işlev daha.
 
@@ -142,7 +141,7 @@ python3 -m unittest code/test_main.py
 
 4. R@K'nin yanında hesaplama ortalama karşılıklı sıralama (MRR) MRR, doğru öğenin üst K'nin ötesinde yer aldığı yere karşı hassasdır; R@K, üst K'ye düşüp yer aldığı yere karşı hassasdır.
 
-5. Evalüasyonu eğitim sırasında beş kontrol noktasında (addım 0, 10, 20, 30, 40, 50) çalıştırın ve öğrenme eğriyi çizin.
+5. Evalüasyonu eğitim sırasında altı kontrol noktasında (addım 0, 10, 20, 30, 40, 50) çalıştırın ve öğrenme eğriyi çizin.
 
 ## Anahtar Terimler
 
