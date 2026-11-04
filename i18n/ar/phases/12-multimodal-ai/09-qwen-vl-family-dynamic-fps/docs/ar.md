@@ -53,7 +53,7 @@
 
 كانت المقاطعة الكبرى في Qwen2.5VL هي الفيديو. FPS الديناميكي ليس فقط "مختبر المزيد من الإطارات عند الحاجة".
 
-- رموز الوقت المطلقة بدلاً من مؤشرات الموقف (الإطار 0، 1، 2...) ، استخدموا طوابع الوقت الفعلية. "في 0: 04, القط يقفز". النموذج يرى `<time>0.04</time>`الوهم المتداخل مع الوهم الإطار.
+- الوقت المطلق في أجهزة تعريف الموقف. بدلاً من مؤشرات الإطار (إطار 0, 1, 2...) ، يتبع المحور الزمني من M-RoPE العلامات الزمنية الفعلية ، بحيث تتتبع الفجوة بين أجهزة تعريف الإطارين الثواني بينها. "في 0:04 ، يقفز القط". لا توجد رموز نصية إضافية تحمل الوقت ، لذلك لا يضيف التشفير طول تسلسل.
 - FPS ديناميكي. عينة في 1 FPS لقطات بطيئة، 4 + FPS للعمل. المستخدم أو المدرب يختار؛ M-RoPE يتكيف.
 - الاهتمام بالمركز في التلفزيون. يتم توزيع الاهتمام الفضائي على النافذة (المحلي داخل الكتل) من أجل التدفق؛ الاهتمام العالمي كل بضع طبقات.
 - صيغة خروج JSON الصريحة. تدرب على أداة الاتصال البيانات: "{\"أداة\": \"نقر\", \"مخططات\": [380, 220]}". وكيل جاهز خارج مربع.
@@ -71,10 +71,12 @@ Qwen3-VL هو تحديث تدريجي يوحد بدلاً من إعادة الا
 
 كلاسيكية روبي يدور استفسار `q`من الامتداد`d`حسب الموقف`m`باستخدام إحداثيات مُزدوجة:
 
-```
-q_rot[2i]   = q[2i]   * cos(m * theta_i) - q[2i+1] * sin(m * theta_i)
-q_rot[2i+1] = q[2i]   * sin(m * theta_i) + q[2i+1] * cos(m * theta_i)
-theta_i     = 10000^(-2i/d)
+```math
+\begin{aligned}
+q_{\text{rot}}[2i] &= q[2i] \cos(m \theta_i) - q[2i+1] \sin(m \theta_i) \\
+q_{\text{rot}}[2i+1] &= q[2i] \sin(m \theta_i) + q[2i+1] \cos(m \theta_i) \\
+\theta_i &= 10000^{-2i/d}
+\end{aligned}
 ```
 
 M-RoPE تقسم الضوء الخفي إلى ثلاث فصائل`d = 96`. تمنح 32 ضيقة إلى الزمني، 32 إلى الطول، 32 إلى ال عرض. كل شريط يدور بموقف محور خاص به. تصل مساحة في (t=5، h=10, w=20) إلى دورانات `R_t(5)`،`R_h(10)`،`R_w(20)`ويتم تطبيقها على ثلاث فصائل
@@ -90,7 +92,7 @@ M-RoPE تقسم الضوء الخفي إلى ثلاث فصائل`d = 96`. تمن
 1. احسب أقصى عدد المكاسب التي تستطيع تحملها:`fps_max = B / (T * tokens_per_frame)`. . .
 2. اختر هدف FPS من`{1, 2, 4, 8}`هذا يرضي`fps <= fps_max`. . .
 3. إذا كان الحركة مرتفعاً (تطلبات الطاقة البصرية أو الطلبات المستخدمية الصريحة) ، اختر FPS أعلى. إذا كان الحركة منخفضة، اختر أقل.
-4. عينة متساوية في الموقع المختار`<time>t</time>`الارقام بين الإطارات
+4. عينة متساوية في FPS المختار؛ حدد كل إطار M-RoPE ID الزمني من طابع الوقت في ثواني.
 
 Qwen2.5 - VL تدرب هذه المنطق ضمنياً ، عند الاستنتاج يسيطر المستخدم عبر `fps`المعلم: تسلسل عمل 60 ثانية عند 4 FPS مع 81 رمزا لكل إطار = 19440 رمزا، قابلة للإدارة في سياق 32k.
 
@@ -145,7 +147,7 @@ mm-mrope-axes
 |------|-----------------|------------------------|
 | M-RoPE | "Multimodal RoPE" | 3D rotary position embedding with temporal, height, and width bands in the hidden dim |
 | Dynamic FPS | "Smart sampling" | Frame sampling rate chosen per video based on motion, duration, and token budget |
-| Absolute time token | "Timestamp token" | `<time>t</time>` interleaved in the sequence so the model sees actual seconds not frame index |
+| Absolute time encoding | "Time-aligned M-RoPE" | Temporal position IDs set from each frame's timestamp, so the model sees actual seconds, not frame index, with no extra tokens |
 | Window attention | "Local attention" | Spatial self-attention restricted to small windows for speed; global attention added periodically |
 | Structured agent output | "JSON mode" | Training data supervision teaching the VLM to emit parseable JSON with coords and tool names |
 | min_pixels / max_pixels | "Resolution bounds" | Per-request Qwen2.5-VL controls bounding total pixel count and therefore token count |
