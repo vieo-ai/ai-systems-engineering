@@ -49,15 +49,14 @@ Pour chaque image (image, question, réponse), encodez l'image, embladez la ques
 
 ### Le projet de loi
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 Où ?`p_n`est la précision n-gramme modifiée (compte réduit des n-grammes générés qui apparaissent dans toute référence, divisé par le total des n-grammes générés), et `BP`est la peine de breveté:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 Le raffinage est nécessaire pour les petits échantillons où certains `p_n`La mise en œuvre utilise la méthode " Chen et Cherry " 1 (ajouter 1 au numérateur et au dénominateur pour tout compte zéro), qui est la méthode par défaut la plus sûre pour les régimes à faible nombre.
@@ -109,7 +108,7 @@ Résultats: le tableau métrique avant/après montre une amélioration de la ré
 
 Chaque métrique est directement cartographiée sur un indice de référence de production:
 
-- **Retrieval.**MS-COCO 5K val, Flickr30K, ImageNet zero-shot sont tous des problèmes R@K sur la même matrice de similitude.
+- **Retrieval.**MS-COCO 5K val et Flickr30K sont des problèmes R@K sur la même matrice de similitude. ImageNet Zero-shot utilise cette matrice aussi, avec une intégration de prompt par classe, mais il rapporte une précision de classification top-1, qui est R@1 sur les demandes de classe.
 - **VQA.**VQA v2, GQA, OK-VQA utilisent la même forme de correspondance exacte (avec l'accélération douce au lieu de l'EM à réponse unique pour VQA v2).
 - **BLEU-4.**Les sous-titres MS-COCO, NoCaps, Flickr30K utilisent tous BLEU-4 plus CIDER et METEOR.
 
@@ -142,7 +141,7 @@ python3 -m unittest code/test_main.py
 
 4. Compute la moyenne de rang réciproque (MRR) à côté de R@K. MRR est sensible à l'endroit où l'élément correct dépasse le K supérieur; R@K est sensible à la question de savoir s'il dépasse le K supérieur.
 
-5. Exécutez l'évaluation sur le modèle à cinq points de contrôle pendant la formation (étape 0, 10, 20, 30, 40, 50) et tracez la courbe d'apprentissage.
+5. Exécutez l'évaluation sur le modèle à six points de contrôle pendant la formation (étape 0, 10, 20, 30, 40, 50) et tracez la courbe d'apprentissage.
 
 ## Les termes clés
 
