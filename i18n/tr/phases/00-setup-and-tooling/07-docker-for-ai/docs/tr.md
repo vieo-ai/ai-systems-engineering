@@ -375,6 +375,16 @@ docker logs -f <container_id>
 3. Ekle`flask`Dockerfile'e, yeniden inşa edin ve port 5000'de basit bir API sunucusu çalıştırın.`-p 5000:5000`
 4. Resim boyutunu ölç`docker images`Bas resimini değiştirmeye çalış .`devel`- ...`runtime`Ve boyutları karşılaştır
 
+### İpuçlar
+
+**Exercise 1.**Bu yüzden inşa et .`docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`Dersten komut, sonra içeriye aktarmayı çalıştır `docker run --rm ai-dev`Mac'te, çıkma.`--gpus all`Desteğin, "Büyük bir şey" ile başlayan bir versiyonu basması gerekir.`2.6.0`- Evet .
+
+**Exercise 2.**Çık .`docker compose up -d`- ... ...`code/`klasör, sonra `ai-dev`hizmetleri ile`docker compose exec ai-dev bash`İçeride, koş.`curl http://qdrant:6333/collections`JSON cevabı, hizmet adı oluşturma ağında çözülür demektir.
+
+**Exercise 3.**Bir ekle`RUN pip install flask`Dockerfile'e bir hat atın, yeniden oluşturun ve sunucuyu `host="0.0.0.0"`, çünkü konteyner içindeki localhost'a bağlı bir sunucu dışarıdan erişilemez.`http://localhost:5000`Port haritasının çalışmadığını doğrultmak için makineye.
+
+**Exercise 4.**Çık .`docker images ai-dev`Ve boyut sütunu yaz.`devel`- ...`runtime`- ... ...`FROM`çizgi, yeni bir etiketle inşa edin ve iki boyutu karşılaştırın; çalıştırma süresi görüntüsü, toplayıcıları ve başlıkları bırakır.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |

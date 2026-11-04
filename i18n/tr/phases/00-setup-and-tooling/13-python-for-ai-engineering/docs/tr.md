@@ -1029,6 +1029,18 @@ Her bulguyu bir yer, sorun ve çözümle rapor eder.
 4. Yazmın .`matvec(matrix, vector)`Temiz Python ve NumPy'de.`best_time`NumPy'nin makinenizde daha hızlı hale geldiği boyutu bul.
 5. Konsept'ten yapı taramasını yaz.`ast.parse`ve `ast.walk`her dosyada `phases/*/*/code/*.py`İçinde bulunan dosyaları say .`ast.ListComp`- Evet .`ast.Yield`ve`ast.With`, ve sayımlarını masanın karşılaştır.
 
+### İpuçlar
+
+**Exercise 1.**İçe aktarım`run_demo`-`code/main.py`Ve onu da `seed=7`ve ile`seed=8`, sonra her iki sonuç da  ile basın .`format_report`. Bilgi değerleri rastgele değişir; bölünme boyutları sadece `n`ve `test_fraction`, böylece aynı kalırlar.
+
+**Exercise 2.**Önce listeyi bir kopyasını sıralayın, sonra orta öğeyi eşsiz uzunluklar için ve iki orta öğenin ortalamasını çift uzunluklar için alın.`statistics.median` gibi listelerde`[3, 1, 2]`ve `[4, 1, 3, 2]`; her ikisi de aynı sayıları vermeli.
+
+**Exercise 3.**Oku `load_records`İçeride`code/main.py`Ve parsing adımını tutmak, ama `yield`Her biri`Record`Bir listeye eklemek yerine kullanın.`save_records`- Evet .`make_dataset(200_000)`Dosyayı oluşturmak için, sonra karşılaştırın.`peak_bytes(lambda: load_records(path))`- Evet .`peak_bytes(lambda: sum(1 for _ in your_generator(path)))`. Generatör çağırabilirlik içinde tüketilmelidir, veya `peak_bytes`Sadece yaratılışını ölçüyor.
+
+**Exercise 4.**Kullanım`dot`saf Python sürümünün modeli olarak ve her satır için bir kez çağırın, sonra kullanın `np.array(matrix) @ np.array(vector)`NumPy için.`best_time`ve her boyut için bir tablo satırı basın; iki sonuç zamanları karşılaştırmadan önce eşit olmalıdır.
+
+**Exercise 5.**Her dosyayı oku `Path.read_text`, analizle `ast.parse`ve kullanmak`any(isinstance(node, ast.ListComp) for node in ast.walk(tree))`Her dosyayı bir kez sayın, çünkü Konsep'teki tablo dosya sayıyor.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it means |

@@ -220,3 +220,11 @@ Bakın .`outputs/prompt-env-check.md`Yapay zeka asistanlarının çevre sorunlar
 1. Doğrulama senaryosunu çalıştır ve herhangi bir hataları düzelt
 2. Bu ders için Python sanal ortamı oluşturun ve PyTorch yükleyin
 3. Dört dilde "hello world" yaz ve her birini çalıştır
+
+### İpuçlar
+
+**Exercise 1.**Çık .`python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner`Bu test, senaryoyu tekrar çalıştırdığınızda ve gerekli tüm araştırmaların geçtiği zaman yapılır.
+
+**Exercise 2.**Çevreyi `uv venv`deposu kökünde, onu etkinleştirin, sonra pyTorch'u pyTorch'u, donanımınıza uyan 6. Adım komutla yükleyin.`python -c "import torch; print(torch.__version__)"`çevre içinde; bir versiyon numarası, çalıştırılan kurulum anlamına gelir.
+
+**Exercise 3.**The Concept'deki dört çalıştırma süresini kullanın: Python, Node.js'teki TypeScript, Rust ve Julia. Her biri için küçük bir dosya yazın ve kullanın `python3`- Evet .`npx tsx`(Node.js bir `.ts`dosya doğrudan), `cargo run`veya `rustc`ve`julia`Her atış mesajınızı yazdırmalı ve 0 kodu ile çıkmalısınız.
