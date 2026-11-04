@@ -36,8 +36,8 @@ Para cada consulta, la NSA ejecuta la atención tres veces, contra tres vistas d
 
 Las tres salidas de la rama se combinan a través de una puerta de posición aprendida:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
+```math
+\text{out} = g_{\text{cmp}} \cdot \text{out}_{\text{cmp}} + g_{\text{sel}} \cdot \text{out}_{\text{sel}} + g_{\text{win}} \cdot \text{out}_{\text{win}}
 ```
 
 `g_cmp, g_sel, g_win`No tienen que sumar a 1  pueden pesar ramas de forma independiente.
@@ -46,7 +46,7 @@ out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
 
 El paso de selección (bloques de la parte superior de la K) es discreto. Las operaciones discretas rompen el flujo de gradiente.
 
-La NSA evita esto: la atención de ramas comprimidas es una atención de granos gruesos diferenciables en toda la secuencia. La operación top-k sólo reutiliza las puntuaciones de atención de la rama comprimida para elegir qué bloques de granos finos cargar. Los gradientes fluyen a través de las puntuaciones de ramas comprimidas (que influyen tanto en la salida comprimida como en la lógica de selección), y la contribución de los bloques seleccionados a la salida final también es diferenciable. El no diferenciable `top_k`La operación es una no-op en el gráfico computacional de adelante  sólo controla qué bloques se cargan de la memoria.
+La NSA evita esto: la atención de ramas comprimidas es una atención de granos gruesos diferenciables en toda la secuencia. La operación top-k sólo reutiliza las puntuaciones de atención de la rama comprimida para elegir qué bloques de granos finos cargar. Los gradientes alcanzan las puntuaciones de las ramas comprimidas a través de la propia salida de la rama comprimida, no a través de la elección de bloques. Dentro de los bloques elegidos, la atención sobre las claves y valores seleccionados es la atención ordinaria, por lo que su contribución al resultado final también es diferenciable. El `top_k`La elección del índice en sí no obtiene ningún gradiente: solo controla qué bloques se cargan de la memoria.
 
 Esta es la razón por la cual la NSA puede ser utilizada en el pre-entrenamiento de extremo a extremo. El modelo aprende a dirigir la información a través de las tres ramas conjuntamente, produciendo un patrón escaso que en inferencia realmente entrega el acelerado prometido.
 
@@ -171,7 +171,7 @@ Esta lección produce`outputs/skill-nsa-integrator.md`. Dado una especificación
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
+| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in $O(N/l)$ keys per query |
 | Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
 | Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
 | Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |

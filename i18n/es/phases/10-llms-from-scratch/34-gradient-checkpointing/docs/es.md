@@ -11,7 +11,7 @@
 
 El entrenamiento de un transformador almacena, para cada capa, las entradas de cada operación que se diferencia hacia atrás: las entradas de atención, las proyecciones Q/K/V, la salida de softmax, las entradas FFN, las salidas normales y el flujo residual.`d`, longitud de la secuencia `L`, lote `B`, esto es por orden de`12 * B * L * d`flotan por capa.
 
-Para`d=8192, L=8192, B=1`, es 800 MB / capa en BF16. Un modelo de 64 capas es 51 GB de activaciones  y eso es antes de que se multiplica por el tamaño del microbatch, antes de que se añade la atención-softmax intermedios (`L^2`y antes de que se factoren las copias parciales tensor-paralelo.
+Para`d=8192, L=8192, B=1`, es aproximadamente 805M valores, o 1.6 GB / capa en BF16. un modelo de 64 capas es aproximadamente 103 GB de activaciones, y eso es antes de que se multiplica por el tamaño del microbatch, antes de que se añade la atención-softmax intermedios (`L^2`y antes de que se factoren las copias parciales tensor-paralelo.
 
 El proyecto de ley de dos caras: los pesos BF16 más el estado de optimización pueden caber en 80 GB, pero las activaciones te empujan más allá. El punto de control gradual (también conocido como recomputo de activación) es la solución estándar. Deja caer la mayoría de las activaciones; vuelve a avanzar durante el retroceso para recuperarlas. Costo: FLOPs adicionales. Beneficio: caídas de memoria por la proporción de los segmentos de los puntos de control a las capas totales.
 
@@ -37,13 +37,13 @@ Ejemplo: Transformador de 32 capas dividido en 32 segmentos de 1 capa cada uno.
 - Memoria: 32 entradas de capas (pequeñas) vs 32 * (volumen de activación por capas) (enorme).
 - Computación adicional: 1 paso más adelante por segmento, es decir, ~33% más FLOPs hacia adelante en total (ya que el retroceso es 2 veces hacia adelante, el paso completo se convierte en 1 + 1 + 2 = 4 unidades en lugar de 1 + 2 = 3).
 
-Esta es la receta original de Chen et al. 2016: un punto de control cada `sqrt(L)`Para L=64, eso es 8 puntos de control.
+Esta es la receta original de Chen et al. 2016: un punto de control cada `sqrt(L)`Las capas para equilibrar memoria y computación.$L=64$, eso es 8 puestos de control.
 
 ### Control selectivo (Korthikanti 2022)
 
 No todas las activaciones cuestan lo mismo.`B*L*L*heads`La activación oculta de FFN es `B*L*4d`Para secuencias largas, el softmax domina.
 
-El control selectivo mantiene las activaciones baratas para almacenar (proyecciones lineales, residuos) y recalcula sólo las costosas (atención).
+El control selectivo mantiene las activaciones baratas para almacenar (proyecciones lineales, residuos) y recalcula sólo las costosas (atención).$O(L^2)$¿Qué es eso?
 
 Megatron-Core implementa esto como recomputo de activación "selectiva".
 
@@ -293,8 +293,8 @@ Esta lección produce`outputs/prompt-activation-recompute-policy.md` un prompt q
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
-| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
+| Attention-softmax volume | "The O(L^2) problem" | $L^2 \cdot \text{heads} \cdot \text{batch}$ floats; dominates activation memory at long contexts |
 
 ## Leer más
 

@@ -36,8 +36,8 @@ Una buena versión vale 2 veces más velocidad que una versión barata. EAGLE, E
 
 - ¿ Qué ?`α`Se calcula que el valor de la moneda de mercado de la moneda de mercado es el valor de la moneda de mercado de la moneda de mercado de la moneda de mercado de la moneda de mercado de la moneda de mercado de la moneda de mercado de la moneda de la Unión.`c = cost(draft) / cost(verifier)`El número esperado de tokens aceptados por verificador a plazo es:
 
-```
-E[accepted] = (1 - α^(N+1)) / (1 - α)
+```math
+\mathbb{E}[\text{accepted}] = \frac{1 - \alpha^{N+1}}{1 - \alpha}
 ```
 
 El tiempo total esperado de pared por token aceptado es `(N * c + 1) / E[accepted]`Minimizar eso con respecto a`N`Y obtienes el punto dulce.`α = 0.8, c = 0.05`: óptimo `N`Es alrededor de 57, velocidad es 3.2x.`α = 0.95, c = 0.02`: óptimo `N`es alrededor de 8×10, la aceleración empuja 5×.
@@ -70,6 +70,8 @@ Para la búsqueda de árboles EAGLE-2, el verificador ejecuta la atención con u
 | EAGLE-2 | EAGLE-1 + dynamic draft tree | 0.80-0.88 | 3-4× | ~60B tokens |
 | EAGLE-3 | Multi-layer feature fusion + TTT | 0.88-0.92 | 3.5-6.5× | ~60-200B tokens |
 | Lookahead | No draft (Jacobi iteration) | N/A | 1.3-1.6× | None |
+
+El `α`La columna es la tasa de aceptación por token a lo largo de la ruta aceptada, en los puntos de referencia de chat, con un borrador entrenado en datos de chat correspondientes. Es la banda superior. La fase 10 · 25 cita 0,82 para EAGLE-3 de una configuración diferente, y la fase 17 · 05 planea lanzamientos de producción con 0,6 a 0,8 en el chat general. Medida `α`en su propio tráfico antes de elegir`N`¿ Qué ?
 
 En 2026 producción: vLLM y SGLang por defecto a EAGLE-3 cuando esté disponible, EAGLE-2 de lo contrario. TensorRT-LLM tiene la ruta Medusa más rápida para los modelos públicos de Meta y NVIDIA. llama.cpp envío el borrador de vainilla para las implementaciones de CPU.
 
