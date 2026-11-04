@@ -36,7 +36,7 @@ Coreference çözünürlüğü, aynı gerçek dünya varlığına atıfta buluna
 **Architectures.**
 
 1. **Rule-based (Hobbs, 1978).**Yerim kurallarını kullanarak sözcük çözünürlüğü, güzel bir başlangıç, sözcüklerle çarpışmak şaşırtıcı derecede zor.
-2. **Mention-pair classifier.**Her iki isim için (m_i, m_j), daha çok isimlerin olup olmadığını tahmin edin.
+2. **Mention-pair classifier.**Her iki söz için .$(m_i, m_j)$- 2016'dan önceki standartlar, geçici kapanışla gruplandırılmış.
 3. **Mention-ranking.**Her bir anket için adayların öncesini sıralayın ( "öncesini yok" da dahil olmak üzere).
 4. **Span-based end-to-end (Lee et al., 2017).**Transformer kodlayıcı. Tüm adaylık alanlarını uzunluk kapısına kadar sayın. Notları belirtin. Her alan için öntemel olasılık tahmin edin. Açgözlülükle toplayın. Modern öntanımlı.
 5. **Generative (2024+).**LLM'yi başlatmak: "Bu metinde ve öncesinde bulunan her isimleri listele".
@@ -61,14 +61,14 @@ coref-links
 ```python
 import spacy
 nlp = spacy.load("en_coreference_web_trf")   # experimental model
-doc = nlp("Apple announced new products. The company said they would ship soon.")
+doc = nlp("Apple announced new products. The company said it would ship them soon.")
 for cluster in doc._.coref_clusters:
     print(cluster, "->", [m.text for m in cluster])
 ```
 
 Uzun bir belgeye göre şöyle bir şey olur:
-- Cluster 1: [Apple, Şirket, onlar]
-- Grup 2: [yeni ürünler]
+- Cluster 1: [Apple, Şirket, it]
+- Grup 2: [yeni ürünler, onlar]
 
 ### Adım 2: Kurallara dayalı isim çözücü (öğretim)
 

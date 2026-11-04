@@ -23,9 +23,11 @@ Bu ders, sıfırdan kelimelerden bir çanta oluşturur, sonra TF-IDF, sonra üç
 
 **TF-IDF**Bu, bir tek belgeye ait bir kelime, yani bir sinyal, yani bir kelime.
 
-```
-TF-IDF(w, d) = TF(w, d) * IDF(w)
-             = count(w in d) / |d| * log(N / df(w))
+```math
+\begin{aligned}
+\text{TF-IDF}(w, d) &= \text{TF}(w, d) \cdot \text{IDF}(w) \\
+&= \frac{\mathop{\mathrm{count}}(w \text{ in } d)}{|d|} \cdot \log\frac{N}{\mathop{\mathrm{df}}(w)}
+\end{aligned}
 ```
 
 Nerede ?`TF`belgede terim sıklığıdır, `df`belgelerin sıklığı (sözü içeren kaç belge),`N`Bu, toplam belgeler.`log`Her yerde bulunan kelimelerin ağırlığını sınırlı tutar.
@@ -124,7 +126,7 @@ def tfidf(bow_matrix):
 >>> tfidf(bow)
 ```
 
-Üç belge, beş kelime kelime (`the`- Evet .`cat`- Evet .`sat`- Evet .`dog`- Evet .`ran` ).`the`Üçünde de görülüyor, bu yüzden IDF'si düşük.`dog`Vectörler nadir (çoğu giriş küçüktür) ve ayrımcı kelimeler pop.
+Üç belge, beş kelime kelime (`the`- Evet .`cat`- Evet .`sat`- Evet .`dog`- Evet .`ran` ).`the`Üçünde de görülüyor, bu yüzden IDF'si düşük.`dog`Bu, bir kez daha çok sözcüklü bir kelime ve bu vektörlerin sayısı çok azdır.
 
 ### Adım 5: L2- sırayı normalleştir
 
