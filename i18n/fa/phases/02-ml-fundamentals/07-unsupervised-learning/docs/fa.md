@@ -58,9 +58,9 @@ K-Means داده ها را به طور دقیق به خوشه های K تقسی�
 
 دو روش استاندارد:
 
-**Elbow method:**K-Means را اجرا کنید برای K = 1, 2, 3, ..., n. سست بودن پلاوت در مقابل K. دنبال "کعب" باشید که در آن اضافه کردن دسته های بیشتر باعث کاهش سست بودن به طور قابل توجهی می شود.
+**Elbow method:**راه اندازي K-Means رو براي$K = 1, 2, 3, \ldots, n$. سست بودن نقشه به مقابل K. دنبال "کعب" باشید که اضافه کردن تعداد بیشتری از خوشه ها باعث کاهش سست بودن به طور قابل توجهی می شود.
 
-**Silhouette score:**برای هر نقطه، اندازه گیری کنید که چقدر شبیه به خوشه خود (a) در مقابل نزدیکترین خوشه دیگر (b) است. ضریب شیش (b - a) / max(a, b) ، از -1 (کلاستر اشتباه) تا +1 (با خوش خوشه جمع شده) متفاوت است. میانگین در سراسر نقاط برای یک نمره جهانی.
+**Silhouette score:**برای هر نقطه، اندازه گیری کنید که چقدر شبیه به کلستر خود است ($a$) در مقابل نزدیک ترین گروه دیگر ($b$. .عادل سیلوئیت$(b - a) / \max(a, b)$, از -1 (گروه اشتباه) تا +1 (گروه خوب) .
 
 ### DBSCAN: گروه بندی مبتنی بر چگالی
 
@@ -112,7 +112,7 @@ GMM می تواند خوشه های eliptical را مدل کند (نه فقط ک
 |--------|----------|------------|
 | K-Means | Large datasets, spherical clusters, known K | Irregular shapes, outliers present |
 | DBSCAN | Unknown K, arbitrary shapes, outlier detection | Varying densities, very high dimensions |
-| Hierarchical | Small datasets, need dendrogram, unknown K | Large datasets (O(n^2) memory) |
+| Hierarchical | Small datasets, need dendrogram, unknown K | Large datasets ($O(n^2)$ memory) |
 | GMM | Overlapping clusters, soft assignments needed | Very large datasets, too many dimensions |
 
 ### تشخیص ناهنجاری با دسته بندی
@@ -488,7 +488,7 @@ gmm_model = GaussianMixture(n_components=3, random_state=42).fit(data)
 | Clustering | "Grouping similar things" | Partitioning data into subsets where within-group similarity exceeds between-group similarity, measured by a specific distance metric |
 | Centroid | "The center of a cluster" | The mean of all points assigned to a cluster; used by K-Means as the cluster representative |
 | Inertia | "How tight the clusters are" | Sum of squared distances from each point to its assigned centroid; lower is tighter |
-| Silhouette score | "How well-separated clusters are" | For each point, (b - a) / max(a, b) where a is mean intra-cluster distance and b is mean nearest-cluster distance |
+| Silhouette score | "How well-separated clusters are" | For each point, $(b - a) / \max(a, b)$ where $a$ is mean intra-cluster distance and $b$ is mean nearest-cluster distance |
 | Core point | "A point in a dense region" | A point with at least min_samples neighbors within eps distance, in DBSCAN |
 | EM algorithm | "Soft K-Means" | Expectation-Maximization: iteratively compute membership probabilities (E-step) and update distribution parameters (M-step) |
 | Dendrogram | "A tree of clusters" | A tree diagram showing the order and distance at which clusters were merged in hierarchical clustering |

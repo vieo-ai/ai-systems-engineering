@@ -91,8 +91,8 @@ flowchart TD
 
 **How to fix:**تفاوت: به جای مدل سازی ارزش های خام، مدل سازی تغییر بین ارزش های متوالی:
 
-```
-diff[t] = value[t] - value[t-1]
+```math
+\text{diff}[t] = \text{value}[t] - \text{value}[t-1]
 ```
 
 اگر یک دور از تفاوت باعث توقف سری نمی شود، آن را دوباره اعمال کنید (تفرق دوم). اکثر سری های دنیای واقعی به حداکثر دو دور نیاز دارند.
@@ -109,7 +109,7 @@ diff[t] = value[t] - value[t-1]
 
 ### ارتباط خودکار
 
-خودتوافق اندازه گیری می کند که مقدار یک ارزش در زمان t به مقدار در زمان t-k (ک گام در گذشته) مربوط است. تابع خودتوافق (ACF) این ارتباط را برای هر تاخیر k نشان می دهد.
+خودتحالی اندازه گیری می کند که مقدار یک ارزش در زمان $t$با ارزش زماني همبستگی دارد$t-k$($k$عملکرد خودتفاعل (ACF) این ارتباط را برای هر تاخیر نشان می دهد.$k$. .
 
 **ACF tells you:**
 - اگه ACF بعد از 5 مرحله به صفر افتد، ارزش های قبل از 5 مرحله مهم نیست.
@@ -142,7 +142,7 @@ diff[t] = value[t] - value[t-1]
 
 **How many lags?**اگر ACF تا 10 تاخیر قابل توجه باشد، حداقل 10 تاخیر را استفاده کنید. اگر فصلیتی هفتگی وجود دارد، شامل 7 (و احتمالا 14) تاخیر کنید.
 
-**The target alignment trap.**وقتی ویژگی های تاخیر را ایجاد می کنید، هدف باید ارزش در زمان t باشد و همه ویژگی ها باید از ارزش ها در زمان t-1 یا قبل استفاده کنند. اگر شما تصادفی ارزش در زمان t را به عنوان یک ویژگی اضافه کنید، شما یک پیش بینی کامل دارید - و یک مدل کاملا بی فایده. این رایج ترین خطا در مهندسی ویژگی های سری زمان است.
+**The target alignment trap.**وقتی ویژگی های تاخیر ایجاد می شود، هدف باید ارزش در زمان باشد $t$، و همه ویژگی ها باید از ارزش ها در زمان استفاده کنند $t-1$یا قبل از آن. اگر تصادفاً ارزش را در زمان اضافه کنید$t$به عنوان یک ویژگی، شما یک پیش بینی کامل دارید -- و یک مدل کاملا بی فایده. این رایج ترین خطا در مهندسی ویژگی های سری زمان است.
 
 ### تاییدیه پیشروی
 
@@ -178,8 +178,8 @@ flowchart TD
 ```
 
 اعتبارسنجی پیش رو:
-1. آموزش داده ها تا زمان t
-2. پیش بینی در زمان t+1 (یا t+1 تا t+k برای چند مرحله)
+1. آموزش داده ها به موقع$t$
+2. پیش بینی در زمان$t+1$(یا $t+1$به$t+k$برای چند مرحله)
 3. پنجره رو جلو بکش
 4. تکرار کنید
 
@@ -191,11 +191,11 @@ flowchart TD
 
 ARIMA مدل سری زمان کلاسیک است. این مدل دارای سه جزء است:
 
-- **AR (Autoregressive):**پیش بینی از ارزش های گذشته. AR ((p) از آخرین ارزش های p استفاده می کند.
-- **I (Integrated):**تفاوت برای رسیدن به ثابت بودن.
-- **MA (Moving Average):**پیش بینی از اشتباهات پیش بینی گذشته. MA(q) از آخرین اشتباهات q استفاده می کند.
+- **AR (Autoregressive):**پیش بینی از ارزش های گذشته. AR ((p) از آخرین استفاده می کند $p$ارزش ها
+- **I (Integrated):**تفاوت برای رسیدن به ثابت بودن.$d$دور های تفاوتی
+- **MA (Moving Average):**پیش بینی از اشتباهات پیش بینی گذشته.$q$اشتباهات
 
-ARIMA ((p, d, q) سه را ترکیب می کند. شما p, d, q را بر اساس تجزیه و تحلیل ACF / PACF یا جستجوی خودکار (ARIMA) انتخاب می کنید.
+آريما ((پ، د، ق) سه تا رو هم ميگيره.$p$،$d$،$q$بر اساس تجزیه و تحلیل ACF/PACF یا جستجوی خودکار (ARIMA خودکار)
 
 ما از ابتدا ARIMA را اجرا نمی کنیم -- این نیازمند بهینه سازی عددی است که فراتر از حوزه این درس است. بینش کلیدی این است که درک کنید هر جزء چه می کند تا بتوانید نتایج ARIMA را تفسیر کنید و بدانید که چه زمانی از آن استفاده کنید.
 
@@ -217,7 +217,7 @@ ARIMA ((p, d, q) سه را ترکیب می کند. شما p, d, q را بر اس
 
 **Recursive (iterated):**پیش بینی یک قدم جلوتر، از پیش بینی به عنوان ورودی برای گام بعدی استفاده کنید. ساده اما اشتباهات جمع می شوند - هر پیش بینی از پیش بینی قبلی استفاده می کند، بنابراین اشتباهات مخلوط می شوند.
 
-**Direct:**مدل 1 t+1 را پیش بینی می کند، مدل 5 t+5 را پیش بینی می کند. هیچ تراکم خطا وجود ندارد، اما هر مدل نمونه های آموزش کمتری دارد و اطلاعات را به اشتراک نمی گذارند.
+**Direct:**مدل جداگانه ای برای هر افق آموزش بده مدل 1 پیش بینی می کنه$t+1$، مدل 5 پيش بيني ميکنه$t+5$. هیچ غلطه ای وجود ندارد، اما هر مدل نمونه های آموزش کمتری دارد و اطلاعات را به اشتراک نمی گذارند.
 
 **Multi-output:**یک مدل را آموزش دهید که تمام افق ها را به طور همزمان تولید کند. اطلاعات را در افق ها به اشتراک می گذارد اما نیاز به یک مدل است که از چندین محصول پشتیبانی کند (یا یک تابع ضایعات سفارشی).
 
@@ -228,7 +228,7 @@ ARIMA ((p, d, q) سه را ترکیب می کند. شما p, d, q را بر اس
 | Mistake | Why it happens | How to fix |
 |---------|---------------|-----------|
 | Random train/test split | Habit from standard ML | Use walk-forward or temporal split |
-| Using future features | Feature at time t included by mistake | Audit every feature for temporal alignment |
+| Using future features | Feature at time $t$ included by mistake | Audit every feature for temporal alignment |
 | Overfitting to seasonality | Model memorizes calendar patterns | Hold out a full seasonal cycle in the test set |
 | Ignoring scale changes | Revenue doubles but patterns stay | Model percentage change instead of absolute |
 | Too many lag features | "More history is better" | Use ACF to determine relevant lags |
@@ -386,7 +386,7 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 پیش بینی سری زمان از متریک های رجریشن استفاده می کند، اما با زمینه آگاه با زمان:
 
-- **MAE (Mean Absolute Error):**متوسط y_true - y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_pred = y_y_pred = y_y_y_pred = y_y_y_= y_pred = y_y_y_y_y_y_y_de= y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y_y
+- **MAE (Mean Absolute Error):**متوسط$\lvert y_{\text{true}} - y_{\text{pred}} \rvert$. به راحتی در واحد های اصلی تفسیر می شود. "در میانگین، پیش بینی ها 3.2 درجه از هم رفته اند".
 - **RMSE (Root Mean Squared Error):**ریشه مربع اشتباه متوسط مربع. مجازات اشتباهات بزرگ بیشتر از MAE. استفاده کنید زمانی که اشتباهات بزرگ بدتر از اشتباهات کوچک هستند.
 - **MAPE (Mean Absolute Percentage Error):**متوسط خطا / true_value = 100 است. مستقل از مقیاس، برای مقایسه در سری های مختلف مفید است. اما نامحدود زمانی که ارزش های واقعی صفر هستند.
 - **Naive baseline comparison:**همیشه با خط های پایه ساده مقایسه کنید. خط پایه بی نظیر فصلی ارزش را از یک دوره گذشته (روز گذشته، هفته گذشته) پیش بینی می کند. اگر مدل شما نمی تواند بی نظیر را شکست دهد، چیزی اشتباه است.
@@ -417,7 +417,7 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 1. **Start with plotting.**قبل از هر مدل سازی، سری خام را نقشه بزنید. به دنبال روند، فصلی، خارق العاده، شکاف های ساختاری (تغییر ناگهانی در رفتار) باشید. یک بازرسی بصری ۳۰ ثانیه اغلب بیش از یک ساعت تجزیه و تحلیل خودکار را به شما می گوید.
 
-2. **Difference first, model second.**اگر مجموعه ای از روند مشخصی داشته باشد، قبل از ایجاد ویژگی های تاخیر، آن را متفاوت کنید. مدل های مبتنی بر درخت می توانند روند را مدیریت کنند، اما مدل های خطی نمی توانند، و تفاوت هرگز آسیب نمی رساند.
+2. **Difference first, model second.**اگر مجموعه ای یک روند واضح دارد، قبل از ایجاد ویژگی های تاخیر آن را تشخیص دهید. مدل های مبتنی بر درخت می توانند روند را مدیریت کنند، اما مدل های خطی بدون یک اصطلاح روند صریح نمی توانند. هنگامی که مجموعه ثابت است متوقف شوید: هر دور اضافی تفاوت اضافه می کند و اطلاعات سطح را دور می کند.
 
 3. **Hold out at least one full seasonal cycle.**اگر شما دارای فصلی هفتگی هستید، مجموعه آزمایش شما حداقل یک هفته کامل نیاز دارد. اگر ماهانه باشد، حداقل یک ماه کامل. در غیر این صورت شما نمی توانید ارزیابی کنید که آیا مدل الگوی فصلی را ضبط کرده است یا خیر.
 
@@ -444,10 +444,10 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Stationarity | "The stats don't change over time" | A series whose mean, variance, and autocorrelation structure are constant over time |
-| Differencing | "Subtract consecutive values" | Computing y[t] - y[t-1] to remove trends and achieve stationarity |
+| Differencing | "Subtract consecutive values" | Computing $y[t] - y[t-1]$ to remove trends and achieve stationarity |
 | Autocorrelation (ACF) | "How a series correlates with itself" | The correlation between a time series and a lagged copy of itself, as a function of the lag |
-| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag k after removing the effect of all shorter lags |
-| Lag features | "Past values as inputs" | Using y[t-1], y[t-2], ..., y[t-k] as features to predict y[t] |
+| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag $k$ after removing the effect of all shorter lags |
+| Lag features | "Past values as inputs" | Using $y[t-1], y[t-2], \ldots, y[t-k]$ as features to predict $y[t]$ |
 | Walk-forward validation | "Time-respecting cross-validation" | Evaluation where training data always precedes test data chronologically |
 | ARIMA | "The classic time series model" | AutoRegressive Integrated Moving Average: combines past values (AR), differencing (I), and past errors (MA) |
 | Seasonality | "Repeating calendar patterns" | Regular, predictable cycles in a time series tied to calendar periods (daily, weekly, yearly) |

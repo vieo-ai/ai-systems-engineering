@@ -81,11 +81,11 @@ flowchart TB
     Fold5 --> R
 ```
 
-1. داده ها را به کالا های مساوی اندازه تقسیم کنید
-2. برای هر طناب، روی طناب K-1 حرکت کنید و روی طناب باقیمانده تأیید کنید
-3. میانگین نمره های اعتبار K
+1. داده ها را به قسمت های مختلف تقسیم کنید$K$پوشک های مساوی
+2. برای هر خم، قطار رو ادامه بده$K-1$پوشانده و بر روی پوشان باقیمانده تایید می شود
+3. متوسط$K$نمرات اعتبار
 
-K=5 یا K=10 انتخاب های استاندارد هستند. هر نقطه داده برای اعتبارسنجی دقیقاً یک بار استفاده می شود. نمره متوسط یک تخمین پایدار تر از هر تقسیم واحد است.
+$K=5$یا$K=10$هر نقطه داده برای اعتبارسنجی دقیقا یک بار استفاده می شود.
 
 **Stratified K-fold**: توزیع کلاس را در هر لایه حفظ می کند. اگر مجموعه داده شما 70٪ کلاس A و 30٪ کلاس B باشد، هر لایه تقریباً نسبت مشابهی دارد. این برای مجموعه داده های نامتناسب مهم است که در آن تقسیم تصادفی می تواند تمام نمونه های اقلیت را در یک لایه قرار دهد.
 
@@ -100,18 +100,18 @@ K=5 یا K=10 انتخاب های استاندارد هستند. هر نقطه �
 
 از این ماتریکس، تمام متریک های دیگر عبارتند از:
 
-- **Accuracy**= (TP + TN) / (TP + TN + FP + FN). بخش از پیش بینی های صحیح. گمراه کننده در زمانی که کلاس ها بی تعادل هستند.
-- **Precision**= TP / (TP + FP). از همه چیز پیش بینی شده مثبت، چند مورد در واقع بودند؟ استفاده کنید زمانی که مثبت های غلط گران هستند (به عنوان مثال، فیلتر اسپام که ایمیل واقعی را به عنوان اسپم نشان می دهد).
-- **Recall**(حساسیت) = TP / (TP + FN). از همه مثبت های واقعی، چند تا را گرفتیم؟ استفاده کنید وقتی منفی های غلط گران هستند (به عنوان مثال، غربالگری سرطان از وجود تومور).
-- **F1 score**= 2 * دقت * یادآوری / (درست + یادآوری) میانگین هماهنگ دقت و یادآوری.
+- **Accuracy**= $(TP + TN) / (TP + TN + FP + FN)$. بخش کوچکی از پیش بینی های درست . در حالی که کلاس ها متوازن نیستند
+- **Precision**= $TP / (TP + FP)$از همه چیز مثبت پیش بینی شده، چند تا در واقع مثبت بودند؟ استفاده کنید زمانی که مثبت های غلط گران هستند (به عنوان مثال، فیلتر اسپام که ایمیل واقعی را اسپم نشان می دهد).
+- **Recall**(حساسيت) = $TP / (TP + FN)$از همه مثبتات واقعی، چند تا را گرفتیم؟ استفاده کنید وقتی منفی های غلط گران هستند (به عنوان مثال، غربالگری سرطان از وجود تومور).
+- **F1 score**= $2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$. ابزار هماهنگ دقت و بازنگري . هر دو را در حال توازن قرار ميده وقتي هيچکدوم از آنها به وضوح تسلط ندارن
 - **AUC-ROC**: منطقه زیر منحنی ویژگی های عملیاتی گیرنده. نرخ مثبت واقعی در مقابل نرخ مثبت نادرست در حدودی های مختلف طبقه بندی را نشان می دهد. AUC = 0.5 به معنای حدس تصادفی است، AUC = 1.0 به معنای جداسازی کامل است. مستقل از حد: این اندازه گیری می کند که مدل چقدر مثبت را بالاتر از منفی قرار می دهد، صرف نظر از کسری که انتخاب می کنید.
 
 ### متریک های بازپسین
 
-- **MSE**(وسط خطای مربع) = متوسط (((y_true - y_pred) ^ 2). خطاهای بزرگ را به صورت مربع مجازات می کند. حساس به غیر معمول است.
-- **RMSE**(سرمایه اشتباه مربع) = sqrt(MSE). واحد های مشابه متغیر هدف. تفسیر آن آسان تر از MSE است.
-- **MAE**(متوسط خطا مطلق) = متوسط ((y_true - y_pred_the)) تمام اشتباهات را خطیانه درمان می کند. قوی تر تا غیر قابل ملاحظه از MSE است.
-- **R-squared**= 1 - SS_res / SS_tot، جایی که SS_res = مجموع (((y_true - y_pred) ^2) و SS_tot = مجموع ((((y_true - y_mean) ^2).
+- **MSE**(خطای متوسط مربع) = $\text{mean}((y_{\text{true}} - y_{\text{pred}})^2)$. اشتباهات بزرگ را به صورت مربع مجازات می کند . حساس به انحرافات
+- **RMSE**(خطای جذر متوسط مربع) = $\sqrt{\text{MSE}}$. همون واحد هاي متغير هدف رو ، آسان تر از MSE تعبير ميکنه
+- **MAE**(خطای مطلق متوسط) = $\text{mean}(\lvert y_{\text{true}} - y_{\text{pred}} \rvert)$. تمام اشتباهات را خطیانه می کند . قوی تر تا غیر قابل ملاحظه از MSE
+- **R-squared**= $1 - SS_{\text{res}} / SS_{\text{tot}}$، کجا$SS_{\text{res}} = \sum (y_{\text{true}} - y_{\text{pred}})^2$و$SS_{\text{tot}} = \sum (y_{\text{true}} - y_{\text{mean}})^2$. بخش کوچکی از تفاوت که توسط مدل توضیح داده شده است. $R^2 = 1.0$خیلی عالیه$R^2 = 0.0$یعنی مدل بهتر از پیش بینی متوسط نیست.$R^2$می تواند منفی باشد اگر مدل بدتر از متوسط باشد.
 
 ### منحنیات یادگیری
 
@@ -664,10 +664,10 @@ scores = cross_val_score(model, X, y, cv=StratifiedKFold(5), scoring="f1")
 |------|----------------|----------------------|
 | Overfitting | "Memorizing the training data" | The model captures noise in the training data, performing well on training but poorly on unseen data |
 | Cross-validation | "Testing on different subsets" | Systematically rotating which portion of data is used for validation, averaging results across all rotations |
-| Precision | "How many predicted positives are correct" | TP / (TP + FP): the fraction of positive predictions that are actually positive |
-| Recall | "How many actual positives we found" | TP / (TP + FN): the fraction of actual positives that were correctly identified |
+| Precision | "How many predicted positives are correct" | $TP / (TP + FP)$: the fraction of positive predictions that are actually positive |
+| Recall | "How many actual positives we found" | $TP / (TP + FN)$: the fraction of actual positives that were correctly identified |
 | AUC-ROC | "How well the model separates classes" | The area under the curve of true positive rate vs false positive rate across all thresholds, from 0.5 (random) to 1.0 (perfect) |
-| R-squared | "How much variance is explained" | 1 - (sum of squared residuals / total sum of squares): the fraction of target variance captured by the model |
+| R-squared | "How much variance is explained" | $1 - (\text{sum of squared residuals} / \text{total sum of squares})$: the fraction of target variance captured by the model |
 | Data leakage | "The model cheated" | Using information during training that would not be available at prediction time, leading to optimistic evaluation |
 | Learning curve | "How performance changes with more data" | A plot of training and validation scores vs training set size, revealing underfitting or overfitting |
 | Stratified split | "Keeping class ratios balanced" | Splitting data so each subset has the same proportion of each class as the full dataset |

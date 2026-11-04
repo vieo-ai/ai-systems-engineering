@@ -30,8 +30,8 @@
 
 نظريه بايز احتمالات مشروط رو رد ميکنه:
 
-```
-P(class | features) = P(features | class) * P(class) / P(features)
+```math
+P(\text{class} \mid \text{features}) = \frac{P(\text{features} \mid \text{class}) \cdot P(\text{class})}{P(\text{features})}
 ```
 
 ما میخوایم`P(class | features)`-- احتمال اینکه یک سند متعلق به یک کلاس به گفته کلمات موجود در آن است.
@@ -43,15 +43,15 @@ P(class | features) = P(features | class) * P(class) / P(features)
 
 ### فرض استقلال ساده
 
-محاسبات`P(features | class)`با یک لغت 10 هزار کلمه، شما باید توزیع بیش از 2^10،000 ترکیب احتمالی را تخمین بزنید. غیرممکن.
+محاسبات`P(features | class)`به طور دقیق نیاز به تخمین احتمال مشترک همه ویژگی ها در کنار هم دارد. با یک ذخایر 10،000 کلمه، شما باید یک توزیع بیش از تخمین$2^{10{,}000}$. امکان نداره
 
 فرض ساده: هر ویژگی به لحاظ شرایط مستقل با توجه به کلاس است.
 
-```
-P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
+```math
+P(w_1, w_2, \ldots, w_n \mid \text{class}) = P(w_1 \mid \text{class}) \cdot P(w_2 \mid \text{class}) \cdots P(w_n \mid \text{class})
 ```
 
-به جای یک توزیع مشترک غیرممکن، شما n توزیع ساده در هر ویژگی را تخمین می زنید.
+به جای یک توزیع مشترک غیرممکن، شما تخمین می زنید$n$توزیع های ساده در هر ویژگی. هر یک فقط به یک شمارش نیاز دارد.
 
 این فرضیه به وضوح اشتباه است. کلمات " ماشین " و " یادگیری " در هیچ سند مستقل نیستند. اما طبقه بندی کننده به تخمین های احتمالی درست نیاز ندارد. به رتبه بندی درست نیاز دارد - کدام کلاس احتمال بالاتر دارد. فرضیه استقلال خطاهای سیستماتیک را معرفی می کند، اما این خطاها بر همه کلاس ها به طور مشابه تاثیر می گذارد، بنابراین رتبه بندی درست باقی می ماند.
 
@@ -59,7 +59,7 @@ P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
 
 سه دلیل:
 
-1. **Ranking over calibration.**طبقه بندی فقط نیاز به درجه بندی بالا را درست است. حتی اگر P(spam) = 0.99999 زمانی که احتمال واقعی 0.7 است، طبقه بندی کننده هنوز هم اسپام را درست انتخاب می کند. ما به احتمالات درست نیاز نداریم. ما به برنده درست نیاز داریم.
+1. **Ranking over calibration.**طبقه بندی فقط نیاز به درجه بندی بالا دارد تا درست باشد. حتی اگر$P(\text{spam}) = 0.99999$وقتی احتمال واقعی 0.7 باشد، طبقه بندی کننده هنوز هم اسپام را درست انتخاب می کند. ما به احتمالات درست نیاز نداریم. ما به برنده درست نیاز داریم.
 
 2. **High bias, low variance.**فرض استقلال یک پیش فرض قوی است. این مدل را به شدت محدود می کند، که از بیش از حد مناسب شدن جلوگیری می کند. با داده های آموزشی محدود، یک مدل که کمی اشتباه است اما پایدار است، مدل ای را که از نظر نظری درست است اما بسیار نامستقیم است، می پرشد. این تعادل تعصب-غیرتی در عمل است.
 
@@ -76,31 +76,33 @@ P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
 - ایمیل های غیر اسپام 5 بار "بخش" ، 10 بار "پای" ، 100 بار "مقابله" را ذکر می کنند (115 کلمه در کل)
 - ۴۰ درصد از ایمیل ها اسپم هستند، ۶۰ درصد از آنها اسپم نیستند
 
-با صاف کردن Laplace (alpha=1):
+با نرم کردن Laplace ($\alpha=1$):
 
-```
-P(free | spam)    = (80 + 1) / (150 + 3) = 81/153 = 0.529
-P(money | spam)   = (60 + 1) / (150 + 3) = 61/153 = 0.399
-P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072
-
-P(free | not-spam)    = (5 + 1) / (115 + 3) = 6/118 = 0.051
-P(money | not-spam)   = (10 + 1) / (115 + 3) = 11/118 = 0.093
-P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856
+```math
+\begin{aligned}
+P(\text{free} \mid \text{spam}) &= (80 + 1) / (150 + 3) = 81/153 = 0.529 \\
+P(\text{money} \mid \text{spam}) &= (60 + 1) / (150 + 3) = 61/153 = 0.399 \\
+P(\text{meeting} \mid \text{spam}) &= (10 + 1) / (150 + 3) = 11/153 = 0.072 \\[6pt]
+P(\text{free} \mid \text{not-spam}) &= (5 + 1) / (115 + 3) = 6/118 = 0.051 \\
+P(\text{money} \mid \text{not-spam}) &= (10 + 1) / (115 + 3) = 11/118 = 0.093 \\
+P(\text{meeting} \mid \text{not-spam}) &= (100 + 1) / (115 + 3) = 101/118 = 0.856
+\end{aligned}
 ```
 
 ایمیل جدید شامل: "برانه" (2 بار) ، "پای" (1 بار) ، "اجتماع" (0 بار) است.
 
+```math
+\begin{aligned}
+\log P(\text{spam} \mid \text{email}) &= \log(0.4) + 2 \log(0.529) + 1 \log(0.399) + 0 \log(0.072) \\
+&= -0.916 + 2(-0.637) + (-0.919) + 0 \\
+&= -3.109 \\[6pt]
+\log P(\text{not-spam} \mid \text{email}) &= \log(0.6) + 2 \log(0.051) + 1 \log(0.093) + 0 \log(0.856) \\
+&= -0.511 + 2(-2.976) + (-2.375) + 0 \\
+&= -8.838
+\end{aligned}
 ```
-log P(spam | email) = log(0.4) + 2*log(0.529) + 1*log(0.399) + 0*log(0.072)
-                    = -0.916 + 2*(-0.637) + (-0.919) + 0
-                    = -3.109
 
-log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
-                        = -0.511 + 2*(-2.976) + (-2.375) + 0
-                        = -8.838
-```
-
-اسپام با بازده بزرگی برنده می شود. کلمه "آزاد" که دو بار ظاهر می شود، شواهد قوی برای اسپام است. توجه داشته باشید که "اجتماع" که ظاهر نمی شود به هر دو مجموعه ثبت (0 * log(P)) کمک صفر می کند - در Multinomial NB، کلمات غایب هیچ اثر ای ندارند. این Bernoulli NB است که به طور صریح نماد غیبت کلمه را نشان می دهد.
+اسپام با حاشیه بزرگی برنده می شود. کلمه "آزاد" که دو بار ظاهر می شود، شواهد قوی برای اسپم است. توجه داشته باشید که "ملاقات" که ظاهر نمی شود، به هر دو مجموعه ثبت نام کمک صفر می کند ($0 \cdot \log P$) -- در Multinomial NB، کلمات غائب هیچ اثر ای ندارند.
 
 ### سه نوع
 
@@ -110,8 +112,8 @@ log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
 
 مدل ها هر ویژگی را به عنوان یک شمارش انجام می دهند. بهترین برای داده های متن که ویژگی ها فرکانس کلمات یا ارزش های TF-IDF هستند.
 
-```
-P(word_i | class) = (count of word_i in class + alpha) / (total words in class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count of } \text{word}_i \text{ in class} + \alpha}{\text{total words in class} + \alpha \cdot \text{vocab\_size}}
 ```
 
 .`alpha`این نوع کار برای طبقه بندی متن است.
@@ -120,8 +122,8 @@ P(word_i | class) = (count of word_i in class + alpha) / (total words in class +
 
 هر مدل به عنوان توزیع طبیعی، بهترین برای ویژگی های مداوم است.
 
-```
-P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
+```math
+P(x_i \mid \text{class}) = \frac{1}{\sqrt{2 \pi \cdot \text{var}}} \cdot \exp\left(-\frac{(x_i - \text{mean})^2}{2 \cdot \text{var}}\right)
 ```
 
 هر کلاس متوسط و متغیر خاص خود را برای هر ویژگی دارد. این کار خوب زمانی که ویژگی ها واقعاً در هر کلاس به منحنی زنگ عمل کنند.
@@ -130,8 +132,8 @@ P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
 
 مدل ها هر ویژگی را به عنوان دوگانه (حاضر یا غایب) می کند. بهترین برای متن کوتاه یا ویکتورهای دوگانه است.
 
-```
-P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in class + 2 * alpha)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{docs in class containing } \text{word}_i + \alpha}{\text{total docs in class} + 2 \alpha}
 ```
 
 برنولی به طور صریح عدم وجود یک کلمه را مجازات می کند. اگر "آزاد" معمولا در اسپم ظاهر می شود اما از این ایمیل غائب است، برنولی این را به عنوان شواهد علیه اسپم حساب می کند.
@@ -152,11 +154,11 @@ P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in c
 
 صاف کردن لپلاز تعداد کمی اضافه می کنه`alpha`(معمولاً 1) به هر عدد ویژگی:
 
-```
-P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count}(\text{word}_i, \text{class}) + \alpha}{\text{total\_words\_in\_class} + \alpha \cdot \text{vocab\_size}}
 ```
 
-با الفا=1، هر کلمه حداقل یک احتمال کوچک دریافت می کند. کلمه "discombobulate" که در یک ایمیل آزمون ظاهر می شود، دیگر احتمال اسپام را نمی کشد. صاف کردن تفسیر بیزیایی دارد: معادل قرار دادن یک Dirichlet یکنواخت در پیش توزیع کلمات است.
+با$\alpha=1$در یک ایمیل تست، کلمه "discombobulate" دیگر احتمال اسپام را نمی کشد. نرم کردن تفسیر بیزیایی دارد: معادل قرار دادن یک Dirichlet یکساخت در پیش توزیع کلمات است.
 
 آلفا بالا به معنای صاف سازی قوی تر (توزيعات یکسانی بیشتر) است. آلفا پایین به معنای این است که مدل به داده ها بیشتر اعتماد می کند. آلفا یک پارامتر فوق العاده است که شما تنظیم می کنید.
 
@@ -175,8 +177,8 @@ P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alp
 
 راه حل: کار در فضای Log. به جای ضرب احتمالات، الگورتم های آنها را اضافه کنید:
 
-```
-log P(class | x1, x2, ..., xn) = log P(class) + sum_i log P(xi | class)
+```math
+\log P(\text{class} \mid x_1, x_2, \ldots, x_n) = \log P(\text{class}) + \sum_i \log P(x_i \mid \text{class})
 ```
 
 این پیش بینی را به یک محصول نقطه تبدیل می کند:
@@ -194,7 +196,7 @@ prediction = argmax(log_scores)
 
 | Aspect | Naive Bayes | Logistic Regression |
 |--------|------------|-------------------|
-| Type | Generative (models P(X\|Y)) | Discriminative (models P(Y\|X)) |
+| Type | Generative (models $P(X \mid Y){}$) | Discriminative (models $P(Y \mid X){}$) |
 | Training | Count frequencies | Optimize loss function |
 | Small data | Better (strong prior helps) | Worse (not enough to estimate weights) |
 | Large data | Worse (wrong assumption hurts) | Better (flexible boundary) |
@@ -221,8 +223,8 @@ flowchart LR
 
 در عمل، ما در فضای چوبی کار می کنیم تا از جریان پایین نقطه شناور جلوگیری کنیم. به جای ضرب بسیاری از احتمال های کوچک، ما لوگاریتم آنها را اضافه می کنیم:
 
-```
-log P(class | features) = log P(class) + sum_i log P(feature_i | class)
+```math
+\log P(\text{class} \mid \text{features}) = \log P(\text{class}) + \sum_i \log P(\text{feature}_i \mid \text{class})
 ```
 
 ```figure
@@ -239,7 +241,7 @@ naive-bayes
 
 1. **fit(X, y)**: برای هر کلاس، فرکانس هر ویژگی را بشمارید. صاف کردن Laplace را اضافه کنید. احتمالات ثبت را محاسبه کنید. پیشینه های کلاس ذخیره کنید (log فرکانس کلاس).
 
-2. **predict_log_proba(X)**: برای هر نمونه، حساب کردن log P(class) + مجموعه از log P(صفحه_i در تمام کلاس ها. این یک ضرب ماتریکس است: X @ log_probs.T + log_priors.
+2. **predict_log_proba(X)**: برای هر نمونه، محاسبه کنید $\log P(\text{class})$+ مجموع $\log P(\text{feature}_i \mid \text{class})$برای تمام کلاس ها. این ضرب ماتریکس است: X @ log_probs.T + log_priors.
 
 3. **predict(X)**: کلاس با بالاترین احتمال ثبت را برگردانید.
 
@@ -312,9 +314,9 @@ class GaussianNB:
 
 ### سرعت پیش بینی
 
-پیش بینی بیز ساده یک ضرب ماتریکس است. برای نمونه های n با ویژگی های d و کلاس های k:
-- چندگانهNB: یک ماتریس ضرب (n x d) @ (d x k) = O(n * d * k)
-- GaussianNB: n * k ارزیابی های Gaussian PDF، هر یک از آنها دارای ویژگی های d = O(n * d * k)
+پیش بینی بیز ساده، ضرب ماتریک است.$n$نمونه هایی که$d$ویژگی ها و$k$کلاس ها:
+- MultinomialNB: یک ماتریک ضرب کنید $(n \times d) \mathbin{@} (d \times k) = O(n \cdot d \cdot k)$
+- گاسینNB: $n \cdot k$ارزیابی های Gaussian PDF، هر یک از آنها$d$ویژگی ها = $O(n \cdot d \cdot k)$
 
 هر دو در هر ابعاد خطی هستند. این را با KNN (که نیاز به محاسبه فاصله به تمام نقاط آموزش دارد) یا SVM با هسته RBF (که نیاز به ارزیابی هسته در برابر تمام متری پشتیبانی دارد) مقایسه کنید. NB در زمان پیش بینی با دستورات بزرگی سریعتر است.
 
@@ -387,7 +389,7 @@ text_clf = Pipeline([
 
 ### کالیبر کردن NB احتمالات
 
-احتمالات NB ضعیف است. وقتی NB می گوید P(spam) = 0.95، احتمال واقعی ممکن است 0.7 باشد. اگر به تخمین های احتمالی قابل اعتماد نیاز دارید (به عنوان مثال، برای تعیین یک حد و یا ترکیب با مدل های دیگر) ، از KlassifierCalibratedCV sklearn استفاده کنید:
+احتمالات NB ضعیف است.$P(\text{spam}) = 0.95$اگر شما نیاز به تخمین های احتمالی قابل اعتماد (به عنوان مثال برای تعیین یک حد یا برای ترکیب با مدل های دیگر) دارید، از مدل کالیبر شده SKULAARNClassifierCV استفاده کنید:
 
 ```python
 from sklearn.calibration import CalibratedClassifierCV
@@ -405,7 +407,7 @@ proba = calibrated_nb.predict_proba(X_test)
 
 2. **Zero variance features.**GaussianNB با متغیر تقسیم می شود. اگر یک ویژگی دارای متغیر صفر برای یک کلاس (همه ارزش ها یکسان هستند) ، محاسبه احتمال شکسته می شود. کد یک اصطلاح صاف سازی کوچک (1e-9) را به تمام متغیرها اضافه می کند تا از این جلوگیری شود.
 
-3. **Class imbalance.**اگر 99 درصد از ایمیل ها اسپم نیستند، پی پی قبلی (P(non-spam) = 0.99 آنقدر قوی است که شواهد احتمال را مغلوب می کند. شما می توانید اولویت های کلاس را به صورت دستی تنظیم کنید یا از پارامتر class_prior در sklearn استفاده کنید.
+3. **Class imbalance.**اگر 99 درصد از ایمیل ها اسپم نباشند،$P(\text{not-spam}) = 0.99$شما می توانید با دست تنظیم کلاس های قبلی یا استفاده از کلاس_پیرامیتر در sklearn.
 
 4. **Feature scaling.**MultinomialNB به مقیاس بندی نیاز ندارد (بر اساس شمارش کار می کند). GaussianNB به مقیاس بندی نیز نیاز ندارد (اسطاتتیک های فی فیچر را تخمین می زند). این یک مزیت نسبت به بازپسین لوژیستیک و SVM است که نسبت به مقیاس ویژگی ها حساس هستند.
 
@@ -431,7 +433,7 @@ NB شکست می خورد وقتی فرض استقلال باعث رتبه بن�
 
 1. **Smoothing experiment.**آموزش MultinomialNB در داده های متن با ارزش های آلفا 0.01، 0.1، 1.0, 10.0 و 100.0. دقت نقشه در مقابل آلفا. عملکرد بالاتر کجاست؟ چرا آلفا بسیار بالا درد می کند؟
 
-2. **Feature independence test.**یک مجموعه داده های واقعی متن را بگیرید. دو کلمه را انتخاب کنید که به وضوح مرتبط هستند (" ماشین " و " یادگیری "). حساب کنید P  کلمه 1  کلاس) * P  کلمه 2  کلاس) و آن را با P  کلمه 1 و کلمه 2  کلاس مقایسه کنید. فرضیه استقلال چقدر اشتباه است؟ آیا این بر دقت طبقه بندی تاثیر می گذارد؟
+2. **Feature independence test.**یک مجموعه داده های واقعی متن را انتخاب کنید. دو کلمه را انتخاب کنید که به وضوح مرتبط هستند (" ماشین " و " یادگیری "). محاسبه کنید $P(\text{word}_1 \mid \text{class}) \cdot P(\text{word}_2 \mid \text{class})$و مقایسه با$P(\text{word}_1 \text{ AND } \text{word}_2 \mid \text{class})$فرض استقلال چقدر اشتباهه؟
 
 3. **Bernoulli implementation.**کد را با یک کلاس BernoulliNB گسترش دهید. کلاه کلمات را به دوگانه (حاضر/ غائب) تبدیل کنید و دقت را با MultinomialNB در داده های متن مقایسه کنید. Bernoulli چه زمانی برنده می شود؟
 
@@ -444,14 +446,14 @@ NB شکست می خورد وقتی فرض استقلال باعث رتبه بن�
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Naive Bayes | "Simple probabilistic classifier" | A classifier that applies Bayes' theorem with the assumption that features are conditionally independent given the class |
-| Conditional independence | "Features don't affect each other" | P(A, B \| C) = P(A \| C) * P(B \| C) -- knowing B tells you nothing new about A once you know C |
+| Conditional independence | "Features don't affect each other" | $P(A, B \mid C) = P(A \mid C) \cdot P(B \mid C)$ -- knowing $B$ tells you nothing new about $A$ once you know $C$ |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from dominating the prediction |
-| Prior | "What you believed before seeing data" | P(class) -- the probability of each class before observing any features |
-| Likelihood | "How well the data fits" | P(features \| class) -- the probability of observing these features if the class is known |
-| Posterior | "What you believe after seeing data" | P(class \| features) -- the updated probability of the class after observing the features |
-| Generative model | "Models how data is generated" | A model that learns P(X \| Y) and P(Y), then uses Bayes' theorem to get P(Y \| X) |
-| Discriminative model | "Models the decision boundary" | A model that directly learns P(Y \| X) without modeling how X is generated |
-| Log probability | "Avoid underflow" | Working with log P instead of P to prevent the product of many small numbers from becoming zero in floating point |
+| Prior | "What you believed before seeing data" | $P(\text{class})$ -- the probability of each class before observing any features |
+| Likelihood | "How well the data fits" | $P(\text{features} \mid \text{class})$ -- the probability of observing these features if the class is known |
+| Posterior | "What you believe after seeing data" | $P(\text{class} \mid \text{features})$ -- the updated probability of the class after observing the features |
+| Generative model | "Models how data is generated" | A model that learns $P(X \mid Y)$ and $P(Y)$, then uses Bayes' theorem to get $P(Y \mid X)$ |
+| Discriminative model | "Models the decision boundary" | A model that directly learns $P(Y \mid X)$ without modeling how $X$ is generated |
+| Log probability | "Avoid underflow" | Working with $\log P$ instead of $P$ to prevent the product of many small numbers from becoming zero in floating point |
 
 ## خواندن بیشتر
 

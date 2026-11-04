@@ -16,7 +16,7 @@
 
 ## مشکل
 
-مدل افزایش گرادینت شما دارای نرخ یادگیری، تعداد درختان، عمق حداکثر، نمونه های حداقل در هر برگ، نسبت نمونه های زیر و نسبت نمونه های ستون است. این شش هیپر پارامتر است. اگر هر یک از آنها دارای 5 مقدار منطقی است، شبکه دارای 5^6 = 15,625 ترکیب است. آموزش هر یک 10 ثانیه است. این 43 ساعت محاسبه برای امتحان همه آنها است.
+مدل افزایش گرادینت شما دارای نرخ یادگیری، تعداد درختان، عمق حداکثر، نمونه های حداقل در هر برگ، نسبت نمونه های زیر و نسبت نمونه های ستون است. این شش پارامتر است. اگر هر یک از آنها دارای 5 ارزش منطقی است، شبکه دارای $5^6 = 15{,}625$هر یک از این ترکیب ها، 10 ثانیه طول می کشد که 43 ساعت محاسبه برای امتحان کردن همه آنها است.
 
 جستجوی شبکه روشی آشکار و بدترین در مقیاس است. جستجوی تصادفی با کمترین محاسبات بهتر است. بهینه سازی بیزیانی با یادگیری از ارزیابی های گذشته حتی بهتر است. دانستن اینکه کدام استراتژی را استفاده کنید و کدام پارامترهای هیپرامتر واقعا مهم هستند، روزهای تلف شده زمان GPU را صرفه جویی می کند.
 
@@ -31,7 +31,7 @@
 | Learning rate | Step size per update | 0.001 to 1.0 |
 | Number of trees/epochs | How long to train | 10 to 10,000 |
 | Max depth | Model complexity | 1 to 30 |
-| Regularization (lambda) | Overfitting prevention | 0.0001 to 100 |
+| Regularization ($\lambda$) | Overfitting prevention | 0.0001 to 100 |
 | Batch size | Gradient estimation noise | 16 to 512 |
 | Dropout rate | Fraction of neurons dropped | 0.0 to 0.5 |
 
@@ -125,7 +125,7 @@ flowchart TD
 | Scheduler | Formula | When to use |
 |-----------|---------|-------------|
 | Step decay | Multiply by 0.1 every N epochs | Classic CNN training |
-| Cosine annealing | lr * 0.5 * (1 + cos(pi * t / T)) | Modern default |
+| Cosine annealing | $\text{lr} \cdot 0.5 \cdot (1 + \cos(\pi t / T))$ | Modern default |
 | Warmup + decay | Linear increase then cosine decay | Transformers |
 | One-cycle | Increase then decrease over one cycle | Fast convergence |
 | Reduce on plateau | Reduce by factor when metric stalls | Safe default |

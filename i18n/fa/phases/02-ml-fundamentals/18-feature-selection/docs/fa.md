@@ -9,7 +9,7 @@
 
 ## اهداف یادگیری
 
-- از ابتدا روش های فیلتر (حرم تغییرات، اطلاعات متقابل، چِ- مربع) و روش های بسته بندی (RFE، انتخاب جلو) را پیاده سازی کنید.
+- از ابتدا روش های فیلتر (حرم اختلاف، اطلاعات متقابل) ، روش بسته بندی (RFE) و روش های داخلی (L1، اهمیت درخت) را پیاده سازی کنید، سپس انتخاب را در تمرینات پیش فرض کنید.
 - توضیح دهید که چرا اطلاعات متقابل روابط غیر خطی را با ویژگی های هدف که ارتباط را از دست می دهد، ضبط می کند
 - مقایسه تنظیم L1 (انتخاب داخلی) با RFE (انتخاب بسته بندی) و ارزیابی تعادل های محاسباتی آنها
 - ایجاد یک خط انتخاب ویژگی که چندین روش را ترکیب می کند و نشان می دهد که عمومی سازی بهتر در داده های نگه داشته شده است
@@ -62,8 +62,8 @@ flowchart TD
 
 به یک ویژگی که 0.0 برای 999 از 1000 نمونه است، توجه کنید. تفاوت آن نزدیک به صفر است. هیچ مدل نمی تواند از آن برای تشخیص کلاس ها استفاده کند. آن را حذف کنید.
 
-```
-variance(x) = mean((x - mean(x))^2)
+```math
+\text{variance}(x) = \text{mean}\bigl((x - \text{mean}(x))^2\bigr)
 ```
 
 یک حد (به عنوان مثال، 0.01) تنظیم کنید. هر ویژگی با تفاوت زیر آن را رها کنید. این ویژگی های ثابت یا نزدیک به ثابت را بدون نگاه به متغیر هدف حذف می کند.
@@ -74,17 +74,17 @@ variance(x) = mean((x - mean(x))^2)
 
 ### اطلاعات متقابل
 
-اطلاعات متقابل اندازه گیری می کند که چقدر دانستن ارزش ویژگی X عدم اطمینان در مورد هدف Y را کاهش می دهد.
+اطلاعات متقابل اندازه گیری می کند که چقدر ارزش ویژگی را می دانیم $X$عدم قطعیت در مورد هدف را کاهش می دهد $Y$. .
 
-```
-I(X; Y) = sum_x sum_y p(x, y) * log(p(x, y) / (p(x) * p(y)))
+```math
+I(X; Y) = \sum_x \sum_y p(x, y) \cdot \log \frac{p(x, y)}{p(x) \cdot p(y)}
 ```
 
-اگر X و Y مستقل باشند، p(x، y) = p(x) * p(y) ، پس اصطلاح ثبت صفر است و I(X؛ Y) = 0. هرچه X بیشتر درباره Y به شما بگوید، اطلاعات متقابل بالاتر است.
+اگه$X$و$Y$مستقل هستند.$p(x, y) = p(x) \cdot p(y)$، پس اصطلاح ثبت صفر و$I(X; Y) = 0$هرچه بیشتر$X$درباره اش بهت میگه$Y$، اطلاعات متقابل بالاتر است
 
 مزیت اصلی بر روی ارتباط: اطلاعات متقابل روابط غیر خطی را ضبط می کند. یک ویژگی ممکن است ارتباط صفر با هدف داشته باشد اما اطلاعات متقابل بالا است زیرا رابطه مربع یا دوره ای است.
 
-برای ویژگی های مداوم، ابتدا به سطل ها (تقدیر مبتنی بر هیستogram) امتیاز دهید. تعداد سطل ها بر تخمین تاثیر می گذارد - بیش از حد تعداد سطل ها اطلاعات را از دست می دهند، بیش از حد تعداد سطل ها صدا اضافه می کنند. یک انتخاب رایج: مربع ((n) سطل ها یا قانون استرجز (1 + log2 ((n)).
+برای ویژگی های مداوم، ابتدا به سطل ها تقسیم کنید (تقدیر مبتنی بر هیستogram). تعداد سطل ها بر تخمین تاثیر می گذارد - بیش از حد تعداد سطل های گم شده اطلاعات، بیش از حد سطل های گم شده صدا اضافه می کنند. یک انتخاب رایج: $\sqrt{n}$قاعده کنسرت ($1 + \log_2 n$)
 
 ```mermaid
 flowchart LR
@@ -116,14 +116,14 @@ flowchart TD
 
 RFE تعاملات ویژگی ها را در نظر می گیرد زیرا مدل تمام ویژگی های باقیمانده را با هم می بیند. حذف یک ویژگی اهمیت سایر ویژگی ها را تغییر می دهد. این باعث می شود که آن را دقیق تر از روش های فیلتر کند.
 
-هزینه: شما مدل N را آموزش می دهید - زمان هدف. با 500 ویژگی و هدف 10 ، این 490 تمرین است. برای مدل های گران قیمت ، این آهسته است. شما می توانید با حذف چندین ویژگی در هر مرحله (به عنوان مثال ، حذف پایین 10٪ هر دور) آن را تسریع کنید.
+هزینه: شما مدل را آموزش می دهید$N - \text{target}$در این حالت، این کار به سرعت انجام می شود. با 500 ویژگی و هدف 10، یعنی 490 تمرین. برای مدل های گران قیمت، این کار کند است. شما می توانید با حذف چندین ویژگی در هر مرحله (به عنوان مثال، حذف پایین 10٪ هر دور) آن را سرعت بخشید.
 
 ### L1 (لاسسو) تنظیم
 
 تنظیم L1 ارزش مطلق وزن را به تابع از دست دادن اضافه می کند:
 
-```
-loss = prediction_error + alpha * sum(|w_i|)
+```math
+\text{loss} = \text{prediction\_error} + \alpha \cdot \sum \lvert w_i \rvert
 ```
 
 پارامتر آلفا کنترل می کند که چه طور پرتیجنتانه ویژگی ها را برش می دهند. آلفا بالاتر به معنای وزن بیشتر به صفر می رسد.
@@ -140,12 +140,10 @@ loss = prediction_error + alpha * sum(|w_i|)
 
 درختان تصمیم و مجموعه های آنها (درست های تصادفی، افزایش گرادینت) به طور طبیعی ویژگی های مرتب می شوند. هر تقسیم باعث کاهش آلودگی می شود (Gini یا entropy برای طبقه بندی، انحراف برای بازگشت). ویژگی هایی که باعث کاهش آلودگی بزرگتر می شوند مهم تر هستند.
 
-برای جنگل تصادفی با درختان T:
+براي يه جنگل تصادفي با$T$درختان:
 
-```
-importance(feature_j) = (1/T) * sum over all trees of
-    sum over all nodes splitting on feature_j of
-        (n_samples * impurity_decrease)
+```math
+\text{importance}(\text{feature}_j) = \frac{1}{T} \sum_{\text{all trees}} \; \sum_{\text{all nodes splitting on } \text{feature}_j} (\text{n\_samples} \cdot \text{impurity\_decrease})
 ```
 
 این یک نمره اهمیت عادی برای هر ویژگی را می دهد. این روابط غیر خطی و تعاملات ویژگی را به طور خودکار اداره می کند.
@@ -524,7 +522,7 @@ importances = rf.feature_importances_
 | Filter method | "Score features independently" | A feature selection approach that ranks features using a statistical measure without training a model, evaluating each feature in isolation |
 | Wrapper method | "Use the model to pick features" | A feature selection approach that evaluates feature subsets by training a model and using its performance as the selection criterion |
 | Embedded method | "The model selects features during training" | Feature selection that happens as part of model fitting, such as L1 regularization driving weights to zero |
-| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about Y given knowledge of X, capturing both linear and nonlinear dependencies |
+| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about $Y$ given knowledge of $X$, capturing both linear and nonlinear dependencies |
 | Recursive Feature Elimination | "Train, rank, prune, repeat" | An iterative wrapper method that trains a model, removes the least important feature(s), and repeats until a target count is reached |
 | L1 / Lasso regularization | "Penalty that kills features" | Adding the sum of absolute weight values to the loss function, which drives unimportant feature weights to exactly zero |
 | Variance threshold | "Remove constant features" | Dropping features whose variance across samples falls below a specified threshold, filtering out features that carry no information |

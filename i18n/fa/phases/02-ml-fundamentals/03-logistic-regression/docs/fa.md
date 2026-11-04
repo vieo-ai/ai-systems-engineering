@@ -18,7 +18,7 @@
 
 شما می خواهید پیش بینی کنید که آیا تومور به دلیل اندازه آن بدخیم است یا خیرخیم. شما بازخورد خطی را امتحان می کنید. این اعداد مانند 0.3 یا 1.7 یا -0.5 را تولید می کند. این ها چه معنی دارند؟ 1.7 "خیلی بدخیم" است؟ -0.5 "خیلی خیرخیم" است؟ بازخورد خطی تعداد نامحدود را تولید می کند. طبقه بندی نیاز به احتمالات محدودی بین 0 و 1 دارد و یک تصمیم روشن: بله یا نه.
 
-بازپسین لوژیستیک این مسئله را حل می کند. این ترکیب خطی مشابه (wx + b) را می گیرد و از طریق تابع سیگمائید آن را عبور می کند، که هر عدد را به محدوده (0,1) می کند. تولید یک احتمال است. شما یک حد (معمولاً 0.5) را تنظیم می کنید و تصمیم می گیرید.
+بازپسین لوژیستیک این مسئله را حل می کند.$wx + b$) و آن را از طریق تابع سیگمائید عبور می کند که هر عدد را به محدوده (0,1) می کند.
 
 این یکی از الگوریتم های گسترده ترین استفاده شده در عمل است. علیرغم نام خود، بازپسین لوگستیک یک الگوریتم طبقه بندی است، نه یک الگوریتم بازپسین. نام از عملکرد لجستیک (sigmoid) که از آن استفاده می کند آمده است.
 
@@ -44,22 +44,22 @@ actual: 0   0   0   0   1   1   1   1   1   1
 
 تابع سیگمائید دقیقا این کار را انجام می دهد:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\sigma(z) = \frac{1}{1 + e^{-z}}
 ```
 
 خواص:
-- وقتی z بزرگ و مثبت باشد، sigmoid ((z) به 1 نزدیک می شود
-- وقتی z بزرگ و منفی است، sigmoid ((z) به 0 نزدیک می شود
-- وقتی z = 0، sigmoid ((z) = 0.5
+- چه وقت$z$بزرگ و مثبت است$\sigma(z)$رویکردهای 1
+- چه وقت$z$بزرگ و منفی است$\sigma(z)$0
+- چه وقت$z = 0$،$\sigma(z) = 0.5$
 - خروجی همیشه بین 0 تا 1 است
 - عملکرد هموار و قابل تفاوتی در همه جا است
 
-مشتق دارای شکل مناسب است: sigmoid'(z) = sigmoid(z) * (1 - sigmoid(z)). این باعث می شود که محاسبه گرادیانت کارآمد باشد.
+مشتق دارای شکل مناسب است: $\sigma'(z) = \sigma(z) (1 - \sigma(z))$این باعث می شود که محاسبه گرادینت کارآمد باشد.
 
 ### بازپسین لوژیستیک = مدل خطی + سیگمائید
 
-مدل z = wx + b را محاسبه می کند (به عنوان بازپسین خطی) ، سپس sigmoid را اعمال می کند:
+مدل حساب می کنه$z = wx + b$(همچنین با بازپسین خطی) ، سپس سیگمائید اعمال می شود:
 
 ```mermaid
 flowchart LR
@@ -70,34 +70,36 @@ flowchart LR
     D -->|No| N[Predict 0]
 ```
 
-خروجی p به عنوان P ((y=1)) تفسیر می شود، احتمال اینکه خروجی به کلاس 1 تعلق دارد. مرز تصمیم گیری جایی است که wx + b = 0 است که باعث می شود خروجی sigmoid دقیقاً 0.5 باشد.
+تولید$p$این عبارت را به عنوان$P(y=1 \mid x)$, احتمال اینکه ورودی به کلاس 1 تعلق دارد. مرز تصمیم گیری در جایی است که $wx + b = 0$، که باعث می شود تولید سیگمائید دقیقا 0.5 باشد.
 
 ### از دست دادن دوگانه ی کراس انترپی
 
 شما نمی توانید از MSE برای بازپسین لوژیستیک استفاده کنید. MSE با یک sigmoid یک سطح هزینه غیر مخلوط با بسیاری از حداقل های محلی ایجاد می کند. در عوض، از بین بردن دوگانه استفاده کنید:
 
-```
-Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
+```math
+\text{Loss} = -\frac{1}{n} \sum \left( y \log(p) + (1-y) \log(1-p) \right)
 ```
 
 چرا این کار می کنه:
-- وقتی y=1 و p نزدیک به 1: log(1) =0 باشد، پس از آن، ضرر نزدیک به 0 است (درسته، هزینه کم)
-- وقتی y=1 و p نزدیک به 0: log(0) به بی نهایت منفی نزدیک می شود، بنابراین ضرر بسیار زیاد است (خطا، هزینه بالا)
-- وقتی y=0 و p نزدیک به 0 است: log(1) = 0, بنابراین ضرر نزدیک به 0 است (درسته، هزینه کم)
-- وقتی y=0 و p نزدیک به 1: log(0) به بی نهایت منفی نزدیک می شود، بنابراین ضرر بسیار زیاد است (خطا، هزینه بالا)
+- چه وقت$y=1$و$p$نزدیک به ۱ است.$\log(1) = 0$، پس خسارت نزدیک به 0 است (صحيح، هزینه کم)
+- چه وقت$y=1$و$p$نزدیک به 0 است: $\log(0)$به بی نهایت منفی نزدیک می شود، بنابراین زیان بسیار زیاد است (خطا، هزینه بالا)
+- چه وقت$y=0$و$p$نزدیک به 0 است: $\log(1) = 0$، پس خسارت نزدیک به 0 است (صحيح، هزینه کم)
+- چه وقت$y=0$و$p$نزدیک به ۱ است.$\log(0)$به بی نهایت منفی نزدیک می شود، بنابراین زیان بسیار زیاد است (خطا، هزینه بالا)
 
-این تابع از دست دادن برای بازپسین لوژیستیک منحنی است و حداقل جهانی را تضمین می کند.
+این تابع از دست دادن برای بازپسین لوژیستیک مخلوط است، بنابراین هر حداقل محلی حداقل جهانی است و کاهش گرادینت نمی تواند در یک بد گیر کند. در داده های کاملا جدا کننده، از دست دادن به طور کامل کاهش می یابد زیرا وزنه ها رشد می کنند، بنابراین حداقل محدود وجود ندارد؛ تنظیم L2 این را اصلاح می کند و حداقل را منحصر به فرد می کند.
 
 ### کاهش تدریجی برای بازپسین لجستیک
 
 گرادینت های دوگانه ی انترپی با سیگمائید شکل پاک دارند:
 
-```
-dL/dw = (1/n) * sum((p - y) * x)
-dL/db = (1/n) * sum(p - y)
+```math
+\begin{aligned}
+\frac{\partial L}{\partial w} &= \frac{1}{n} \sum (p - y) \, x \\
+\frac{\partial L}{\partial b} &= \frac{1}{n} \sum (p - y)
+\end{aligned}
 ```
 
-این ها شبیه گرادیانت های گریگریشن خطی هستند. تفاوت این است که p = sigmoid ((wx + b) به جای p = wx + b. sigmoid عدم خطی را معرفی می کند، اما قانون به روز رسانی گرادیانت یکسان است.
+این ها شبیه گرادینتهای ریگریسیون خطی هستند. تفاوت این است که$p = \sigma(wx + b)$به جای$p = wx + b$. سیگمائید غیر خطی را معرفی می کند، اما قانون به روز رسانی گرادیانت یکسان باقی می ماند.
 
 ```mermaid
 flowchart TD
@@ -114,29 +116,29 @@ flowchart TD
 
 برای ورودی 2D (دو ویژگی) ، مرز تصمیم گیری خطی است که در آن:
 
-```
-w1*x1 + w2*x2 + b = 0
+```math
+w_1 x_1 + w_2 x_2 + b = 0
 ```
 
 نقاط در یک طرف به عنوان 1 طبقه بندی می شوند، نقاط در طرف دیگر به عنوان 0 طبقه بندی می شوند. بازگشت لجستیک همیشه یک مرز تصمیم گیری خطی تولید می کند. اگر به یک مرز منحنی نیاز دارید، یا ویژگی های چندگانه اضافه می کنید یا از یک مدل غیر خطی استفاده می کنید.
 
 ### طبقه بندی چند طبقه با Softmax
 
-بازپسین لوژیستیکی دو طبقه را اداره می کند. برای کلاس های k، از تابع softmax استفاده کنید:
+بازپسین لوژیستیکی دو طبقه را اداره می کند.$k$کلاس ها، از تابع softmax استفاده کنید:
 
-```
-softmax(z_i) = e^(z_i) / sum(e^(z_j) for all j)
+```math
+\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}
 ```
 
-هر کلاس ویکتور وزن خود را دارد. مدل یک امتیاز z_i برای هر کلاس محاسبه می کند، سپس softmax امتیاز را به احتمالاتی تبدیل می کند که به 1.
+هر کلاس ویکتور وزن خودش رو داره. مدل نمره ای محاسبه می کنه$z_i$برای هر کلاس، Softmax امتیاز را به احتمالاتی تبدیل می کند که به ۱ می رسد. کلاس پیش بینی شده یکی از بالاترین احتمال ها است.
 
 تابع از دست دادن تبدیل به کراس انترپی دسته بندی می شود:
 
-```
-Loss = -(1/n) * sum(sum(y_k * log(p_k)))
+```math
+\text{Loss} = -\frac{1}{n} \sum \sum_k y_k \log(p_k)
 ```
 
-جایی که y_k برای کلاس واقعی 1 و 0 برای همه ی بقیه (کوڈنگ یک گرم) است.
+کجا$y_k$برای کلاس واقعی 1 و برای همه ی بقیه 0 است (کوڈنگ یک گرم).
 
 ### متریک ارزیابی
 
@@ -150,18 +152,18 @@ Loss = -(1/n) * sum(sum(y_k * log(p_k)))
 | Actually Negative | False Positive (FP) | True Negative (TN) |
 
 **Precision**: از همه مثبت های پیش بینی شده، چند تا مثبت هستند؟
-```
-Precision = TP / (TP + FP)
+```math
+\text{Precision} = \frac{TP}{TP + FP}
 ```
 
 **Recall**(حساسیت): از همه مثبتات واقعی، چند تا را گرفتیم؟
-```
-Recall = TP / (TP + FN)
+```math
+\text{Recall} = \frac{TP}{TP + FN}
 ```
 
 **F1 Score**: متوسط هماهنگ دقت و بازپس گرفتن.
-```
-F1 = 2 * (Precision * Recall) / (Precision + Recall)
+```math
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
 چه زمانی باید اولویت بندی شود:
@@ -504,7 +506,7 @@ print(f"\nClassification Report:\n{classification_report(y_te, y_pred)}")
 
 ## تمرینات
 
-1. مجموعه داده ای را تولید کنید که به صورت خطی جدا نمی شود (به عنوان مثال دو دایره متمرکز). بازپسین لوژیستیک را تمرین کنید و شکست آن را مشاهده کنید. سپس ویژگی های چندگانه (x1^2, x2^2, x1*x2) را اضافه کنید و دوباره تمرین کنید. نشان دهید که دقت بهبود می یابد.
+1. یک مجموعه داده ای را تولید کنید که به صورت خطی جدا نمی شود (به عنوان مثال دو دایره متمرکز). بازگشت لوژیستیک را تمرین کنید و شکست آن را مشاهده کنید. سپس ویژگی های چندگانه را اضافه کنید ($x_1^2, x_2^2, x_1 x_2$و دوباره تمرین کنید. نشان دهید که دقت بهبود می یابد.
 2. یک ماتریس سردرگمی چند طبقه را برای مدل 3 کلاس نرم ماکس اجرا کنید. دقت هر کلاس را محاسبه کنید و بازپس بگیرید. کدام کلاس سخت ترین طبقه بندی است؟
 3. منحنی ROC را از ابتدا بسازید. برای 100 مقدار آستانه از 0 تا 1، نرخ مثبت واقعی و نرخ مثبت نادرست را محاسبه کنید. AUC (جاهای زیر منحنی) را با استفاده از قانون تراپیزوئید محاسبه کنید.
 
@@ -513,14 +515,14 @@ print(f"\nClassification Report:\n{classification_report(y_te, y_pred)}")
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Logistic regression | "Regression for classification" | A linear model followed by a sigmoid function that outputs class probabilities |
-| Sigmoid function | "The S-curve" | The function 1/(1+e^(-z)) that maps any real number to the range (0, 1) |
-| Binary cross-entropy | "Log loss" | The loss function -[y*log(p) + (1-y)*log(1-p)] that penalizes confident wrong predictions severely |
+| Sigmoid function | "The S-curve" | The function $1/(1+e^{-z})$ that maps any real number to the range (0, 1) |
+| Binary cross-entropy | "Log loss" | The loss function $-[y \log(p) + (1-y) \log(1-p)]$ that penalizes confident wrong predictions severely |
 | Decision boundary | "The dividing line" | The surface where the model's output probability equals 0.5, separating predicted classes |
 | Softmax | "Multi-class sigmoid" | A function that converts a vector of scores into probabilities that sum to 1 |
-| Precision | "How many selected are relevant" | TP / (TP + FP), the fraction of positive predictions that are actually positive |
-| Recall | "How many relevant are selected" | TP / (TP + FN), the fraction of actual positives that the model correctly identifies |
-| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: 2*P*R / (P+R) |
+| Precision | "How many selected are relevant" | $TP / (TP + FP)$, the fraction of positive predictions that are actually positive |
+| Recall | "How many relevant are selected" | $TP / (TP + FN)$, the fraction of actual positives that the model correctly identifies |
+| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: $2PR / (P+R)$ |
 | Confusion matrix | "The error breakdown" | A table showing TP, TN, FP, FN counts for each class pair |
 | Threshold | "The cutoff" | The probability value above which the model predicts class 1 (default 0.5, tunable) |
-| One-hot encoding | "Binary columns for categories" | Representing class k as a vector of zeros with a 1 at position k |
-| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to k classes using one-hot encoded labels |
+| One-hot encoding | "Binary columns for categories" | Representing class $k$ as a vector of zeros with a 1 at position $k$ |
+| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to $k$ classes using one-hot encoded labels |

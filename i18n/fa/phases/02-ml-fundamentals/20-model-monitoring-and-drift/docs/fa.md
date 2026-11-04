@@ -43,8 +43,8 @@
 
 تقسیم مشترک ورودی ها را بنویسید `x`و برچسب ها`y`دو راه:
 
-```text
-P(x, y) = P(x) * P(y | x) = P(y) * P(x | y)
+```math
+P(x, y) = P(x) \cdot P(y \mid x) = P(y) \cdot P(x \mid y)
 ```
 
 هر نوع انحراف عامل متفاوتی را تغییر می دهد:
@@ -87,8 +87,8 @@ P(x, y) = P(x) * P(y | x) = P(y) * P(x | y)
 
 PSI از امتیاز اعتبار حاصل می شود. مقادیر مرجع را به سطل ها، معمولاً ده سطل در دسیل مرجع، برش دهید تا هر سطل 10 درصد از مرجع را نگه دارد. سهم ارزش های فعلی را در هر سطل محاسبه کنید. سپس یک اصطلاح را در هر سطل اضافه کنید:
 
-```text
-PSI = sum over bins of (current_share - reference_share) * ln(current_share / reference_share)
+```math
+\text{PSI} = \sum_{\text{bins}} (\text{current\_share} - \text{reference\_share}) \cdot \ln\left(\frac{\text{current\_share}}{\text{reference\_share}}\right)
 ```
 
 یک باین با سهم صفر باعث می شود که این سوابق بی نهایت باشد، بنابراین هر سهم را به یک مقدار کوچک مانند 0.0001 کاپ کنید. PSI متقابل است. این برابر با انحراف KL از جریان به مرجع و همچنین انحراف KL از مرجع به جریان است.
@@ -99,8 +99,8 @@ PSI = sum over bins of (current_share - reference_share) * ln(current_share / re
 
 آمار دو نمونه KS `D`بزرگترین شکاف عمودی بین دو تابع توزیع تجمیمی تجربی است:
 
-```text
-D = max over x of | F_reference(x) - F_current(x) |
+```math
+D = \max_x \left\lvert F_{\text{reference}}(x) - F_{\text{current}}(x) \right\rvert
 ```
 
 `D`برای نمونه های یکسان 0 و 1 برای نمونه هایی که همپوش نمی شوند. به هیچ سطل نیاز ندارد. ارزش p از توزیع کلمگوروف با اندازه نمونه واقعی می آید `n * m / (n + m)`. .
@@ -111,9 +111,11 @@ D = max over x of | F_reference(x) - F_current(x) |
 
 برای یک ویژگی دسته بندی مانند کانال پرداخت، یک جدول با دو ردیف (رجای، جریان) و یک ستون در هر دسته ایجاد کنید. تعداد انتظار می رود در هر سلول از کل ردیف و ستون ها می آید:
 
-```text
-expected[r][c] = row_total[r] * column_total[c] / grand_total
-chi2 = sum over cells of (observed - expected)^2 / expected
+```math
+\begin{aligned}
+\text{expected}[r][c] &= \text{row\_total}[r] \cdot \text{column\_total}[c] / \text{grand\_total} \\
+\text{chi2} &= \sum_{\text{cells}} (\text{observed} - \text{expected})^2 / \text{expected}
+\end{aligned}
 ```
 
 آزمایش داره`k - 1`درجه آزادی برای`k`دسته بندی: یک دسته که فقط در پنجره فعلی ظاهر می شود یک اصطلاح بزرگ اضافه می کند، بنابراین تست به ارزش های جدید واکنش نشان می دهد. V Cramér اندازه اثر است. برای یک جدول با دو ردیف، برابر با ریشه مربع `chi2 / grand_total`. .

@@ -26,36 +26,36 @@
 
 ### نمونه
 
-بازپسین خطی فرض می کند که رابطه خطی بین ورودی (x) و ورودی (y) وجود داشته باشد:
+بازپسین خطی فرض می کند که رابطه خطی بین ورودی ($x$) و تولید ($y$):
 
-```
+```math
 y = wx + b
 ```
 
-- `w`(وزن/سوال): چقدر y تغییر می کند وقتی x با 1 افزایش می یابد
-- `b`(تاهید/قاطع): ارزش y زمانی که x = 0
+- `w`(وزن/نحرف): چقدر$y$وقتی تغییر می کند$x$افزایش 1
+- `b`(تاهید/قاطع): ارزش $y$چه وقت$x = 0$
 
 برای ورودی های متعدد (تخصیصات) این به:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
-یا به صورت ویکتور:`y = w^T * x + b`
+یا به صورت ویکتور:$y = w^T x + b$
 
-هدف: یافتن ارزش های w و b که باعث می شود y پیش بینی شده تا حد ممکن به y واقعی در تمام نمونه های آموزش نزدیک شود.
+هدف: یافتن ارزش های $w$و$b$که پیش بینی شده را انجام می دهند$y$تا حد امکان به واقع نزدیک تر$y$در تمام نمونه های آموزش.
 
 ### عملکرد هزینه (خطای متوسط مربع)
 
 چگونه "به عنوان نزدیک به ممکن" اندازه گیری می کنید؟ شما نیاز به یک عدد واحد دارید که نشان دهد پیش بینی های شما چقدر اشتباه است. رایج ترین انتخاب خطای متوسط مربع (MSE) است:
 
-```
-MSE = (1/n) * sum((y_predicted - y_actual)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{predicted}} - y_{\text{actual}})^2
 ```
 
 چرا مربع؟ دو دلیل. اول، این خطا های بزرگ را بیشتر از اشتباهات کوچک مجازات می کند (خطای 10 برابر 100 برابر بدتر از خطای 1 است نه 10 برابر). دوم، تابع مربع در همه جا صاف و قابل تفاوتی است، که بهینه سازی را ساده می کند.
 
-عملکرد هزینه سطح را ایجاد می کند. برای یک وزن واحد w و bias b، سطح MSE مانند یک کاسه (پاراولاید مخلوط) به نظر می رسد. پایین کاسه جایی است که MSE به حداقل رسانی می رسد. آموزش به معنای یافتن آن پایین است.
+تابع هزینه سطح را ایجاد می کند. برای یک وزن$w$و تعصب$b$سطح MSE شبیه یک کاسه (یک پارابولاید مخلوط) است. پایین کاسه جایی است که MSE به حداقل رسانی می شود. آموزش به معنای پیدا کردن آن پایین است.
 
 ### کاهش تدریجی
 
@@ -74,18 +74,22 @@ flowchart TD
 
 گرادینت ها دو چیز را به شما می گویند: کدام جهت هر پارامتر را حرکت دهید و چقدر حرکت کنید.
 
-برای MSE با y_hat = wx + b:
+برای MSE با $\hat{y} = wx + b$:
 
-```
-dMSE/dw = (2/n) * sum((y_hat - y) * x)
-dMSE/db = (2/n) * sum(y_hat - y)
+```math
+\begin{aligned}
+\frac{\partial \text{MSE}}{\partial w} &= \frac{2}{n} \sum (\hat{y} - y) \, x \\
+\frac{\partial \text{MSE}}{\partial b} &= \frac{2}{n} \sum (\hat{y} - y)
+\end{aligned}
 ```
 
 قانون تازه:
 
-```
-w = w - learning_rate * dMSE/dw
-b = b - learning_rate * dMSE/db
+```math
+\begin{aligned}
+w &= w - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial w} \\
+b &= b - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial b}
+\end{aligned}
 ```
 
 سرعت یادگیری اندازه گام را کنترل می کند. بیش از حد بزرگ: شما از حداقل عبور می کنید و منحرف می شوید. بیش از حد کوچک: آموزش برای همیشه طول می کشد. ارزش های اولیه معمول: 0.01، 0.001 یا 0.0001.
@@ -94,18 +98,18 @@ b = b - learning_rate * dMSE/db
 
 برای بازپسین خطی به طور خاص، یک فرمول مستقیم وجود دارد که بدون هیچ تکرار، وزنهای مطلوب را می دهد:
 
-```
-w = (X^T * X)^(-1) * X^T * y
+```math
+w = (X^T X)^{-1} X^T y
 ```
 
-این یک ماتریس را برای حل کردن w در یک مرحله معکوس می کند. این برای مجموعه داده های کوچک به خوبی کار می کند. برای مجموعه داده های بزرگ (میلیون ها ردیف یا هزاران ویژگی) ، کاهش گرادینت ترجیح داده می شود زیرا معکوس ماترسی O(n^3) در تعداد ویژگی ها است.
+این یک ماتریکس را برای حل کردن معکوس می کند$w$برای مجموعه داده های بزرگ (میلیون ها ردیف یا هزاران ویژگی) ، کاهش گرادینت ترجیح داده می شود زیرا معکوس ماترکس$O(n^3)$در تعداد ویژگی ها
 
 ### بازگشت خطی چندگانه
 
 با ویژگی های متعدد، مدل تبدیل به:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
 همه چیز به همان شکل کار می کند: MSE عملکرد هزینه است، گرادینت نزول تمام وزنه ها را به طور همزمان به روز می کند. تنها تفاوت این است که شما یک فرش فرعی را به جای یک خط نصب می کنید.
@@ -116,36 +120,38 @@ y = w1*x1 + w2*x2 + ... + wn*xn + b
 
 اگر رابطه خطی نباشد چه می شود؟ شما هنوز می توانید با ایجاد ویژگی های چندگانه از رجریشن خطی استفاده کنید:
 
-```
-y = w1*x + w2*x^2 + w3*x^3 + b
+```math
+y = w_1 x + w_2 x^2 + w_3 x^3 + b
 ```
 
-این بازپسین "خطی" است زیرا مدل در وزنه ها خطی است (w1، w2، w3). شما فقط از ویژگی های غیر خطی x استفاده می کنید.
+این بازپسین "خطی" است زیرا مدل در وزنه ها خطی است ($w_1, w_2, w_3$) شما فقط از ویژگی های غیر خطی استفاده می کنید$x$. .
 
 چند متغیر درجه بالاتر می تواند منحنیات پیچیده تری را متناسب کند اما خطر بیش از حد مناسب است. یک چند متغیر درجه 10 از طریق هر نقطه در مجموعه داده های 10 نقطه عبور می کند اما در داده های جدید ضعیف پیش بینی می کند.
 
 ### امتیاز R مربع
 
-MSE به شما می گوید که چقدر اشتباه می کنید، اما این عدد بستگی به مقیاس y دارد. R- مربع (R^2) یک اندازه گیری مستقل از مقیاس را می دهد:
+MSE به شما میگه چقدر اشتباه می کنید، اما این عدد بستگی به مقیاس$y$. ر- مربع ($R^2$) یک اندازه گیری مستقل از مقیاس را ارائه می دهد:
 
-```
-R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
-    = 1 - SS_res / SS_tot
+```math
+\begin{aligned}
+R^2 &= 1 - \frac{\text{sum of squared residuals}}{\text{sum of squared deviations from mean}} \\
+&= 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{aligned}
 ```
 
-- R^2 = 1.0: پیش بینی های کامل
-- R^2 = 0.0: مدل بهتر از پیش بینی متوسط هر بار نیست
-- R^2 < 0.0: مدل بدتر از پیش بینی متوسط است
+- $R^2 = 1.0$: پیش بینی های کامل
+- $R^2 = 0.0$: مدل بهتر از پیش بینی متوسط هر بار نیست
+- $R^2 < 0.0$: مدل بدتر از پیش بینی متوسط است
 
 ### پیش نمایش تنظیم (رجرج ریج)
 
 هنگامی که شما ویژگی های بسیاری دارید، مدل می تواند با اختصاص وزن های بزرگ بیش از حد متناسب باشد. بازگشت ریدج (رجولاریزاسیون L2) یک مجازات اضافه می کند:
 
-```
-Cost = MSE + lambda * sum(w_i^2)
+```math
+\text{Cost} = \text{MSE} + \lambda \sum w_i^2
 ```
 
-اصطلاح مجازات وزن های بزرگ را تشویق نمی کند. لامبا هایپر پارامتر کنترل تعویض را کنترل می کند: لامبا های بالاتر به معنای وزن های کوچکتر و تنظیم بیشتر است. این موضوع در یک درس بعدی به طور عمیق مورد بحث قرار می گیرد. برای حال، بدانید که وجود دارد و چرا کمک می کند.
+اصطلاح مجازات وزن هاي بزرگ رو از دست ميده$\lambda$کنترل کردن تعادل: بالاتر $\lambda$در یک درس بعدی، این موضوع به طور عمیق مورد بررسی قرار خواهد گرفت. برای همین، بدانید که این موضوع وجود دارد و چرا کمک می کند.
 
 ```figure
 linear-regression-fit
@@ -520,24 +526,24 @@ print(f"Ridge coefficient: {ridge.coef_[0]:.4f}")
 ## تمرینات
 
 1. پیاده سازی کاهش گرادینت دسته، کاهش گرادینت ستوکاستیک (SGD) و کاهش گرادینت دسته کوچک. سرعت تقابل در یک مجموعه داده مشابه را مقایسه کنید. کدام یک سریعتر تقابل می کند؟ کدام یک دارای نرمترین منحنی هزینه است؟
-2. داده ها را از یک تابع مکعب (y = ax^3 + bx^2 + cx + d + شور) تولید کنید. چند متغیر مناسب درجه 1, 3 و 10. آموزش R^2 و آزمون R^2 را مقایسه کنید.
-3. پیاده سازی بازپسین لاسو (L1 تنظیم: مجازات الفا *((=باید)) ، داده های مسکن چند ویژگی را تمرین کنید. مقایسه کنید که کدام وزن به صفر نسبت به ریدج می رود. چرا L1 راه حل های کمیاب تولید می کند در حالی که L2 انجام نمی دهد؟
+2. تولید داده ها از یک تابع مکعب ($y = ax^3 + bx^2 + cx + d + \text{noise}$) چند متغیر مناسب درجه 1، 3 و 10 . مقایسه آموزش$R^2$و آزمایش$R^2$تا چه حد اضافه شدن به نظر می رسد؟
+3. پیاده سازی بازپسین لاسو (رجولاریزاسیون L1: $\text{penalty} = \alpha \sum \lvert w_i \rvert$) بر اساس داده های مسکن چند ویژگی آموزش دهید. مقایسه کنید که کدام وزن به صفر نسبت به ریج می رسد. چرا L1 راه حل های کمیاب تولید می کند در حالی که L2 نمی کند؟
 
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear regression | "Draw a line through data" | Find weight w and bias b that minimize the sum of squared differences between wx+b and actual y values |
+| Linear regression | "Draw a line through data" | Find weight $w$ and bias $b$ that minimize the sum of squared differences between $wx+b$ and actual $y$ values |
 | Cost function | "How bad the model is" | A function that maps model parameters to a single number measuring prediction error, which optimization minimizes |
-| Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
+| Mean squared error | "Average of squared errors" | $\frac{1}{n} \sum (\text{predicted} - \text{actual})^2$, penalizing large errors disproportionately |
 | Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
 | Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
-| R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
+| Normal equation | "Solve it directly" | The closed-form solution $w = (X^T X)^{-1} X^T y$ that gives optimal weights without iteration |
+| R-squared | "How good the fit is" | The fraction of variance in $y$ explained by the model, ranging from negative infinity to 1.0 |
 | Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
 | Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
-| Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
+| Ridge regression | "L2 regularization" | Linear regression with a penalty of $\lambda \sum w_i^2$ added to MSE |
+| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features ($x, x^2, x^3, \ldots$), still linear in the weights |
 | Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## خواندن بیشتر
