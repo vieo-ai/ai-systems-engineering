@@ -12,7 +12,7 @@
 - Divida o pipeline de inferência em Thinker (razão de texto) e Talker (sinteze de fala) e explique por que o streaming paralelo funciona.
 - Calcular o orçamento de tempo para primeiro byte de áudio (TTFAB) para uma interação de conversação, componente por componente.
 - Descreva a posição alinhada com o tempo do TMRoPE codificando visão, áudio e texto dentro do Pensador.
-- Nomear os três padrões de conversação em tempo real: meio duplex, turno-tomando, duplex completo.
+- Nomear os dois padrões de conversação em tempo real, meio duplex e duplex completo, e explicar como a tomada de turno VAD impulsiona a transferência de meio duplex.
 
 ## O problema
 
@@ -41,10 +41,10 @@ A separação é importante. O pensador tem que ser grande para um bom raciocín
 
 - Elas estão em paralelo.
 
-1. O pensador emite um sinal de texto.
-2. O falante consome t_i (via streaming) e emite tokens de fala s_i, s_{i+1}, ..., s_{i+k}.
+1. O pensador emite um token de texto .$t_i$- Não .
+2. O falante consome .$t_i$(via streaming) e emite tokens de fala $s_i, s_{i+1}, \ldots, s_{i+k}$- Não .
 3. O decodificador de voz consome tokens de voz à medida que eles chegam e emite amostras de áudio.
-4. Quando o Thinker está no token de texto, o Talker já transmitiu áudio para t_0..t_{i+2}.
+4. Quando o Pensador estiver no sinal de texto .$t_{i+3}$O Talker já transmitiu áudio para o$t_0, \ldots, t_{i+2}$- Não .
 
 ### Posições multimodal TMRoPE  alinhadas no tempo
 
@@ -85,7 +85,7 @@ Para uma interação de streaming típica:
 - Decodificação residual-VQ: 30 ms.
 - Decodificação de forma de onda de fala: 50-80ms.
 
-TTFAB total: 320-510ms em 7B, 600-900ms em 70B. A qualidade de fronteira geralmente significa 70B +; portanto, a diferença de latência de fronteira.
+TTFAB total: 320-490ms em 7B, 600-900ms em 70B. A qualidade de fronteira geralmente significa 70B +; portanto, a diferença de latência de fronteira.
 
 ### Matemática de taxa de tokens
 
