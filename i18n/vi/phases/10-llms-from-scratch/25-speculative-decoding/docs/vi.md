@@ -53,8 +53,8 @@ nơi `(p - q)+`chỉ ra phần tích cực của sự khác biệt về điểm.
 
 Nếu tỷ lệ chấp nhận cấp token của mô hình dự thảo là `α`, các token dự kiến được sản xuất cho mỗi mục tiêu chuyển tiếp là:
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 Tại `α = 0.8, K = 4``(1 - 0.8^5)/(1 - 0.8) = 3.36`Các token trên mỗi forward.`cost_q * K + cost_p`(K dự thảo bước cộng với một mục tiêu xác minh). Nếu `cost_p >> cost_q * K`tỷ lệ tăng tốc là `3.36× / 1 = 3.36×`về thông qua.
@@ -85,7 +85,7 @@ Thay đổi của EAGLE-1:
 
 EAGLE-2 (2024) thêm topology cây động: cây phát triển rộng hơn nơi có dự án không chắc chắn và duy trì hẹp khi nó tự tin.`α_effective`không tăng chi phí xác minh.
 
-Eagle-3 (Li et al. 2025, "EAGLE-3: Scaling Up Inference Acceleration of Large Language Models via Training-Time Test") loại bỏ sự phụ thuộc tính năng lớp trên cố định và đào tạo bản thảo với một lỗ hổng "simulans thời gian thử nghiệm" mới. Tỷ lệ chấp nhận tăng từ 0,75 (EAGLE-2) lên 0,82 (EAGLE-3), và trung bình token / xác minh từ 3,0 lên 4,5.
+Eagle-3 (Li et al. 2025, "EAGLE-3: Scaling Up Inference Acceleration of Large Language Models via Training-Time Test") loại bỏ sự phụ thuộc tính năng lớp trên cố định và đào tạo bản thảo với một lỗ hổng "simulans thời gian thử nghiệm" mới. Tỷ lệ chấp nhận tăng từ 0,75 (EAGLE-2) lên 0,82 (EAGLE-3), và trung bình token / xác minh từ 3,0 lên 4,5. Những con số này đến từ một thiết lập tham chiếu. Việc chấp nhận phụ thuộc vào cặp mô hình, cây dự thảo và lưu lượng truy cập: Giai đoạn 10 · 15 trích dẫn 0,88 đến 0,92 cho mỗi token đường được chấp nhận trên các tiêu chuẩn trò chuyện, và Giai đoạn 17 · 05 kế hoạch với 0,6 đến 0,8 trên trò chuyện chung sản xuất.
 
 ### Kiểm tra sự chú ý của cây
 
@@ -132,13 +132,13 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     """One round of speculative decoding. Returns list of accepted tokens."""
     # 1. Draft K tokens
     draft_tokens = []
-    q_probs = []
+    q_dists = []
     state = draft_state_init()
     for _ in range(K):
         probs = softmax(q_draft(state) / temperature)
         t = np.random.choice(len(probs), p=probs)
         draft_tokens.append(t)
-        q_probs.append(probs[t])
+        q_dists.append(probs)
         state = draft_step(state, t)
 
     # 2. Target computes p at every drafted position + 1 extra
@@ -148,10 +148,10 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     accepted = []
     for k, tok in enumerate(draft_tokens):
         r = np.random.uniform()
-        if r < p_probs_all[k][tok] / q_probs[k]:
+        if r < p_probs_all[k][tok] / q_dists[k][tok]:
             accepted.append(tok)
         else:
-            residual = np.maximum(p_probs_all[k] - q_probs[k], 0)
+            residual = np.maximum(p_probs_all[k] - q_dists[k], 0)
             residual /= residual.sum()
             accepted.append(np.random.choice(len(residual), p=residual))
             return accepted
@@ -175,7 +175,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-speculative-tuning.md
 
 1. Thực hiện quy tắc từ chối chính xác và xác minh bằng chứng.`speculative_decode`và thông qua lấy mẫu mục tiêu đơn giản; tính khoảng cách TV giữa hai phân phối đầu ra.
 
-2. Xét công thức tăng tốc.`α`và `K`, biểu đồ các token dự kiến cho mỗi mục tiêu tiến. Tìm K tối ưu cho α ∈ {0,5, 0,7, 0,9}.
+2. Xét công thức tăng tốc.`α`và `K`, biểu đồ các token dự kiến cho mỗi mục tiêu tiến. Tìm tối ưu $K$cho $\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$- Tôi không biết.
 
 3. Đưa một con đường nhỏ, lấy một mục tiêu GPT-2 124M và chưng cất một con đường GPT-2 30M trên 100M token với lỗ KL.`α`- Đường dự kiến: 0,6-0,7.
 

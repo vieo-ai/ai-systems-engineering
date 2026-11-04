@@ -36,8 +36,8 @@ Native Sparse Attention (Yuan et al., DeepSeek + PKU + UW, ACL 2025 best paper, 
 
 Ba đầu ra của nhánh được kết hợp qua một cổng học được học theo vị trí:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
+```math
+\text{out} = g_{\text{cmp}} \cdot \text{out}_{\text{cmp}} + g_{\text{sel}} \cdot \text{out}_{\text{sel}} + g_{\text{win}} \cdot \text{out}_{\text{win}}
 ```
 
 `g_cmp, g_sel, g_win`là trọng lượng cổng từ một MLP nhỏ trên truy vấn. Họ không phải cộng vào 1  họ có thể cân nặng các nhánh độc lập.
@@ -46,7 +46,7 @@ out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
 
 Bước lựa chọn (những khối top-k) là riêng biệt. Các hoạt động riêng biệt phá vỡ dòng chảy gradient. Công việc chú ý ít trước đó hoặc bỏ qua backprop thông qua lựa chọn (các khóa học) hoặc sử dụng thư giãn liên tục mà không cung cấp sự ít thực tế khi suy luận.
 
-NSA bỏ qua điều này: sự chú ý của các nhánh nén là một sự chú ý thô lỗ phân biệt trên toàn bộ chuỗi. Hoạt động top-k chỉ sử dụng lại điểm chú ý cao nhất từ nhánh nén để chọn những khối hạt mỏng để tải. Các gradient chảy qua các điểm số của các nhánh nén (được ảnh hưởng đến cả kết quả nén và logic lựa chọn), và đóng góp của các khối được chọn vào kết quả cuối cùng cũng có thể phân biệt. Không phân biệt được`top_k`hoạt động là không hoạt động trên biểu đồ tính toán phía trước nó chỉ kiểm soát những khối nào được tải từ bộ nhớ.
+NSA bỏ qua điều này: sự chú ý của các nhánh nén là một sự chú ý thô lỗ phân biệt trên toàn bộ chuỗi. Hoạt động top-k chỉ sử dụng lại điểm chú ý cao nhất từ nhánh nén để chọn những khối hạt mỏng để tải. Các gradient đạt đến điểm số của nhánh nén thông qua sản lượng của nhánh nén, chứ không phải thông qua sự lựa chọn các khối. Bên trong các khối được chọn, sự chú ý đến các khóa và giá trị được chọn là sự chú ý bình thường, vì vậy đóng góp của chúng vào kết quả cuối cùng cũng có thể phân biệt được. - `top_k`tự chọn chỉ số không có gradient: nó chỉ kiểm soát các khối được tải từ bộ nhớ.
 
 Đây là lý do tại sao NSA có thể được sử dụng trong việc huấn luyện trước cuối đến cuối. mô hình học cách định tuyến thông tin qua ba chi nhánh chung, tạo ra một mô hình hiếm có mà khi suy luận thực sự cung cấp tốc độ hứa hẹn.
 
@@ -171,7 +171,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-nsa-integrator.md`. V
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
+| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in $O(N/l)$ keys per query |
 | Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
 | Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
 | Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |

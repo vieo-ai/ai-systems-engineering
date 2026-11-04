@@ -11,7 +11,7 @@
 
 Việc đào tạo một bộ biến đổi lưu trữ, cho mỗi lớp, các đầu vào cho mỗi hoạt động được phân biệt ngược: đầu vào chú ý, dự đoán Q / K / V, đầu ra softmax, đầu vào FFN, đầu ra chuẩn và dòng dư thừa. Đối với một lớp có kích thước ẩn `d`, chiều dài chuỗi `L`, lô`B`, đây là theo lệnh của `12 * B * L * d`Lượng nước lơ lửng trên mỗi lớp.
 
-Vì `d=8192, L=8192, B=1`, đó là 800 MB / lớp trong BF16. Một mô hình 64 lớp là 51 GB của kích hoạt  và đó là trước khi bạn nhân bằng kích thước microbatch, trước khi bạn thêm trung gian chú ý-softmax (`L^2`mỗi đầu), và trước khi bạn tính toán các bản sao phụ song thoáng.
+Vì `d=8192, L=8192, B=1`, đó là khoảng 805M giá trị, hoặc 1.6 GB / lớp trong BF16. Một mô hình 64 lớp là khoảng 103 GB của kích hoạt, và đó là trước khi bạn nhân bằng kích thước microbatch, trước khi bạn thêm trung gian chú ý-softmax (`L^2`mỗi đầu), và trước khi bạn tính toán các bản sao phụ song thoáng.
 
 Các hóa đơn hai mặt: BF16 trọng lượng cộng với trạng thái tối ưu hóa có thể phù hợp với 80GB, nhưng kích hoạt đẩy bạn qua. kiểm tra điểm (tương tự là tính toán lại kích hoạt) là sự cố tiêu chuẩn. Thả hầu hết các kích hoạt; làm lại phía trước trong thời gian ngược để lấy lại chúng. Chi phí: FLOPs bổ sung. Lợi ích: trí nhớ giảm theo tỷ lệ các phân đoạn điểm kiểm tra với tổng lớp.
 
@@ -37,13 +37,13 @@ Ví dụ: Máy biến 32 lớp chia thành 32 phân đoạn mỗi lớp là 1 l�
 - Khoá: 32 đầu vào lớp (các) so với 32 * (thời lượng kích hoạt mỗi lớp) (chưa lớn).
 - Lượng tính toán thêm: 1 phần nào thêm tiến lên, tức là tổng số FLOP tiến lên ~33% (vì ngược lại là 2x tiến lên, bước hoàn chỉnh trở thành 1 + 1 + 2 = 4 đơn vị thay vì 1 + 2 = 3).
 
-Đây là công thức của Chen et al. 2016: mỗi điểm kiểm soát`sqrt(L)`L=64, đó là 8 điểm kiểm tra.
+Đây là công thức của Chen et al. 2016: mỗi điểm kiểm soát`sqrt(L)`Các lớp để cân bằng bộ nhớ và tính toán.$L=64$, đó là 8 điểm kiểm soát.
 
 ### Địa chỉ chọn lọc (Korthikanti 2022)
 
 Không phải tất cả các kích hoạt đều có giá tương tự.`B*L*L*heads`và tăng lên *quadratically* với chiều dài chuỗi.`B*L*4d`và phát triển theo đường thẳng. Đối với các chuỗi dài Softmax thống trị.
 
-Việc kiểm tra chọn lọc giữ lại các kích hoạt giá rẻ để lưu trữ (những dự đoán tuyến tính, dư lượng) và tính lại chỉ những thứ đắt tiền (trông trọng).
+Việc kiểm tra chọn lọc giữ các hoạt động giá rẻ để lưu trữ (những dự đoán tuyến tính, dư lượng) và tính lại chỉ những hoạt động đắt tiền (trông tâm).$O(L^2)$trí nhớ.
 
 Megatron-Core thực hiện điều này như là tính toán lại kích hoạt "đặc biệt". được sử dụng trong hầu hết các cuộc đào tạo biên giới 2024+.
 
@@ -293,8 +293,8 @@ Bài học này sẽ mang lại kết quả `outputs/prompt-activation-recompute
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
-| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
+| Attention-softmax volume | "The O(L^2) problem" | $L^2 \cdot \text{heads} \cdot \text{batch}$ floats; dominates activation memory at long contexts |
 
 ## Đọc thêm
 

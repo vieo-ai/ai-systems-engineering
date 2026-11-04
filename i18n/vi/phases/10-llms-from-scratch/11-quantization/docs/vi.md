@@ -42,11 +42,11 @@ INT8:  [1 sign] [7 value]                   = 8  bits (uniform steps)
 INT4:  [1 sign] [3 value]                   = 4  bits (16 levels total)
 ```
 
-**FP32**là độ chính xác đầy đủ. 23 bit mantissa cho bạn khoảng 7 chữ số thập phân độ chính xác. phạm vi: khoảng 1,2 x 10^-38 đến 3,4 x 10^38.
+**FP32**là độ chính xác đầy đủ. 23 bit mantissa cho bạn khoảng 7 chữ số thập phân độ chính xác.$1.2 \times 10^{-38}$đến$3.4 \times 10^{38}$- Việc đào tạo trước đây chỉ diễn ra trong FP32. Nó vẫn còn hoạt động cho sự tích lũy (tổng chạy trong quá trình nhân tử liệu).
 
 **FP16**10 bit mantissa tạo ra khoảng 3,3 chữ số thập phân. Tỷ số giảm xuống còn 5 bit, làm giảm phạm vi đáng kể (tỷ lệ tối đa là ~65,504). Điều này rất tốt cho trọng lượng (cluster gần không) nhưng nguy hiểm cho các hoạt động và độ nghiêng có thể tăng trong quá trình đào tạo.
 
-**BF16**(Brain Float 16) giữ cho số lượng 8 bit từ FP32 nhưng thu hẹp mantissa xuống còn 7 bit. Phạm vi tương tự như FP32, ít chính xác hơn FP16. Google thiết kế nó đặc biệt cho việc học sâu. Hình giác quan: phạm vi quan trọng hơn là độ chính xác cho mạng thần kinh. Một gradient 10^-20 chảy xuống không trong FP16 tồn tại trong BF16. Một trọng lượng 0,07342 tròn đến 0,0734 trong BF16 là đủ gần. Mỗi cuộc tập luyện hiện đại sử dụng BF16 hoặc hỗn hợp BF16/FP32.
+**BF16**(Brain Float 16) giữ cho hàm số 8 bit từ FP32 nhưng thu hẹp mantissa xuống còn 7 bit. cùng phạm vi với FP32, ít chính xác hơn FP16. Google thiết kế nó đặc biệt cho việc học sâu.$10^{-20}$Một trọng lượng 0,07342 mà vòng quanh đến 0,0734 trong BF16 là đủ gần.
 
 **FP8**E4M3 (4 hàm, 3 mantissa) được sử dụng cho trọng lượng và kích hoạt trong quá trình suy luận. E5M2 (5 hàm, 2 mantissa) được sử dụng cho độ lệch trong quá trình đào tạo nơi phạm vi quan trọng hơn độ chính xác.
 

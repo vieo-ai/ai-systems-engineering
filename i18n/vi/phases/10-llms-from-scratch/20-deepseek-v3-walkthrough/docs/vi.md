@@ -106,18 +106,18 @@ Hãy phân tích nó:
 Việc tính toán đầy đủ là trong `code/main.py`- Tiêu đề:
 
 - Đêm: `vocab * hidden = 129280 * 7168 = ~0.93B`- Tôi không biết.
-- 3 khối mật đầu tiên: chú ý với MLA (~144M mỗi khối) + MLP mật (~260M mỗi khối) + chuẩn mực.
-- 58 khối MoE: sự chú ý với MLA (~144M) + 256 chuyên gia mỗi (30M mỗi) + 1 chuyên gia chia sẻ (30M) + chuẩn. Tổng cộng ~ 7.95B mỗi khối, bao gồm tất cả các chuyên gia.
-- Module MTP: 14B.
+- 3 khối dày đặc đầu tiên: chú ý với MLA (~ 84M mỗi khối trong số đơn giản hóa máy tính) + SwiftU MLP dày đặc (`3 * 7168 * 18432 = ~396M`mỗi khối) + các tiêu chuẩn.
+- 58 khối MoE: sự chú ý với MLA (~ 84M) + 256 chuyên gia hướng (`3 * 7168 * 2048 = ~44M`mỗi người) + 1 chuyên gia chia sẻ (~ 44M) + router + tiêu chuẩn. Khoảng 11.4B mỗi khối, bao gồm tất cả các chuyên gia. Khoảng 661B cho 58 khối MoE.
+- Mô-đun MTP: mô-đun được xuất bản là 14B. Máy tính sử dụng một stand-in dày đặc của ~ 0,8B.
 
-Tổng cộng: ~476B cho kiến trúc cốt lõi + 14B MTP + rõ ràng số 671B được công bố chiếm các tham số cấu trúc bổ sung (những tensor thiên vị, các thành phần chuyên gia cụ thể, quy mô chuyên gia chia sẻ, vv). Số lượng chúng tôi tái tạo trong máy tính tính là trong vòng 3-5% của công bố  delta đến từ tài liệu báo cáo kế toán tinh tế của DeepSeek trong phần 2 phụ lục của nó.
+Tổng cộng: máy tính hạ cánh ở ~664B so với 671B được công bố cho mô hình chính. Điểm kiểm tra Hugging Face là 685B vì nó thêm mô-đun MTP 14B lên trên 671B. Khoảng cách ~ 1% còn lại đến từ việc đơn giản hóa: máy tính bỏ qua các kích thước RoPE tách rời trong MLA, đầu đầu ra không được gắn, và một vài tensor nhỏ.
 
 Các tham số hoạt động cho mỗi forward:
 
-- Lưu ý: 144M mỗi lớp * 61 = 8,8B (tất cả các lớp cháy).
-- MLP hoạt động: 3 lớp đầu tiên dày đặc (3 * 260M = 780M), 58 lớp MoE mỗi lớp hoạt động với 8 đường + 1 chia sẻ + đường trên.
-- Đáp nhập + chuẩn: 1.2B.
-- Tổng hoạt động: khoảng 26B lõi + 14B MTP (được đào tạo nhưng không phải lúc nào cũng chạy theo suy luận) ≈ 37B.
+- Lưu ý: 84M mỗi lớp * 61 = ~5.1B (tất cả các lớp cháy).
+- MLP hoạt động: 3 lớp đầu tiên dày đặc (`3 * 396M = ~1.2B`), 58 lớp MOE hoạt động với 8 chuyên gia được chuyển hướng + 1 chuyên gia chia sẻ (`9 * 44M = ~396M`Mỗi lớp, tổng cộng là 23B.
+- Đan nhúng + chuẩn: ~ 0,9B.
+- Tổng hoạt động: ~ 30B từ máy tính so với 37B được xuất bản. Phần lớn khoảng cách là sự chú ý: MLA đầy đủ, với kích thước RoPE và truy vấn rộng hơn và đầu khóa, lớn hơn con số đơn giản hóa. Mô-đun MTP không tính đến 37B.
 
 ### Tỷ lệ 671B / 37B
 
@@ -180,7 +180,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-deepseek-v3-reader.md
 | num_experts_per_tok | "Top-k routing" | How many routed experts fire per token; DeepSeek-V3 uses 8 |
 | Shared experts | "Always-on experts" | Experts that process every token regardless of routing; DeepSeek-V3 uses 1 |
 | Auxiliary-loss-free routing | "Bias-adjusted load balance" | Per-expert bias terms adjusted during training to keep expert load balanced without adding a loss term |
-| MTP module | "Extra prediction head" | Transformer block predicting t+2 from h^(1) and E(t+1); denser training, free speculative-decoding draft |
+| MTP module | "Extra prediction head" | Transformer block predicting $t+2$ from $h^{(1)}$ and $E(t+1)$; denser training, free speculative-decoding draft |
 | DualPipe | "Bidirectional pipeline" | Training schedule that overlaps forward/backward compute with cross-node all-to-all |
 | Active parameter ratio | "Sparsity" | active_params / total_params; DeepSeek-V3 hits 5.5% |
 | FP8 training | "8-bit training" | Training storage and many compute ops in FP8; roughly halves memory vs BF16 at a small quality cost |

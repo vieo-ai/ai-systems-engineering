@@ -67,8 +67,8 @@ Ba cơ chế khiến điểm số chuẩn ngừng phản ánh khả năng thực
 
 Sự bối rối đo lường mức độ ngạc nhiên của một mô hình bởi một chuỗi các token.
 
-```
-PPL = exp(-1/N * sum(log P(token_i | context)))
+```math
+\text{PPL} = \exp\left(-\frac{1}{N} \sum_i \log P(\text{token}_i \mid \text{context})\right)
 ```
 
 Một độ phức tạp của 10 có nghĩa là mô hình trung bình không chắc chắn như chọn đồng đều giữa 10 tùy chọn tại mỗi vị trí mã thông báo. thấp hơn là tốt hơn. GPT-2 có độ phức tạp của ~30 trên WikiText-103. GPT-3 có được ~20. Llama 3 8B có được ~7.
@@ -503,7 +503,7 @@ Nó cũng sản xuất `outputs/skill-llm-evaluation.md`-- một khung quyết �
 | MMLU | "The benchmark" | Massive Multitask Language Understanding -- 15,908 multiple choice questions across 57 subjects, saturated above 88% by 2025 |
 | HumanEval | "Code eval" | 164 Python function-completion problems from OpenAI, tests only isolated function generation |
 | SWE-bench | "Real coding eval" | 2,294 GitHub issues from 12 Python repos, measures end-to-end bug fixing including test generation |
-| Perplexity | "How confused the model is" | exp(-avg(log P(token_i given context))) -- lower means the model assigns higher probability to the actual tokens |
+| Perplexity | "How confused the model is" | $\exp(-\mathop{\mathrm{avg}}(\log P(\text{token}_i \text{ given context})))$ -- lower means the model assigns higher probability to the actual tokens |
 | ELO rating | "Chess ranking for models" | A relative skill rating computed from pairwise win/loss records, used by Chatbot Arena to rank 100+ models |
 | LLM-as-judge | "Using AI to grade AI" | A strong model scores a weaker model's outputs against a rubric, ~80% agreement with human judges at ~$0.01/judgment |
 | Data contamination | "The model saw the test" | Training data includes benchmark questions, inflating scores without improving real capability |
