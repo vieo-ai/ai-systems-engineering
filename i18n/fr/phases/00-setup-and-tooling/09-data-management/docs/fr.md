@@ -245,6 +245,16 @@ Cette leçon donne:
 3. Convertir un ensemble de données en Parquet et comparer la taille du fichier à CSV
 4. Créer une séparation de train/val/essai 70/15/15 avec une semence fixe et vérifier les tailles
 
+### Des indices
+
+**Exercise 1.**Appel`load_and_inspect("glue", "mrpc")`de `code/data_utils.py`ou `load_dataset("glue", "mrpc")`directement et imprimé `ds["train"][:5]`Chaque exemple doit avoir`sentence1`- Je suis là .`sentence2`, et `label`les champs.
+
+**Exercise 2.**Charger le jeu de données avec `streaming=True`, comme `stream_dataset`fait, et lire des exemples dans une boucle qui s'arrête quand `time.time()`Préparer le compte, le faire deux fois, car la première mise en marche comprend le démarrage de la connexion.
+
+**Exercise 3.**Enregistrez le même ensemble de données avec `to_csv`et `to_parquet`, comme `convert_format`fait, puis comparez les tailles avec `ls -lh`ou `os.path.getsize`Remplissez le dossier du Parquet avec`load_from_parquet`et vérifier que le nombre de lignes n'a pas changé.
+
+**Exercise 4.**Utilisation `train_test_split`deux fois avec un fixe `seed`Les trois longueurs doivent s'ajouter à la longueur initiale, et une seconde course avec la même graine doit donner la même première ligne dans chaque division.
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |

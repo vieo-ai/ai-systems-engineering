@@ -220,3 +220,11 @@ Regardez !`outputs/prompt-env-check.md`pour une demande qui aide les assistants 
 1. Exécutez le script de vérification et corrigez les pannes
 2. Créez un environnement virtuel Python pour ce cours et installez PyTorch
 3. Écrivez un "bonjour au monde" dans les quatre langues et faites fonctionner chacune d'elles.
+
+### Des indices
+
+**Exercise 1.**On court .`python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner`La vérification est effectuée lorsque vous exécutez le script à nouveau et que chaque sonde requise passe.
+
+**Exercise 2.**Faites de l'environnement avec `uv venv`dans la racine du référentiel, l'activer, puis installer PyTorch avec la commande de l'étape 6 qui correspond à votre matériel.`python -c "import torch; print(torch.__version__)"`dans l'environnement; un numéro de version signifie que l'installation a été effectuée.
+
+**Exercise 3.**Utilisez les quatre temps d'exécution de la pile dans The Concept: Python, TypeScript sur Node.js, Rust et Julia.`python3`- Je suis là .`npx tsx`(Node.js ne peut pas exécuter un`.ts`dossier directement), `cargo run`ou `rustc`, et `julia`Chaque course doit imprimer votre message et sortir avec le code 0.

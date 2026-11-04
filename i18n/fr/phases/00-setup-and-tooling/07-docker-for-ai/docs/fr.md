@@ -375,6 +375,16 @@ Retirez le `--gpus all`Le contenant fonctionne toujours pour les leçons basées
 3. Ajouter `flask`Pour le fichier Docker, reconstruire et exécuter un serveur API simple sur le port 5000.`-p 5000:5000`
 4. Mesurer la taille de l' image avec `docker images`Essayez de changer l' image de base de `devel`à `runtime`et comparer les tailles
 
+### Des indices
+
+**Exercise 1.**Construire avec le `docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`commandement de la leçon, puis exécutez l'importation à l'intérieur `docker run --rm ai-dev`- Sur un Mac, écarte`--gpus all`Le contenant doit imprimer une version qui commence par:`2.6.0`- Je suis désolé .
+
+**Exercise 2.**On court .`docker compose up -d`dans le `code/`le dossier, puis ouvrez une coquille dans le `ai-dev`service avec `docker compose exec ai-dev bash`À l'intérieur, courir.`curl http://qdrant:6333/collections`; une réponse JSON signifie que le nom du service résulte sur le réseau de composition.
+
+**Exercise 3.**Ajouter un `RUN pip install flask`ligne vers le fichier Docker, reconstruire et démarrer le serveur avec `host="0.0.0.0"`, parce qu' un serveur lié à localhost à l'intérieur du conteneur n'est pas accessible de l'extérieur.`http://localhost:5000`sur votre machine pour confirmer que le port de cartographie fonctionne.
+
+**Exercise 4.**On court .`docker images ai-dev`et écrivez la colonne de taille.`devel`à `runtime`dans le `FROM`ligne, construire avec une nouvelle balise, et comparer les deux tailles; l'image de l'exécution laisse les compilateurs et les en-têtes.
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |

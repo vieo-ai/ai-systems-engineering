@@ -55,7 +55,13 @@ Vérifiez si vous en avez un:
 nvidia-smi
 ```
 
-Installez PyTorch avec CUDA:
+Installez PyTorch avec CUDA. Sur Linux, les roues par défaut se déploient avec CUDA. Sur Windows, copiez la commande CUDA depuis le sélecteur sur pytorch.org.
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+Alors vérifiez si PyTorch voit le GPU:
 
 ```python
 import torch
@@ -129,6 +135,14 @@ if torch.cuda.is_available():
 1. Exécutez le point de référence ci-dessus et comparer les temps de CPU vs GPU
 2. Si vous n'avez pas de GPU, exécutez-le sur Google Colab et comparez
 3. Vérifiez combien de mémoire GPU vous avez et estimez le plus grand modèle que vous pouvez adapter (règle générale: 2 octets par paramètre pour fp16)
+
+### Des indices
+
+**Exercise 1.**Exécutez le code de la section Construire comme il est, puis écrivez le temps de processeur, le temps de GPU et la ligne de vitesse. Exécutez-le une deuxième fois; la première exécution de GPU inclut le coût de démarrage, de sorte que les deuxièmes chiffres sont ceux à comparer.
+
+**Exercise 2.**Dans Colab, sélectionnez Runtime > Change de type de runtime > GPU, puis collez le point de référence dans une cellule.`!nvidia-smi`dans une autre cellule d'abord; il doit montrer un nom de GPU avant que le résultat de référence signifie quelque chose.
+
+**Exercise 3.**Lisez la mémoire totale avec `torch.cuda.get_device_properties(0).total_memory / 1e9`, comme dans `code/gpu_check.py`. Divisez la mémoire en octets par 2 pour obtenir le nombre de paramètres pour fp16, puis gardez une marge, car les activations et le contexte CUDA utilisent également la mémoire.
 
 ## Les termes clés
 

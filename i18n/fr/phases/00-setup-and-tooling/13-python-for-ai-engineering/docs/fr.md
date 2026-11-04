@@ -1029,6 +1029,18 @@ Il rapporte chaque découverte avec un emplacement, le problème et une solution
 4. Écrivez`matvec(matrix, vector)`En Python pur et en NumPy. Mesurez les deux avec `best_time`Pour les tailles 4, 64 et 1024, trouvez la taille où NumPy devient plus rapide sur votre machine.
 5. Écrivez l'analyse de la construction du concept.`ast.parse`et `ast.walk`dans chaque dossier `phases/*/*/code/*.py`- Comptez les fichiers qui contiennent`ast.ListComp`- Je suis là .`ast.Yield`, et `ast.With`, et comparer vos comptes avec la table.
 
+### Des indices
+
+**Exercise 1.**Importation `run_demo`de `code/main.py`et l' appeler avec `seed=7`et avec `seed=8`, puis imprimez les deux résultats avec `format_report`. Les valeurs provenant de données aléatoires changent; les tailles de fractionnement dépendent uniquement de `n`et `test_fraction`Ils restent les mêmes.
+
+**Exercise 2.**Sélectionnez d'abord une copie de la liste, puis prenez l'élément du milieu pour les longueurs impares et la moyenne des deux éléments du milieu pour les longueurs pares.`statistics.median`sur des listes telles que `[3, 1, 2]`et `[4, 1, 3, 2]`; les deux doivent donner les mêmes chiffres.
+
+**Exercise 3.**Lire `load_records`dans `code/main.py`et continuez à parcourir, mais `yield`chaque`Record`Au lieu de l'ajouter à une liste.`save_records`avec `make_dataset(200_000)`pour faire le dossier, puis comparer `peak_bytes(lambda: load_records(path))`avec `peak_bytes(lambda: sum(1 for _ in your_generator(path)))`Le générateur doit être consommé à l'intérieur de la machine d'appel, ou`peak_bytes`Il faut que ce soit un pic beaucoup plus faible.
+
+**Exercise 4.**Utilisation `dot`comme modèle pour la version pure Python et l'appeler une fois pour chaque ligne, puis utiliser `np.array(matrix) @ np.array(vector)`Pour NumPy, le temps pour les deux.`best_time`et imprimez une rangée de table pour chaque taille; les deux résultats doivent être égaux avant de comparer les temps.
+
+**Exercise 5.**Lisez chaque fichier avec `Path.read_text`, analysez-le avec `ast.parse`, et utiliser `any(isinstance(node, ast.ListComp) for node in ast.walk(tree))`Pour tester une construction, comptez chaque fichier une fois, parce que la table dans le Concept compte les fichiers.
+
 ## Les termes clés
 
 | Term | What people say | What it means |
