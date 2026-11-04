@@ -52,18 +52,20 @@ Cada linha neste loop é onde um bug pode viver.`model(x).softmax()`As aumentas 
 
 Um classificador produz `C`números por imagem chamados logits. Aplicando softmax, eles são convertidos em uma distribuição de probabilidade:
 
-```
-softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```math
+\mathop{\mathrm{softmax}}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
 ```
 
 A entropia cruzada mede a probabilidade de registro negativo da classe correta:
 
-```
-CE(z, y) = -log( softmax(z)_y )
-        = -z_y + log( sum_j exp(z_j) )
+```math
+\begin{aligned}
+\mathrm{CE}(z, y) &= -\log\left( \mathop{\mathrm{softmax}}(z)_y \right) \\
+&= -z_y + \log\left( \sum_j \exp(z_j) \right)
+\end{aligned}
 ```
 
-A forma à direita é a numéricamente estável (log-sum-exp).`nn.CrossEntropyLoss`A aplicação de softmax por si mesmo é quase sempre um erro.
+A forma à direita é a numéricamente estável (log-sum-exp).`nn.CrossEntropyLoss`A aplicação de softmax em primeiro lugar é quase sempre um erro  você calcula $\log(\mathop{\mathrm{softmax}}(\mathop{\mathrm{softmax}}(z)))$, uma quantidade sem sentido.
 
 ### Por que a ampliação funciona
 
@@ -98,14 +100,14 @@ Por que ajuda: o modelo deixa de memorizar alvos picantes e aprende a interpolar
 
 ### Limeamento de rótulos
 
-Um primo de confusão, em vez de treinar contra o`[0, 0, 1, 0, 0]`, treno contra`[eps/C, eps/C, 1-eps, eps/C, eps/C]`Para um pequeno .`eps`O modelo não produz logites arbitrariamente afiados e melhora a calibração quase sem custo.`nn.CrossEntropyLoss(label_smoothing=0.1)`desde a PyTorch 1.10.
+Um primo de confusão, em vez de treinar contra o`[0, 0, 1, 0, 0]`, treno contra`[eps/C, eps/C, 1-eps+eps/C, eps/C, eps/C]`Para um pequeno .`eps`O modelo não produz logites arbitrariamente afiados e melhora a calibração sem quase nenhum custo.`nn.CrossEntropyLoss(label_smoothing=0.1)`desde a PyTorch 1.10.
 
 ### Avaliação além da precisão
 
 A precisão agregada esconde desequilíbrio. Um classificador binário de 90 a 10 que sempre prevê a classe majoritária pontua 90%.
 
 - **Per-class accuracy** um número por classe; imediatamente aparece categorias com baixo desempenho.
-- **Confusion matrix** Gradeira C x C com linha i col j = contagem de classe verdadeira i prevista como classe j; a diagonal é correta, os fora-diagonais são onde o seu modelo vive.
+- **Confusion matrix**- Não .$C \times C$Grade com linha $i$Col.$j$= contagem de classe verdadeira $i$Previsto como classe .$j$A diagonal é correta, as fora-diagonais são onde o modelo vive.
 - **Top-1 / Top-5** se a classe correta está nas previsões de 1 ou 5 melhores; Top-5 importa para a ImageNet porque classes como "Norwich Terrier" vs "Norfolk Terrier" são genuinamente ambíguas.
 - **Calibration (ECE)** uma previsão de confiança de 0,8 consegue ser correta 80% do tempo? redes modernas são sistematicamente excessivamente confiantes; corrigir com escala de temperatura ou suavização de rótulos.
 
@@ -413,7 +415,7 @@ Esta lição produz:
 | DataLoader | "The batcher" | Wraps a dataset with shuffling, batching, and (optional) multi-worker loading; gets blamed for half of training bugs |
 | Augmentation | "Random transforms" | Any pixel-level transform at training time that preserves the label; teaches invariances the CNN does not have natively |
 | Mixup / Cutmix | "Mix two images" | Blend both inputs and labels so the classifier learns smooth interpolations instead of hard boundaries |
-| Label smoothing | "Softer targets" | Replace one-hot with (1-eps, eps/(C-1), ...); improves calibration and slightly boosts accuracy |
+| Label smoothing | "Softer targets" | Replace one-hot with (1-eps+eps/C, eps/C, ...); improves calibration and slightly boosts accuracy |
 | Top-k accuracy | "Top-5" | The correct class is in the k highest-probability predictions; used on datasets with genuinely ambiguous classes |
 | Confusion matrix | "Where errors live" | C x C table where entry (i, j) counts images of true class i predicted as j; diagonal is right, off-diagonal tells you what to fix |
 
