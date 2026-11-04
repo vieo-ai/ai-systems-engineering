@@ -43,8 +43,8 @@ Việc giám sát đầu vào là chủ đề chính của bài học này, bở
 
 Viết phân phối chung của các đầu vào `x`và nhãn`y`Hai cách:
 
-```text
-P(x, y) = P(x) * P(y | x) = P(y) * P(x | y)
+```math
+P(x, y) = P(x) \cdot P(y \mid x) = P(y) \cdot P(x \mid y)
 ```
 
 Mỗi loại biến động thay đổi một yếu tố khác nhau:
@@ -87,8 +87,8 @@ Tính theo mùa phá vỡ các cửa sổ ngây thơ. giao thông thứ Hai khá
 
 PSI đến từ điểm tín dụng. Giảm các giá trị tham chiếu thành các thùng, thường là mười thùng ở các phân số tham chiếu, để mỗi thùng chứa 10% tham chiếu. Đếm tỷ lệ giá trị hiện tại trong mỗi thùng. Sau đó cộng một thuật ngữ cho mỗi thùng:
 
-```text
-PSI = sum over bins of (current_share - reference_share) * ln(current_share / reference_share)
+```math
+\text{PSI} = \sum_{\text{bins}} (\text{current\_share} - \text{reference\_share}) \cdot \ln\left(\frac{\text{current\_share}}{\text{reference\_share}}\right)
 ```
 
 Một bin với một phần của không làm cho nhật ký vô hạn, vì vậy clip mỗi phần vào một giá trị nhỏ như 0.0001. PSI là đối xứng. Nó bằng với sự khác biệt KL từ dòng sang tham chiếu cộng với sự khác biệt KL từ tham chiếu đến dòng.
@@ -99,8 +99,8 @@ Các học viên đọc PSI với băng tần cố định: dưới 0,1 ổn đ�
 
 Các số liệu thống kê KS hai mẫu `D`là khoảng cách dọc lớn nhất giữa hai hàm phân phối tích lũy empirical:
 
-```text
-D = max over x of | F_reference(x) - F_current(x) |
+```math
+D = \max_x \left\lvert F_{\text{reference}}(x) - F_{\text{current}}(x) \right\rvert
 ```
 
 `D`là 0 cho các mẫu giống nhau và 1 cho các mẫu không chồng chéo. Nó không cần các thùng. Giá trị p đến từ phân bố Kolmogorov với kích thước mẫu thực tế `n * m / (n + m)`- Tôi không biết.
@@ -111,9 +111,11 @@ Với các mẫu lớn, giá trị p sẽ giảm xuống 0,0 cho một khoảng 
 
 Đối với một tính năng danh mục, chẳng hạn như kênh thanh toán, tạo ra một bảng với hai hàng (thường tham chiếu, dòng) và một cột cho mỗi loại.
 
-```text
-expected[r][c] = row_total[r] * column_total[c] / grand_total
-chi2 = sum over cells of (observed - expected)^2 / expected
+```math
+\begin{aligned}
+\text{expected}[r][c] &= \text{row\_total}[r] \cdot \text{column\_total}[c] / \text{grand\_total} \\
+\text{chi2} &= \sum_{\text{cells}} (\text{observed} - \text{expected})^2 / \text{expected}
+\end{aligned}
 ```
 
 Thử nghiệm đã`k - 1`Tỷ lệ tự do cho `k`Category. Một danh mục chỉ xuất hiện trong cửa sổ hiện tại thêm một thuật ngữ lớn, do đó thử nghiệm phản ứng với các giá trị mới. V của Cramér là kích thước hiệu ứng. Đối với một bảng có hai hàng, nó bằng với gốc vuông của `chi2 / grand_total`- Tôi không biết.

@@ -24,10 +24,10 @@ Các phương pháp tập hợp thực hiện chính xác điều này. Chúng l
 
 ### Tại sao các nhóm nhóm làm việc
 
-Giả sử bạn có N phân loại độc lập, mỗi loại có độ chính xác p > 0.5.
+Giả sử là anh có$N$Các phân loại độc lập, mỗi loại đều chính xác $p > 0.5$Phần lớn phiếu bầu là chính xác:
 
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
+```math
+P(\text{majority correct}) = \sum_{k > N/2} \binom{N}{k} p^k (1-p)^{N-k}
 ```
 
 Đối với 21 phân loại, mỗi loại có độ chính xác 60%, độ chính xác đa số là khoảng 74%. Với 101 phân loại, nó tăng lên 84%.
@@ -132,7 +132,7 @@ Tăng cường gradient tổng hợp tăng lên các hàm mất tùy ý. Thay v�
 3. Final prediction: F_T(x)
 ```
 
-Đối với lỗ lỗi vuông, các dư giả chỉ là dư thực tế: `r_i = y_i - F_{t-1}(x_i)`Mỗi cây đều phù hợp với những sai lầm của nhóm trước đó.
+Đối với lỗ lỗi vuông, các dư giả chỉ là dư thực tế: $r_i = y_i - F_{t-1}(x_i)$Mỗi cây đều phù hợp với những sai lầm của nhóm trước đó.
 
 Tốc độ học tập (các) kiểm soát mức độ đóng góp của mỗi cây. Tốc độ học tập nhỏ hơn đòi hỏi nhiều cây hơn nhưng tổng quát tốt hơn.
 
