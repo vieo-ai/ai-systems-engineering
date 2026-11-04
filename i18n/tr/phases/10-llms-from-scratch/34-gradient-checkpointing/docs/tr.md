@@ -11,7 +11,7 @@
 
 Bir transformatör eğitimi, her katman için geriye ayrılmış her operasyonun girişlerini saklar: dikkat girişleri, Q/K/V projeksiyonları, softmax çıkışı, FFN girişleri, norm çıkışları ve kalan akım. Gizli boyutlu bir katman için `d`, dizi uzunluğu `L`, parti`B`Bu , emir üzerine .`12 * B * L * d`katman başına yüzen.
 
-- Evet .`d=8192, L=8192, B=1`Bu, BF16'da katman başına 800 MB'dir. 64 katlı bir model 51 GB aktivasyonlara sahiptir.`L^2`(bkz: baş başına) ve tensor paralel kısmi kopyaları oluşturmadan önce.
+- Evet .`d=8192, L=8192, B=1`Bu, yaklaşık 805M değerleri veya BF16'da 1.6 GB/katman. 64 katlı bir model yaklaşık 103 GB aktivasyonlar içerir.`L^2`(bkz: baş başına) ve tensor paralel kısmi kopyaları oluşturmadan önce.
 
 İki taraflı fatur: BF16 ağırlıkları artı optimizer durumu 80GB'ye uygun olabilir, ancak etkinleştirmeler sizi öteye itebilir. Gradient kontrol noktası (aka activation recalculation) standart düzeltme. Çoğu etkinleştirmeyi bırakın; geriye dönerken ileriyi tekrar yapın.
 
@@ -37,13 +37,13 @@ Ağı ikiye böl .`N`Önceki bölümler. Önceki bölümler sırasında, her bö
 - Hatıra: 32 katman giriş (küçük) vs 32 * (katman başına etkinleştirme hacmi) (çok büyük).
 - Ekstra hesaplama: Segmente başına 1 ekstra ileri, yani %33 daha fazla ileri FLOP toplamı (geriye doğru 2x ileri olduğu için, tam adım 1 + 1 + 2 = 4 birim yerine 1 + 2 = 3 olur).
 
-Bu Chen et al. 2016 tarihli orijinal tarifi: her bir kontrol noktası `sqrt(L)`L=64, 8 kontrol noktası.
+Bu Chen et al. 2016 tarihli orijinal tarifi: her bir kontrol noktası `sqrt(L)`- Bilgisayar ve hafıza dengesini sağlamak için katmanlar.$L=64$Bu 8 kontrol noktası.
 
 ### Seçimsel Kontrol Noktası (Korthikanti 2022)
 
 Tüm etkinleştirmeler aynı maliyetli değil.`B*L*L*heads`FFN gizli etkinliği `B*L*4d`Uzun sekanslarda softmax hakimdir.
 
-Seçimsel kontrol noktası, ucuz depolama aktivasyonlarını (lineer projeksiyonlar, kalıntılar) tutar ve sadece pahalı olanları (özen) yeniden hesaplar.
+Seçimsel kontrol noktası, ucuz depolama aktivasyonlarını (lineer projeksiyonlar, kalıntılar) tutar ve sadece pahalı olanları yeniden hesaplar (özen).$O(L^2)$- Hatıra.
 
 Megatron-Core bunu "seçici" etkinleştirme yeniden hesaplama olarak uyguluyor.
 
@@ -293,8 +293,8 @@ Bu ders bize çok yararlı .`outputs/prompt-activation-recompute-policy.md` mode
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
-| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
+| Attention-softmax volume | "The O(L^2) problem" | $L^2 \cdot \text{heads} \cdot \text{batch}$ floats; dominates activation memory at long contexts |
 
 ## Daha Fazla Okumak
 

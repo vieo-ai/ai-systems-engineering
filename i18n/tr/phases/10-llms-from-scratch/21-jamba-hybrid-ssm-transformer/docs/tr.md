@@ -30,12 +30,14 @@ Bu ders, üç makaleyi de okuyor ve "doğru oranı seç" için zihinsel model ol
 
 Bir devlet uzay modeli bir dizi işleme yapar `x_1, ..., x_N`sabit boyutlu bir durumla.`h`- ...
 
-```
-h_t = A h_{t-1} + B x_t
-y_t = C h_t
+```math
+\begin{aligned}
+h_t &= A h_{t-1} + B x_t \\
+y_t &= C h_t
+\end{aligned}
 ```
 
-Her aşamada , devlet bir çizgi dinamikle gelişir .`A`, giriş alır `B x_t`, ve çıkışı yayıyor `C h_t`- Evet .`A, B, C`Önemli bir özelliği dikkat edin: Bilgisayar`y_t`Sadece ihtiyaçları var.`h_{t-1}`ve `x_t`Daha önce hiç olmadı .`x`Hatırlama sabit.
+Her aşamada , devlet bir çizgi dinamikle gelişir .`A`, giriş alır `B x_t`, ve çıkışı yayıyor `C h_t`- Evet .`A, B, C`Önemli bir özelliği dikkat edin: Bilgisayar`y_t`Sadece ihtiyaçları var.`h_{t-1}`ve `x_t`Daha önce hiç olmadı .`x`Hatıra sürekli, akıl etkisi de sürekli.$O(1)$- Bir simge.
 
 Modelleme kalitesi için bir hile , `A`S4 (Gu 2021) eğitim sırasında uzun bir konvulsiyon olarak verimli bir şekilde değerlendirilebilecek yüksek yapılandırılmış bir matris kullandı.`A, B, C`Mamba-2 (2024) yapıyı daha da basitleştirdi. Mamba-3 (2026) belirli yerlerde karmaşıklığı yeniden ekledi.
 
@@ -75,10 +77,10 @@ Mamba katmanları kendileri konum farkındadır (tekrarlanma yoluyla). Mamba tab
 
 Jamba-1 şekli için (32 katman: 28 Mamba + 4 Dikkat, gizlenmiş 4096, 32 dikkat başlığı):
 
-- KV önbelleği (yalnızca dikkat katmanları): `2 * 4 * 32 * 128 * 256k * 2 = 8.4 GB`Sadece 4 dikkat katmanı katkı sağlar.
+- KV önbelleği (yalnızca dikkat katmanları): `2 * 4 * 32 * 128 * 256k * 2 = 16 GB`Bu sayede, Jamba kağıdında bulunan rakam 4 GB'ye ulaşır.
 - SSM durumu: `28 * hidden * state_size`Bu, bir katman için sabit bir boyut, dizilerin uzunluğu ile ölçeklenmemektedir.`28 * 4096 * 16 * 2 = 3.7 MB`- Toplam.
 
-32 katlı saf bir Transformer ile karşılaştırın, aynı gizli, 32 başlı tam MHA:`2 * 32 * 32 * 128 * 256k * 2 = 128 GB`KV önbelleğinin 8 kat azalma.`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`Jamba'nın 1:7 hibrid 16 GB'lı haliyle 2 kat daha küçük.
+32 katlı saf bir Transformer ile karşılaştırın, aynı gizli, 32 başlı tam MHA:`2 * 32 * 32 * 128 * 256k * 2 = 128 GB`KV önbelleğinin 8 kat azalma.`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`), 16 GB'da 32 KV başlığı olan 1:7 hibrid hala 2 kat daha küçüktür.
 
 AI21'in "tek 80GB GPU'da 256k bağlam" olarak anlamı budur. "Tüm MHA saf bir Transformer'ın KV önbelleği uyum sağlamaz; hatta bir GQA temel hattı ağırlıklar ve etkinleştirmeler için yer bırakmaz; Jamba'nın yapması gerekir.
 

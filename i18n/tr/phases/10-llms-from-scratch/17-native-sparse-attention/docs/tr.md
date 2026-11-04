@@ -36,8 +36,8 @@ Her sorgu için NSA, KV önbellekinin üç farklı görünümüne karşı dikkat
 
 Üç dal çıkışı, öğrenilen bir pozisyon kapısı üzerinden birleştirilir:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
+```math
+\text{out} = g_{\text{cmp}} \cdot \text{out}_{\text{cmp}} + g_{\text{sel}} \cdot \text{out}_{\text{sel}} + g_{\text{win}} \cdot \text{out}_{\text{win}}
 ```
 
 `g_cmp, g_sel, g_win`Sorguda küçük bir MLP'den geçit ağırlıkları bulunmaktadır. 1 'ye toplamına gerek yoktur.
@@ -46,7 +46,7 @@ out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
 
 Seçim adımları (top-k blokları) ayrıdır. Diskret işlemler gradient akışını kırar. Önceki nadir dikkat çalışmaları ya seçimi (yasaklama eğitimi) üzerinden geriye atladı veya sonuçta gerçek nadirlik vermeyen sürekli gevşeklemeler kullanıldı.
 
-NSA bunu atlıyor: sıkıştırılmış dal dikkat tüm dizide farklılaştırılabilir kaba tohumlu bir dikkat. Top-k işlevi, baskı dalının en yüksek dikkat puanlarını kullanarak hangi ince tohumlu blokları yüklemek istediğini seçer. Gradiyentler sıkıştırılmış dal puanları (bütün sıkıştırılmış çıkış ve seçim mantığı etki eden) üzerinden akıyor ve seçilen blokların nihai çıkışa katkısı da farklılaştırılabilir. Farklı olmayan `top_k`İşlem ileri hesaplama grafikinde bir işlemi yok. Sadece hangi blokların hafızadan yüklendiğini kontrol eder.
+NSA bunu atlıyor: sıkıştırılmış dal dikkat tüm dizide farklılaştırılabilir kaba tohumlu bir dikkat. Top-k işlevi, baskı dalının en yüksek dikkat puanlarını kullanarak hangi ince tohumlu blokları yüklemek istediğini seçer. Gradyentler, blokların seçimi yoluyla değil, sıkıştırılmış dalın kendi çıkışı yoluyla sıkıştırılmış dal puanlarına ulaşır. Seçilen bloklar içinde, seçilen anahtarlar ve değerler üzerinde dikkat sıradan ilgi, bu nedenle son çıkışa katkısı da farklılaştırılabilir. - Evet .`top_k`indeks seçimi kendiliğinden gradient elde etmez: sadece hafıza'dan hangi blokların yüklendiğini kontrol eder.
 
 Bu nedenle NSA'nın eğitim öncesi end-to-end kullanılabilmesi için kullanılabilir. Model, üç dalın üzerinden bilgiyi birlikte yönlendirmeyi öğrenir ve sonuçta söz verilen hızlandırmayı gerçekleştirecek nadir bir kalıp üretir.
 
@@ -171,7 +171,7 @@ Bu ders bize çok yararlı .`outputs/skill-nsa-integrator.md`. Uzun bağlamlı b
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
+| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in $O(N/l)$ keys per query |
 | Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
 | Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
 | Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |

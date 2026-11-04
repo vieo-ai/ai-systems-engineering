@@ -106,18 +106,18 @@ Parse et .
 Tam hesaplamalar `code/main.py`Başlık:
 
 - Ekleme: `vocab * hidden = 129280 * 7168 = ~0.93B`- Evet .
-- İlk 3 yoğun blok: dikkat MLA (~144M her blok) + yoğun MLP (~260M her blok) + normlar.
-- 58 MoE bloğu: MLA ile ilgi (~144M) + 256 uzman her biri (30M her biri) + 1 ortak uzman (30M) + norm. Tüm uzmanları dahil olmak üzere blok başına toplam ~7.95B. 58 MoE bloğu için toplam 461B.
-- MTP modülü: 14B.
+- İlk 3 yoğun blok: dikkat MLA ile (kalkülülatörün basitleştirilmiş sayısında blok başına ~84M) + yoğun SwiGLU MLP (`3 * 7168 * 18432 = ~396M`Bir blok başına) + normlar. Yaklaşık 1.4B toplam.
+- 58 MOE blokları: MLA ile ilgilenme (~84M) + 256 yönlendirilmiş uzman (`3 * 7168 * 2048 = ~44M`Her bir uzmanı dahil olmak üzere blok başına yaklaşık 11.4B. 58 MoE blokları için yaklaşık 661B.
+- MTP modülü: yayınlanan modül 14B. Hesap makinesi ~0.8B'nin yoğun bir stand-in kullanır.
 
-Büyük toplam: ~476B çekirdek mimarisi için + 14B MTP + açıkça yayınlanan 671B numarası ek yapısal parametreleri (karşılıklılık tensörleri, uzman özel bileşenleri, paylaşılan uzman ölçeklemesi vb.) hesap makinesinde yeniden ürettiğimiz sayı yayınlananın %3-5%'i içinde  delta, DeepSeek'in 2. Bölüm eklemindeki ince tohumlu muhasebe rapor belgeleri'nden gelir.
+Büyük toplam: hesap makinesi ana model için yayınlanan 671B'ye karşı ~664B'ye düşer. Hugging Face kontrol noktası 685B'dir çünkü 671B'nin üstüne 14B MTP modülü ekler. Geri kalan ~1% boşluk basitleştirmelerden gelir: hesap makinesi MLA'daki kopartılmış RoPE boyutlarını, bağlı olmayan çıkış başını ve birkaç küçük tenzorları atlar.
 
 Önceki için aktif parametreler:
 
-- Dikkat: Katman başına 144M * 61 = 8.8B (tüm katmanlar ateşe giriyor).
-- MLP aktif: ilk 3 katman yoğun (3 * 260M = 780M), 58 MoE katman her biri aktif 8 yönlendirilmiş + 1 paylaşılan + yönlendirme üstü.
-- Ekleme + normlar: 1.2B.
-- Toplam aktif: yaklaşık 26B çekirdek + 14B MTP (öğrenilmiş ancak her zaman sonuçlandırma ile çalıştırılmamış) ≈ 37B.
+- Dikkat: Katman başına 84M * 61 = ~5.1B (tüm katmanlar ateşe giriyor).
+- MLP aktif: ilk 3 katman yoğun (`3 * 396M = ~1.2B`), 58 MoE katmanı her biri aktif ve 8 yönlendirilmiş + 1 ortak uzman (`9 * 44M = ~396M`Bir katman başına toplam 23B.
+- Ekleme + normlar: ~0.9B.
+- Toplam aktif: ~30B'den hesap makinesi tarafından yayınlanan 37B'ye karşı. Çoğu boşluk dikkat: RoPE boyutları ve daha geniş sorgu ve anahtar başları ile tam MLA, basitleştirilmiş sayıdan daha büyüktür. MTP modülü 37B'ye doğru sayılmaz.
 
 ### 671B / 37B oranı
 
@@ -180,7 +180,7 @@ Bu ders bize çok yararlı .`outputs/skill-deepseek-v3-reader.md`. DeepSeek aile
 | num_experts_per_tok | "Top-k routing" | How many routed experts fire per token; DeepSeek-V3 uses 8 |
 | Shared experts | "Always-on experts" | Experts that process every token regardless of routing; DeepSeek-V3 uses 1 |
 | Auxiliary-loss-free routing | "Bias-adjusted load balance" | Per-expert bias terms adjusted during training to keep expert load balanced without adding a loss term |
-| MTP module | "Extra prediction head" | Transformer block predicting t+2 from h^(1) and E(t+1); denser training, free speculative-decoding draft |
+| MTP module | "Extra prediction head" | Transformer block predicting $t+2$ from $h^{(1)}$ and $E(t+1)$; denser training, free speculative-decoding draft |
 | DualPipe | "Bidirectional pipeline" | Training schedule that overlaps forward/backward compute with cross-node all-to-all |
 | Active parameter ratio | "Sparsity" | active_params / total_params; DeepSeek-V3 hits 5.5% |
 | FP8 training | "8-bit training" | Training storage and many compute ops in FP8; roughly halves memory vs BF16 at a small quality cost |

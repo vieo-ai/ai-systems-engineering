@@ -42,11 +42,11 @@ INT8:  [1 sign] [7 value]                   = 8  bits (uniform steps)
 INT4:  [1 sign] [3 value]                   = 4  bits (16 levels total)
 ```
 
-**FP32**23 mantissa bit yaklaşık 7 onluk rakamını verir. aralığı: yaklaşık 1.2 x 10^-38 ile 3.4 x 10^38.
+**FP32**23 mantissa bit, yaklaşık 7 onluk rakamlı bir doğruluk sağlar.$1.2 \times 10^{-38}$- ...$3.4 \times 10^{38}$.Eğitim eskiden yalnızca FP32'de yapılıyordu.
 
 **FP16**10 mantissa bit yaklaşık 3.3 onluk rakam verir. Eksponent 5 bit'e kadar küçülür ve aralığı çarpıcı bir şekilde azaltır (maksimum değer ~65,504). Bu, ağırlıklar için iyi (sıfırın yakınında toplananlar), ancak eğitim sırasında tırmanıp çıkabilecek aktivasyonlar ve gradientler için tehlikelidir. FP16 eğitiminde aşağı akışın önlenmesi için kayıp ölçeklemesini gerektirir.
 
-**BF16**(Beyin yüzerek 16) 8 bitli göstergeyi FP32'den tutar ama mantissa'yı 7 bitle küçültür. FP32 ile aynı aralığı, FP16'dan daha az hassaslık. Google bunu özellikle derin öğrenme için tasarladı. İntüyüsyon: Nöral ağlar için mesafe, hassasiyetten daha önemlidir. FP16'da sıfıra doğru akışan 10^-20 bir eğilimi BF16'da hayatta kalır. BF16'da 0.07342'e doğru yuvarlanan bir ağırlık yeterince yakın. Her modern eğitim koşusu BF16 veya BF16/FP32 karışımı kullanır.
+**BF16**(Brain Float 16) 8 bitli göstergeyi FP32'den tutar, ancak mantissa'yı 7 bitlere düşürür. FP32 ile aynı aralığı, FP16'dan daha az hassaslık. Google bunu özellikle derin öğrenme için tasarladı.$10^{-20}$BF16'da sıfıra doğru akışan BF16'da hayatta kalır. BF16'da 0.07342'e kadar olan bir ağırlık yeterince yakın.
 
 **FP8**E4M3 (4 eksponent, 3 mantissa) sonucu çıkarma sırasında ağırlıklar ve aktivasyonlar için kullanılır. E5M2 (5 exponent, 2 mantissa) aralığın hassaslıktan daha önemli olduğu eğitim sırasında gradientler için kullanılır. H100 GPU'larda FP8 sonucu, ihmal edilebilir kalite kaybı ile FP16'a göre 30-50% hızlandırmayı sağlar.
 

@@ -53,8 +53,8 @@ nerede`(p - q)+`Bu, bir proje ve hedef için uygun olduğunda (`p ≈ q`1) kabul
 
 Eğer taslak modelinin token seviyesindeki kabul oranı `α`, hedef ileri geçiş başına üretilen beklenen tokenler:
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 - Evet .`α = 0.8, K = 4`- Evet .`(1 - 0.8^5)/(1 - 0.8) = 3.36`Tek bir hedef vadeli maliyetleri yaklaşık olarak `cost_q * K + cost_p`(K taslak adımlar artı bir hedef doğrulama).`cost_p >> cost_q * K`hızlanma oranı `3.36× / 1 = 3.36×`- Çıktım.
@@ -85,7 +85,7 @@ EAGLE-1 değişiklikleri:
 
 EAGLE-2 (2024) dinamik ağaç topolojisini ekler: ağaç, çizimi belirsiz olduğu yerlerde daha geniş büyür ve güvendiği yerlerde dar kalır.`α_effective`Verifikasyon maliyetini arttırmadan.
 
-EAGLE-3 (Li et al. 2025, "EAGLE-3: Eğitim-Saat Testleri yoluyla Büyük Dil Modellerinin İfratür Hızlandırmasını Ölçeklendirmek") sabit üst katman özellik bağımlılığını ortadan kaldırır ve taslak yeni bir "test zaman simülasyonu" kaybı ile taslaklanır. Kabul oranı 0,75 (EAGLE-2) 'den 0,82'ye (EAGLE-3) ve ortalama token/verification oranı 3,0'dan 4,5'e yükselmektedir.
+EAGLE-3 (Li et al. 2025, "EAGLE-3: Eğitim-Saat Testleri yoluyla Büyük Dil Modellerinin İfratür Hızlandırmasını Ölçeklendirmek") sabit üst katman özellik bağımlılığını ortadan kaldırır ve taslak yeni bir "test zaman simülasyonu" kaybı ile taslaklanır. Kabul oranı 0,75 (EAGLE-2) 'den 0,82'ye (EAGLE-3) ve ortalama token/verification oranı 3,0'dan 4,5'e yükselmektedir. Bu rakamlar bir referans kuruluşu ile elde edilmektedir. Kabul model çiftine, taslak ağacına ve trafiğe bağlıdır: Eğlence 10 · 15 chat referanslarında kabul edilen yol belirtilerine göre 0.88 ila 0.92 oranında alıntı yapar.
 
 ### Ağaç Dikkatini Kontrol Et
 
@@ -132,13 +132,13 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     """One round of speculative decoding. Returns list of accepted tokens."""
     # 1. Draft K tokens
     draft_tokens = []
-    q_probs = []
+    q_dists = []
     state = draft_state_init()
     for _ in range(K):
         probs = softmax(q_draft(state) / temperature)
         t = np.random.choice(len(probs), p=probs)
         draft_tokens.append(t)
-        q_probs.append(probs[t])
+        q_dists.append(probs)
         state = draft_step(state, t)
 
     # 2. Target computes p at every drafted position + 1 extra
@@ -148,10 +148,10 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     accepted = []
     for k, tok in enumerate(draft_tokens):
         r = np.random.uniform()
-        if r < p_probs_all[k][tok] / q_probs[k]:
+        if r < p_probs_all[k][tok] / q_dists[k][tok]:
             accepted.append(tok)
         else:
-            residual = np.maximum(p_probs_all[k] - q_probs[k], 0)
+            residual = np.maximum(p_probs_all[k] - q_dists[k], 0)
             residual /= residual.sum()
             accepted.append(np.random.choice(len(residual), p=residual))
             return accepted
@@ -175,7 +175,7 @@ Bu ders bize çok yararlı .`outputs/skill-speculative-tuning.md` bir hedef mode
 
 1. Tam reddetme kuralını uygulayın ve empirik olarak doğrulayın.`speculative_decode`ve basit hedef örnekleme yoluyla; iki çıkış dağıtımı arasındaki TV mesafesini hesaplayın. < 0,01 olmalıdır.
 
-2. Hızlandırma formülünü hesaplayın.`α`ve `K`, hedef-gelişme başına beklenen tokenleri çiz.
+2. Hızlandırma formülünü hesaplayın.`α`ve `K`, hedef öne doğru beklenen tokenleri çiz.$K$için$\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$- Evet .
 
 3. Küçük bir çekim yapın, 124M GPT-2 hedefini alın ve 100M tokenlerde 30M GPT-2 çekimini KL kaybı ile destille edin.`α`Beklenen: 0.6-0.7.
 
