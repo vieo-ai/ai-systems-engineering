@@ -375,6 +375,16 @@ Tắt `--gpus all`Trình chứa vẫn hoạt động cho các bài học dựa t
 3. Thêm `flask`để Dockerfile, xây dựng lại, và chạy một máy chủ API đơn giản trên cổng 5000.`-p 5000:5000`
 4. Đo kích thước hình ảnh bằng `docker images`Hãy thử chuyển hình ảnh cơ bản từ`devel`đến`runtime`và so sánh kích thước
 
+### Những gợi ý
+
+**Exercise 1.**Xây dựng với `docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`lệnh từ bài học, sau đó chạy nhập vào `docker run --rm ai-dev`- Trên máy Mac, bỏ qua.`--gpus all`Container phải in một phiên bản bắt đầu với`2.6.0`- Tôi không biết.
+
+**Exercise 2.**Đi chạy`docker compose up -d`trong `code/`thư mục, sau đó mở một vỏ trong `ai-dev`dịch vụ với `docker compose exec ai-dev bash`Bên trong, chạy đi.`curl http://qdrant:6333/collections`; một câu trả lời JSON có nghĩa là tên dịch vụ được giải quyết trên mạng viết.
+
+**Exercise 3.**Thêm một `RUN pip install flask`dòng đến Dockerfile, xây dựng lại, và khởi động máy chủ với `host="0.0.0.0"`, bởi vì một máy chủ kết nối với localhost bên trong container không thể tiếp cận từ bên ngoài.`http://localhost:5000`trên máy của bạn để xác nhận rằng bản đồ cổng hoạt động.
+
+**Exercise 4.**Đi chạy`docker images ai-dev`và viết xuống cột SIZE.`devel`đến`runtime`trong `FROM`dòng, xây dựng với một thẻ mới, và so sánh hai kích thước; hình ảnh runtime bỏ qua các trình biên dịch và tiêu đề.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |

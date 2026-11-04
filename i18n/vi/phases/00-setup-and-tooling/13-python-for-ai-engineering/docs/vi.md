@@ -1029,6 +1029,18 @@ Nó báo cáo mỗi phát hiện với một vị trí, vấn đề, và một s
 4. Hãy viết`matvec(matrix, vector)`trong Python tinh khiết và trong NumPy.`best_time`cho kích thước 4, 64, và 1024. Tìm kích thước mà NumPy trở nên nhanh hơn trên máy của bạn.
 5. Viết quét cấu trúc từ Concept.`ast.parse`và `ast.walk`trên mỗi tập tin trong `phases/*/*/code/*.py`- Đếm các tệp chứa`ast.ListComp`- `ast.Yield`, và`ast.With`, và so sánh số lượng của bạn với bảng.
 
+### Những gợi ý
+
+**Exercise 1.**Tiếp xuất`run_demo`từ `code/main.py`và gọi nó là `seed=7`và với `seed=8`, sau đó in cả hai kết quả với `format_report`Các giá trị từ dữ liệu ngẫu nhiên thay đổi; kích thước chia chỉ phụ thuộc vào `n`và `test_fraction`, để chúng vẫn như nhau.
+
+**Exercise 2.**Lập một bản sao của danh sách trước, sau đó lấy mục trung gian cho chiều dài lẻ và trung bình của hai mục trung gian cho chiều dài ngang. So sánh kết quả của bạn với `statistics.median`trên các danh sách như `[3, 1, 2]`và `[4, 1, 3, 2]`; cả hai phải đưa ra cùng một số.
+
+**Exercise 3.**Đọc `load_records`trong `code/main.py`và giữ bước phân tích của nó, nhưng `yield`mỗi người`Record`thay vì thêm nó vào danh sách.`save_records`với `make_dataset(200_000)`để tạo hồ sơ, sau đó so sánh `peak_bytes(lambda: load_records(path))`với `peak_bytes(lambda: sum(1 for _ in your_generator(path)))`. Máy phát điện phải được tiêu thụ bên trong máy gọi, hoặc `peak_bytes`Chỉ cần chỉ tính đến sự tạo ra của nó, nó phải báo cáo một đỉnh thấp hơn nhiều.
+
+**Exercise 4.**Sử dụng `dot`như mô hình cho phiên bản Python tinh khiết và gọi nó một lần cho mỗi hàng, sau đó sử dụng `np.array(matrix) @ np.array(vector)`Thời gian cho cả hai.`best_time`và in một hàng bảng cho mỗi kích thước; hai kết quả phải bằng nhau trước khi bạn so sánh thời gian.
+
+**Exercise 5.**Đọc từng tệp với `Path.read_text`, phân tích nó với `ast.parse`, và sử dụng `any(isinstance(node, ast.ListComp) for node in ast.walk(tree))`để kiểm tra một cấu trúc. Đếm từng tập tin một lần, bởi vì bảng trong The Concept đếm các tập tin.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it means |

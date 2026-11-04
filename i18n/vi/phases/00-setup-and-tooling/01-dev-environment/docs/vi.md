@@ -220,3 +220,11 @@ Nhìn xem`outputs/prompt-env-check.md`cho một lời nhắc giúp trợ lý AI 
 1. Động trình kịch bản xác minh và sửa lỗi
 2. Tạo một môi trường ảo Python cho khóa học này và cài đặt PyTorch
 3. Viết "hào thế giới" bằng cả bốn ngôn ngữ và chạy mỗi ngôn ngữ
+
+### Những gợi ý
+
+**Exercise 1.**Đi chạy`python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner`từ nguồn kho và sửa lỗi lỗi đầu tiên trước khi bạn xem xét một lần nữa. kiểm tra được thực hiện khi bạn chạy lại kịch bản và tất cả các cuộc thăm dò cần thiết đi qua.
+
+**Exercise 2.**Làm cho môi trường với `uv venv`trong nguồn kho, kích hoạt nó, sau đó cài đặt PyTorch với lệnh từ bước 6 phù hợp với phần cứng của bạn.`python -c "import torch; print(torch.__version__)"`bên trong môi trường; số phiên bản có nghĩa là cài đặt đã được thực hiện.
+
+**Exercise 3.**Sử dụng bốn thời gian chạy từ ngăn xếp trong The Concept: Python, TypeScript trên Node.js, Rust và Julia. Viết một tệp nhỏ cho mỗi tệp và chạy nó với `python3`- `npx tsx`(Node.js không thể chạy một `.ts`hồ sơ trực tiếp), `cargo run`hoặc `rustc`, và`julia`Mỗi lần chạy phải in tin của bạn và thoát với mã 0.
