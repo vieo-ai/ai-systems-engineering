@@ -23,9 +23,11 @@ Cette leçon construit un sac de mots, puis TF-IDF, à partir de zéro, puis mon
 
 **TF-IDF**Un mot qui apparaît dans chaque document est non informatif, donc réduisez-le. Un mot rare dans le corpus mais fréquent dans un seul document est un signal, donc redoublez-le.
 
-```
-TF-IDF(w, d) = TF(w, d) * IDF(w)
-             = count(w in d) / |d| * log(N / df(w))
+```math
+\begin{aligned}
+\text{TF-IDF}(w, d) &= \text{TF}(w, d) \cdot \text{IDF}(w) \\
+&= \frac{\mathop{\mathrm{count}}(w \text{ in } d)}{|d|} \cdot \log\frac{N}{\mathop{\mathrm{df}}(w)}
+\end{aligned}
 ```
 
 Où ?`TF`est la fréquence des termes dans le document, `df`est la fréquence du document (combien de documents contiennent le mot), `N`Les documents sont totaux.`log`Il garde le poids limité pour les mots omniprésents.
@@ -124,7 +126,7 @@ def tfidf(bow_matrix):
 >>> tfidf(bow)
 ```
 
-Trois documents, cinq mots vocabulaires (`the`- Je suis là .`cat`- Je suis là .`sat`- Je suis là .`dog`- Je suis là .`ran``the`apparaît dans les trois, donc son IDF est faible. `dog`Les vecteurs sont rares (la plupart des entrées sont petites) et les mots discriminatifs apparaissent.
+Trois documents, cinq mots vocabulaires (`the`- Je suis là .`cat`- Je suis là .`sat`- Je suis là .`dog`- Je suis là .`ran``the`apparaît dans les trois, donc son IDF est faible. `dog`Les mots discriminatifs apparaissent dans un seul, donc leur IDF est élevée.
 
 ### Étape 5: normaliser les rangées L2
 
