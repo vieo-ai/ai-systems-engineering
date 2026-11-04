@@ -28,7 +28,7 @@
 
 ### وصفة MTP المتسلسلة
 
-يضيف DeepSeek-V3 `D`وحدات MTP فوق النموذج الرئيسي.`k`(لـ`k = 1..D`) يتوقع الرمز بعمق `k` هذا هو، `t_{i+k}`مع إعطاء مقدمة من خلال الموقف `i`. . .
+يضيف DeepSeek-V3 `D`وحدات MTP فوق النموذج الرئيسي. النموذج الرئيسي يتوقع `t_{i+1}`كل وحدة`k`(لـ`k = 1..D`) يتنبأ بالرمز`k`خطوات أبعد`t_{i+k+1}`، مع إعطاء مقدمة من خلال الموقف`i`. . .
 
 الوحدة`k`يتكون من:
 
@@ -39,27 +39,29 @@
 
 في التدريب، للفصيلة من خلال الموقف`i`، الحالة المخفية المتقدمة هي:
 
-```
-h_i^(0) = main model backbone at position i
-h_i^(k) = T_k( M_k * concat(RMSNorm(h_i^(k-1)), RMSNorm(E(t_{i+k}))) )   for k >= 1
+```math
+\begin{aligned}
+h_i^{(0)} &= \text{main model backbone at position } i \\
+h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMSNorm}}(h_i^{(k-1)}), \mathop{\mathrm{RMSNorm}}(E(t_{i+k}))\big) \Big) \quad \text{for } k \ge 1
+\end{aligned}
 ```
 
 التنبؤ المتعمق هو:
 
-```
-logits_{i+k} = Out(h_i^(k-1))   for k = 1..D
+```math
+\text{logits}_{i+k+1} = \mathop{\mathrm{Out}}(h_i^{(k)}) \quad \text{for } k = 1, \ldots, D
 ```
 
-الخسارة المتعلقة بالعمق هي التشابه بين الصورة والحقيقة`t_{i+k}`:
+الخسارة المتعلقة بالعمق هي التشابه بين الصورة والحقيقة`t_{i+k+1}`:
 
-```
-L_k = CE(logits_{i+k}, t_{i+k})
+```math
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k+1}, t_{i+k+1})
 ```
 
 فقدان المفاصل عبر العمق:
 
-```
-L_MTP = (lambda / D) * sum_{k=1..D} L_k
+```math
+L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 ```
 
 `lambda`هو عامل وزن صغير  DeepSeek-V3 يستخدم 0.3 في أول 10% من التدريب و 0.1 بعد ذلك.`L_main + L_MTP`. . .
@@ -68,9 +70,9 @@ L_MTP = (lambda / D) * sum_{k=1..D} L_k
 
 كان لدى MTP الموازي الأصلي لـ Gloeckle رؤوس خروج D ، كل منها يتم تطبيقه مباشرة على `h_i^(0)`كل رأس يتنبأ`t_{i+k}`هذا يتدرب بشكل جيد، لكن التنبؤات ليست مشروطة على بعضها البعض.`head_1`إنتاج للمساعدة`head_2`الرؤوس تطلق في مواز
 
-تصميم DeepSeek-V3 متسلسل يبن`h_i^(k)`من`h_i^(k-1)`بالإضافة إلى التضمين الفعلي للبرمجة التالية`E(t_{i+k})`هذا يحافظ على سلسلة السببية: التنبؤ`t_{i+k+1}`، الوحدة في عمق`k+1`يرى ما كان في`t_{i+k}`. هذا هو نفس الهيكل من حيث كيفية استهلاك المقرر التنفيذي لإنتاجها الخاص  مما يجعل وحدات MTP قابلة للاستخدام مباشرة كموظفين لإنشاءات التشخيص المضاربة.
+تصميم DeepSeek-V3 متسلسل يبن`h_i^(k)`من`h_i^(k-1)`بالإضافة إلى التضمين الفعلي للبرمجة التالية`E(t_{i+k})`هذا يحافظ على سلسلة السببية: التنبؤ`t_{i+k+1}`، الوحدة في عمق`k`يرى ما كان في`t_{i+k}`. هذا هو نفس الهيكل كيفية استهلاك المقرر التنفيذي لخروجها الخاص، مما يجعل وحدات MTP مباشرة قابلة للاستخدام كموظفين لترميمات التشخيص المضاربة.
 
-عند الاستنتاج: الأغذية`h_i^(k-1)`و المخططات`t_{i+k}`إلى الوحدة`k+1`، احصل على توقع`t_{i+k+1}`. أكرر. هذا هو بالضبط مسودة على شكل EAGLE، باستخدام وحدات MTP المدربة كشريحة شبكة. DeepSeek-V3 تقرير قبول 80٪ + على أول وحدات MTP و ~ 1.8x تسريع.
+عند الاستنتاج: الأغذية`h_i^(k-1)`و المخططات`t_{i+k}`إلى الوحدة`k`، احصل على توقع`t_{i+k+1}`. أكرر. هذا هو بالضبط مسودة على شكل EAGLE، باستخدام وحدات MTP المدربة كشريحة شبكة. DeepSeek-V3 تقرير قبول 80٪ + على أول وحدات MTP و ~ 1.8x تسريع.
 
 ### المحاسبة المعلمية
 
@@ -139,7 +141,7 @@ def combine(prev_hidden, next_token_embed, M_k):
 
 ### الخطوة 5: فقدان لكل عمق
 
-التشابه المتقاطع بين "softmax" (المناسبة) و "أساسية الحقيقة" عند التشويش`k`. تجمع على أعماق مع`lambda / D`عامل التوسع
+التشابه المتقاطع بين "softmax" (المناسبة) و "أساسية الحقيقة" عند التشويش`k+1`. تجمع على أعماق مع`lambda / D`عامل التوسع
 
 ### الخطوة 6: حسابية المعلمات
 
@@ -174,24 +176,24 @@ def combine(prev_hidden, next_token_embed, M_k):
 
 2. قم بحساب التكلفة العليا للبرامج للنموذج 70B الكثيف (خفي 8192، 80 طبقة) مع D = 1 MTP. مقارنة مع 14B التكلفة العليا التي أبلغ عنها DeepSeek-V3. شرح لماذا عدد DeepSeek أعلى: يتلقى كتلة محول MTP نفس هيكل MoE ، مما يزيد من عدد المعلمات لكل وحدة.
 
-3. تنفيذ D=2 في اللعبة: إضافة وحدة MTP الثانية التي تأخذ h^(1) وتتوقع `t_{i+2}`تأكد من الخسارة المشتركة و حسابية المعلمات تتطابق مع المعادلات 19-21 من ورقة DeepSeek.
+3. تنفيذ D=2 في اللعبة: إضافة وحدة MTP الثانية التي تأخذ $h^{(1)}$و يتوقع`t_{i+3}`تأكد من الخسارة المشتركة و حسابية المعلمات تتطابق مع المعادلات 19-21 من ورقة DeepSeek.
 
 4. قم بتحويل اللعبة إلى MTP متوازية (طريقة Gloeckle): أضف رؤوس خروج D فوق الحالة الخفية الرئيسية ، كل تنبؤ بالتعويض المختلف. قياس كيفية قياس الخسائر لكل عمق مع النسخة المتسلسلة على نفس الإشارة الاصطناعية. يجب أن ينتج النسخة المتسلسلة خسارة أقل عمق-k ل k > 1 لأنه يتطلب التنبؤات المتوسطة.
 
-5. استخدم وحدة MTP المدربة كمسودة على شكل EAGLE: دعوة الوحدة k لتقديم اقتراح `t_{i+k}`عند الاستنتاج. قياس معدل قبول هذه الرسومات على مقارنة مع توقعات النموذج الرئيسي على تسلسل مدموم. إذا ضربت 50٪ + على اللعبة، لقد قمت بتكرار خاصية MTP-as-draft التجريبية.
+5. استخدم وحدة MTP المدربة كمسودة على شكل EAGLE: دعوة الوحدة k لتقديم اقتراح `t_{i+k+1}`عند الاستنتاج. قياس معدل قبول هذه الرسومات على مقارنة مع توقعات النموذج الرئيسي على تسلسل مدموم. إذا ضربت 50٪ + على اللعبة، لقد قمت بتكرار خاصية MTP-as-draft التجريبية.
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | MTP module | "Extra loss block" | A small transformer block plus projection that predicts a token `k` positions ahead of the main model |
-| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k}` from prefix through position `i` |
+| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k+1}` from prefix through position `i` (the main model is depth 0 and predicts `t_{i+1}`) |
 | Parallel MTP | "Gloeckle-style" | D independent heads on the same backbone hidden state, no conditional chain |
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |
 | Shared embedding | "Reuse the main table" | Same vocabulary embedding table is used everywhere; no duplicate parameters |
-| Projection matrix M_k | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
-| Joint loss L_MTP | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
+| Projection matrix $M_k$ | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
+| Joint loss $L_{\text{MTP}}$ | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
 | Acceptance rate at depth 1 | "How often MTP draft is right" | The rate at which the D=1 MTP module's top-1 prediction equals the main model's top-1 prediction; 80%+ on DeepSeek-V3 |
 | Lambda weighting | "Extra-loss importance" | Per-depth scaling factor; 0.3 at start of training, 0.1 later on DeepSeek-V3 |
 

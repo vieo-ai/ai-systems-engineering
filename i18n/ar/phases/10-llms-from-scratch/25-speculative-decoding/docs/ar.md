@@ -53,8 +53,8 @@ For each drafted token x_t:
 
 إذا كان معدل قبول النموذج المشروع على مستوى الرمز هو `α`، فإن الرموز المتوقعة التي يتم إنتاجها لكل مرسلة متقدمة هدف هي:
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 في`α = 0.8, K = 4`: `(1 - 0.8^5)/(1 - 0.8) = 3.36`الـ "Token" لكل مؤشر.`cost_q * K + cost_p`(إثبات خطوات مسودة K بالإضافة إلى هدف واحد)`cost_p >> cost_q * K`نسبة تسريع هي `3.36× / 1 = 3.36×`على التدفق
@@ -85,7 +85,7 @@ E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
 
 إيجل-2 (2024) يضيف توبولوجيّة الأشجار الديناميكية: ينمو الشجرة أوسع حيث يكون المسح غير مؤكّد ويبقى ضيقًا حيث يكون واثقًا.`α_effective`دون زيادة تكلفة التحقق.
 
-(Li et al. 2025، "EAGLE-3: زيادة تسريع الإدلاء على نماذج اللغة الكبيرة عبر اختبار وقت التدريب") يزيل اعتماد الميزات العليا الثابتة ويعمل على تدريب المسودة بخسارة جديدة "تحاكي وقت الاختبار" يرتفع معدل قبول من 0.75 (EAGLE-2) إلى 0.82 (EAGLE-3) ، ومتوسط الرموز / التحقق من 3.0 إلى 4.5.
+(Li et al. 2025، "EAGLE-3: زيادة تسريع الإدلاء على نماذج اللغة الكبيرة عبر اختبار وقت التدريب") يزيل اعتماد الميزات العليا الثابتة ويعمل على تدريب المسودة بخسارة جديدة "تحاكي وقت الاختبار" يرتفع معدل قبول من 0.75 (EAGLE-2) إلى 0.82 (EAGLE-3) ، ومتوسط الرموز / التحقق من 3.0 إلى 4.5. هذه الأرقام تأتي من إعداد مرجعي واحد. يعتمد القبول على زوج النموذج، شجرة مشروع والحركة المرور: المرحلة 10 · 15 اقتباسات 0.88 إلى 0.92 لكل رمز المسار المقبول على مقاييس الدردشة، والمرحلة 17 · 05 خطط مع 0.6 إلى 0.8 على الدردشة العامة الإنتاج.
 
 ### التحقق من الاهتمام بالأشجار
 
@@ -132,13 +132,13 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     """One round of speculative decoding. Returns list of accepted tokens."""
     # 1. Draft K tokens
     draft_tokens = []
-    q_probs = []
+    q_dists = []
     state = draft_state_init()
     for _ in range(K):
         probs = softmax(q_draft(state) / temperature)
         t = np.random.choice(len(probs), p=probs)
         draft_tokens.append(t)
-        q_probs.append(probs[t])
+        q_dists.append(probs)
         state = draft_step(state, t)
 
     # 2. Target computes p at every drafted position + 1 extra
@@ -148,10 +148,10 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     accepted = []
     for k, tok in enumerate(draft_tokens):
         r = np.random.uniform()
-        if r < p_probs_all[k][tok] / q_probs[k]:
+        if r < p_probs_all[k][tok] / q_dists[k][tok]:
             accepted.append(tok)
         else:
-            residual = np.maximum(p_probs_all[k] - q_probs[k], 0)
+            residual = np.maximum(p_probs_all[k] - q_dists[k], 0)
             residual /= residual.sum()
             accepted.append(np.random.choice(len(residual), p=residual))
             return accepted
@@ -175,7 +175,7 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 1. تنفيذ قاعدة الرفض الدقيقة والتحقق من ذلك تجريبيا.`speculative_decode`و عن طريق أخذ عينات واضحة للمستهدف؛ حساب المسافة التلفزيونية بين توزيعات المخرجين. يجب أن يكون < 0.01.
 
-2. احسب صيغة تسريع`α`و`K`، رسم الرموز المتوقعة لكل هدف-مضي قدما. العثور على الكمية المثلى ل α ∈ {0.5 ، 0.7 ، 0.9}.
+2. احسب صيغة تسريع`α`و`K`، رسم الرموز المتوقعة لكل هدف - إلى الأمام.$K$لـ$\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$. . .
 
 3. قم بتدريب مسودة صغيرة، خذ هدف 124 مليون جبت-2 وقطع مسودة 30 مليون جبت-2 على رموز 100 مليون مع خسارة KL.`α`على النص المُتَمَرّد. المتوقع: 0.6-0.7.
 

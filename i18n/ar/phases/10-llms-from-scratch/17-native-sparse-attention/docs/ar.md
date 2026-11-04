@@ -36,8 +36,8 @@
 
 يتم دمج ثلاثة خروجيات الفرع عبر بوابة تعلم لكل موقف:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
+```math
+\text{out} = g_{\text{cmp}} \cdot \text{out}_{\text{cmp}} + g_{\text{sel}} \cdot \text{out}_{\text{sel}} + g_{\text{win}} \cdot \text{out}_{\text{win}}
 ```
 
 `g_cmp, g_sel, g_win`هي وزن البوابات من MLP صغير على السؤال. لا يجب أن يصل إلى 1  يمكنهم وزن الفرع بشكل مستقل.
@@ -46,7 +46,7 @@ out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
 
 خطوة الاختيار (كتل العلوي-ك) متفرقة. عمليات متفرقة تقطع تدفق التراجع. عمل الانتباه النقي إما قفزت من الخلف من خلال الاختيار (التدريب الحدودي) أو استخدمت الاسترخاءات المستمرة التي لم تعط ضيقة حقيقية عند الاستنتاج.
 
-وكالة الأمن القومي تتجنب هذا: الاهتمام بالفروع المضغوطة هو الاهتمام القاسية المميزة على السلسلة بأكملها. العملية العليا تستخدم فقط أعلى نقاط الاهتمام من الفرع المضغوط لتحديد الكتل الدقيقة التي يجب تحملها. تتدفق المعدلات من خلال درجات الفروع المضغوطة (التي تؤثر على كل من الخروج المضغوط ومنطق الاختيار) ، وسهولة الكتل المختارة في الخروج النهائي يمكن التمييز أيضا. غير المميز`top_k`العملية هي بدون عمل على الرسم البياني الحاسوبي المضي قدماً
+وكالة الأمن القومي تتجنب هذا: الاهتمام بالفروع المضغوطة هو الاهتمام القاسية المميزة على السلسلة بأكملها. العملية العليا تستخدم فقط أعلى نقاط الاهتمام من الفرع المضغوط لتحديد الكتل الدقيقة التي يجب تحملها. تصل المعدلات إلى درجات الفروع المضغوطة من خلال إنتاج الفروع المضغوطة ، وليس من خلال اختيار الكتل. داخل الكتل المختارة، الاهتمام على المفاتيح والقيم المختارة هو الاهتمام العادي، لذلك مساهمتهم في الناتج النهائي يمكن التمييز أيضا. - نعم`top_k`اختيار المؤشر نفسه لا يحصل على تراجع: فإنه يتحكم فقط في أي كتلة يتم تحميل من الذاكرة.
 
 هذا هو السبب في أن NSA يمكن استخدامها في التدريبات المسبقة من نهاية إلى نهاية. يتعلم النموذج توجيه المعلومات عبر الفرع الثلاث معا، مما ينتج نمطًا نادرًا الذي في الاستنتاج يقدم بالفعل السرعة الموعودة.
 
@@ -171,7 +171,7 @@ def compress(K, l):
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
+| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in $O(N/l)$ keys per query |
 | Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
 | Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
 | Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |
