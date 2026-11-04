@@ -42,10 +42,10 @@ critic update:   TD on Q_i(x, a_1..n) given next-state joint estimate
 
 ### QMIX (2018)  تجزیه ارزش
 
-فقط همکاری. پاداش جهانی مجموعه ای از یک تابع یک تن از ارزش های Q در هر عامل است:
+فقط همکاری. ارزش مشترک عمل`Q_tot`یک تابع مخلوط یک تن از Q-قیمتهای هر عامل است:
 
-```
-Q_tot(tau, a) = f(Q_1(tau_1, a_1), ..., Q_n(tau_n, a_n)),   df/dQ_i >= 0
+```math
+Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
 ```
 
 اون تک تکونگاري تضمین ميکنه`argmax_a Q_tot`می تونه توسط هر عامل انتخاب بشه`argmax_{a_i} Q_i`مستقل، یعنی**exactly the decentralized execution property**در زمان آموزش، شبکه مخلوط کننده تولید می کند`Q_tot`از هر عامل Qs

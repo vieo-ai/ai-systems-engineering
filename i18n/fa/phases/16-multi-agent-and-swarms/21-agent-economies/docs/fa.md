@@ -61,8 +61,8 @@ shapley(i) = (1/N!) * sum over all orderings O of (v(S_i_O ∪ {i}) - v(S_i_O))
 
 نمره شهرت مرتبط با DID از کمک های تایید شده جمع می شود. یک قانون تازه ساده:
 
-```
-rep(i, t+1) = alpha * rep(i, t) + (1 - alpha) * contribution_quality(i, t)
+```math
+\text{rep}(i, t+1) = \alpha \cdot \text{rep}(i, t) + (1 - \alpha) \cdot \text{contribution\_quality}(i, t)
 ```
 
 با فاکتور انحلال`alpha`نامشهرت:

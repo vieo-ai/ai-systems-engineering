@@ -117,7 +117,7 @@ python3 code/main.py
 
 - **Memory is the database.**یک فروشگاه واقعی (وکتور DB، Postgres) را در مقیاس انتخاب کنید.
 - **Log the retrieval trace.**براي هر عمل، خاطرات بالا رو ثبت کن که باعثش شد
-- **Budget per-agent tokens.**هر نماینده به هر تکه برنامه + بازتاب + برنامه O(k) LLM تماس است. N عوامل × T تکه × تماس های هر تکه می تواند بودجه شما را کوچک کند.
+- **Budget per-agent tokens.**هر ارگان بازيابي + بازتاب + نقشه هر تيك$O(k)$تماس های LLM. N عوامل × T تکه × تماس های هر تکه می تواند بودجه شما را کوچک کند.
 - **Compact memory periodically.**خلاصه و کليد اطلاعات مهمي را جمع كنيد.
 - **Detect spatial / social norm violations**به طور صریح. معماری آنها را یاد نمی گیرد.
 
