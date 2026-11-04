@@ -1,6 +1,6 @@
 # Herhangi bir çözünürlükle görme: Patch-n'-Pack ve NaFlex
 
-> Gerçek görüntüler 224x224 kare değil. Bir makbuz 9:16, bir tablo 16:9, bir tıbbi tarama 4096x4096, bir mobil ekran görüntüsü 9:19.5. 2024'ten önceki VLM cevabı  her şeyi sabit bir kareye boyutlandır  OCR, belge anlayışı ve yüksek çözünürlüklü sahne analizini yapan sinyali atıyor. NaViT (Google, 2023) değişken çözünürlüklü yamaları blok diyagonal maske ile tek bir transformatör partiye paketleyebileceğinizi gösterdi. Qwen2-VL'nin M-RoPE (2024) mutlak pozisyon tablolarını tamamen düşürdü. LLaVA-NeXT'in AnyRes yüksek çözünürlüklü görüntülerini bir taban + alt görüntülere kaydırdı. SigLIP 2'nin NaFlex variansı (2025) artık her yön oranına hizmet vermek için tek bir kontrol noktası isteyen açık VLM'ler için varsayılan kodlayıcıdır. Bu ders, bir parça parça yaptırır.
+> Gerçek görüntüler 224x224 kare değil. Bir makbuz 1: 3, bir tablo 16: 9, bir tıbbi tarama 4096x4096, bir mobil ekran görüntüsü 9:19.5. 2024'ten önceki VLM cevabı  her şeyi sabit bir kareye boyutlandır  OCR, belge anlayışı ve yüksek çözünürlüklü sahne analizini yapan sinyali atıyor. NaViT (Google, 2023) değişken çözünürlüklü yamaları blok diyagonal maske ile tek bir transformatör partiye paketleyebileceğinizi gösterdi. Qwen2-VL'nin M-RoPE (2024) mutlak pozisyon tablolarını tamamen düşürdü. LLaVA-NeXT'in AnyRes yüksek çözünürlüklü görüntülerini bir taban + alt görüntülere kaydırdı. SigLIP 2'nin NaFlex variansı (2025) artık her yön oranına hizmet vermek için tek bir kontrol noktası isteyen açık VLM'ler için varsayılan kodlayıcıdır. Bu ders, bir parça parça yaptırır.
 
 **Type:** Build
 **Languages:** Python (stdlib, patch packer + block-diagonal mask)
@@ -55,7 +55,7 @@ LLaVA-NeXT'in AnyRes pragmatik bir alternatiftir. Yüksek çözünürlüklü bir
 
 2x2 grid ve miniatürde 672x672 görüntü için: 4 * 576 + 576 = 2880 görsel jeton. Pahalı ama etkili  LLM hem yerel ayrıntıları hem de küresel bağlamı görür.
 
-AnyRes, kodlamanız dondurulduğunda ve yalnızca bir çözünürlüğü desteklediğinde seçilen yoldur. Büyük görüntüler için token sayısını patlatır (4x4 şeritte bir 1344x1344 görüntü 9216 + 576 ≈ 9800 token, 8k LLM bağlamının çoğunu doldurur).
+AnyRes, kodlamanız dondurulduğunda ve yalnızca bir çözünürlüğü desteklediğinde seçilen yoldur. Büyük görüntüler için token sayısını patlatır (4x4 şeritte bir 1344x1344 görüntü 9216 + 576 ≈ 9800 token, herhangi bir metin gelmeden önce 8k LLM bağlamını aşar).
 
 ### M-RoPE (Qwen2-VL)
 
@@ -63,7 +63,7 @@ Qwen2-VL, Multimodal Rotary Position Embedding'i tanıttı. NaViT'in kıramlı p
 
 M-RoPE, yeniden eğitim almadan yerel dinamik çözünürlük gönderir. Herhangi bir HxW görüntüsünü beslediğinizde, yama ekleyici H/14 x W/14 jetonları üretir, her jeton (t=0, r=sır, c=col) konumunu alır, RoPE dikkatini doğru frekanslarla döndürür, yapılır. Qwen2.5-VL ve Qwen3-VL bunu sürdürür. InternVL3'in V2PE'si değişken kodlama ile aynı fikirdir.
 
-AnyRes'den farklı olarak, M-RoPE, doğuşsal çözünürlükte O(H x W / P^2) tokensidir  çarpıcı bir plitel overhead yoktur. NaViT'den farklı olarak, hala ileriye bir görüntü bekler.
+AnyRes' den farklı olarak, M-RoPE $O(H \times W / P^2)$Bu, NaViT'in diğer tüm teknolojilerden farklı olarak, önüme bir görüntü bekliyor.
 
 ### NaFlex (SigLIP 2)
 

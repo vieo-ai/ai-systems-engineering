@@ -12,7 +12,7 @@
 - İfade borusunu düşünce (metin mantığı) ve konuşma (söz sentezi) olarak bölün ve paralel akış neden çalışır açıklayın.
 - Bir konuşma etkileşimi için, bileşenler arasındaki Time-to-First-Audio-Byte (TTFAB) bütçesini hesaplayın.
 - TMRoPE'nin düşünceci içinde görme, ses ve metin üzerinde zaman doğrultusunda konum kodlamasını açıklayın.
-- Gerçek zamanlı üç konuşma örneğini isimlendirin: yarı duplex, dönüş, tam duplex.
+- İki gerçek zamanlı konuşma örneğini, yarı duplex ve tam duplex adını verin ve VAD dönüşü almanın yarı duplex el uzatmasını nasıl yönlendirdiğini açıklayın.
 
 ## Sorun
 
@@ -41,10 +41,10 @@ Ayrılma önemlidir. İyi bir mantık yürütmek için düşünen büyük olmal�
 
 İkisini de paralel olarak çalıştırmak:
 
-1. Düşünceci, metin simgesi t_i gönderir.
-2. Konuşmacı t_i (streaming yoluyla) tüketir ve konuşma işaretlerini s_i, s_{i+1}, ..., s_{i+k} gönderir.
+1. Düşünceci metin işaretini gönderir .$t_i$- Evet .
+2. Konuşmacı tüketir .$t_i$(streaming yoluyla) ve konuşma simgelerini gönderir $s_i, s_{i+1}, \ldots, s_{i+k}$- Evet .
 3. Konuşma dekodörü, konuşma işaretlerini geldiğinde tüketir ve ses örneklerini yayar.
-4. Düşünceci'nin metin simgesinde olduğu zaman, Konuşmacı t_0..t_{i+2} için ses akışı yapmış.
+4. Düşünceci mesaj atışına varırken .$t_{i+3}$, Talker zaten ses yayını yaptı .$t_0, \ldots, t_{i+2}$- Evet .
 
 ### TMRoPE  Zaman doğrultusunda çok modal pozisyonlar
 
@@ -85,7 +85,7 @@ Tipik bir akış etkileşimi için:
 - Geri kalan-VQ çözümü: 30 ms.
 - Konuşma dalga şekli çözümü: 50-80 ms.
 
-Toplam TTFAB: 7B'de 320-510 ms, 70B'de 600-900 ms. Sınır kalitesi genellikle 70B+ anlamına gelir; bu nedenle sınır gecikme boşluğu.
+Toplam TTFAB: 7B'de 320-490 ms, 70B'de 600-900 ms. Sınır kalitesi genellikle 70B+ anlamına gelir; bu nedenle sınır gecikme boşluğu.
 
 ### Token oranı matematiği
 

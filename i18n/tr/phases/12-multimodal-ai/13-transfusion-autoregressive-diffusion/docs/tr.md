@@ -51,7 +51,7 @@ Maske:
 M[i, j] = 1 if:
   (i is text and j is text and j <= i)   # causal for text
   OR (i is image and j is image and same_image_block(i, j))   # bidirectional within image
-  OR (i is text and j is image and j < i_image_end)   # text attends to previous images
+  OR (i is text and j is image and j < i)   # text attends to images that closed before it
   OR (i is image and j is text and j < i_image_start)   # image attends to preceding text
 ```
 
@@ -62,9 +62,9 @@ Eğitim ve sonuçlama için blok üçgenli bir maske olarak uygulanır.
 Düzünlük kaybı standarttır: bir görüntü yamağına gürültü ekleyin, modelden gürültüyü (veya temiz yama, eşdeğer olarak) tahmin etmesini isteyin. Transfüzyon'un versiyonu akış eşleşmesini kullanır  gürültüden temizliğe hız alanını tahmin edin.
 
 Eğitim sırasında:
-1. Her görüntü yama x0 için rastgele bir zaman adım t örneği.
-2. Örnek gürültü ε, hesap xt = (1-t) * x0 + t * ε (akış eşleşmesi için doğrusal interpolasyon).
-3. Transformatör v_theta(xt, t) tahmin eder; kaybı = MSE(v_theta(xt, t), ε - x0).
+1. Her görüntü yama için $x_0$, rastgele bir zaman adımını örnekleyin .$t$- Evet .
+2. Örnek gürültü$\epsilon$, hesaplama$x_t = (1-t) \cdot x_0 + t \cdot \epsilon$(çıkış eşleşimi için doğrusal interpolasyon).
+3. Transformatör tahmin ediyor .$v_\theta(x_t, t)$- ...$\text{loss} = \mathop{\mathrm{MSE}}(v_\theta(x_t, t), \epsilon - x_0)$- Evet .
 4. Tekst ile birlikte arka tarafa NTP kayıpları aynı diziden.
 
 Sonuç olarak, nesil:
@@ -97,7 +97,7 @@ Eksik taraf: Transfüzyon ikili kayblı bir modeldir, bu da eğitim dinamiklerin
 
 Janus-Pro (Desin 12.15) Transfusion'un fikrini, Transfusion'un transforman vücudu paylaşırken bir tanesi için SigLIP, diğer tanesi için VQ'yi ayırarak ve anlayış ve jenerasyon için vizyon kodlayıcısını ayırarak geliştirir. Show-o (Desin 12.14) difüzyonu diskret difüzyon (maskeli tahmin) için değiştirir.
 
-2026 üretiminde görüntü yayımlayan VLM'ler  Gemini 3 Pro, GPT-5, Claude Opus 4.7'in görüntü oluşturma yolu  neredeyse kesinlikle bu ailenin bazı soyundan gelmektedir.
+Yerel olarak görüntüler yayımlayan kapalı üretim modelleri bu ailenin bazı soylarını kullanabilir, ancak mimarlıkları yayınlanmamıştır, bu nedenle bu tür herhangi bir iddiayı bir tahmin olarak değerlendirin.
 
 ```figure
 cfg-guidance-scale
@@ -111,7 +111,7 @@ cfg-guidance-scale
 - Resimler 4x4 bayt ağları.
 - Ortak ağırlıklı bir çift doğrusal projeksiyon, transformatörün yerine geçer; metinde NTP kaybı, gürültülü yamalarda MSE kaybı.
 - Eğitim döngüsü iki kayıpı değiştirir, dikkat maskası açıkça.
-- Genre bir ileri geçit içinde bir metin başlığı ve 4x4 resmi üretir.
+- Bir maske demo, bir metin, görüntü, metin dizisi için blok üçgenli dikkat kalıbını yazdırır. Üretim çalıştırılmıyor: gerçek bir örneklemeci metin jetonunu jeton olarak çözür, ardından aşağıdaki egzersizlerin sayıldığı gibi, görüntü yamalarını birçok adım boyunca tanımlar.
 
 İki kayıplı tesisat, dikkat maskası yapımı ve sonuç döngüsü gerçek eserlerdir.
 
