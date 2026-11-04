@@ -32,8 +32,8 @@
 
 برای هر پرامپت، نمونه تکمیل K از مدل SFT را انتخاب کنید. یک برچسبگر آنها را رتبه بندی می کند. یک مدل پاداش را آموزش دهید که هر جفت پاسخ پرامپت را به طوری که برای جفت هایی که `y_w`ترجیح داده بود`y_l`:
 
-```
-L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
+```math
+L_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)
 ```
 
 این از دست دادن اولویت جفت Bradley-Terry است. RM معمولا از مدل SFT با سر LM جایگزین سر اسکالر آغاز می شود.
@@ -44,8 +44,8 @@ L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
 
 هدف را تعریف کنید:
 
-```
-J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
+```math
+J(\pi) = \mathbb{E}_{x \sim D,\, y \sim \pi(\cdot \mid x)} \big[ r(x, y) \big] - \beta \, \mathrm{KL}\big(\pi(\cdot \mid x) \,\|\, \pi_{\text{SFT}}(\cdot \mid x)\big)
 ```
 
 با PPO حداکثرش کنين.`pi`بدون آن، بهینه ساز نمونه های متناقض را پیدا می کند  رشته هایی که بالاتر از RM هستند زیرا RM آنها را هرگز ندیده است، نه اینکه انسان ها آنها را ترجیح می دهند.
@@ -56,8 +56,8 @@ J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
 
 اویانگ و همکاران این را مالیات بر تعادل می نامند و با PPO-ptx آن را اصلاح می کنند: gradients پیش از آموزش را به هدف RL ترکیب می کنند تا مدل فراموش نکند که چگونه وظایف بعدی را انجام دهد که هرگز برای آن پاداش داده نشده است.
 
-```
-J_ptx(pi) = J(pi) + gamma * E_{x~D_pretrain} [ log pi(x) ]
+```math
+J_{\text{ptx}}(\pi) = J(\pi) + \gamma \, \mathbb{E}_{x \sim D_{\text{pretrain}}} \big[ \log \pi(x) \big]
 ```
 
 PPO-ptx استاندارد شد. انتروپک، دیپ میند و متا همه از نوع دیگری استفاده می کنند.
@@ -84,7 +84,7 @@ al-instruct-pipeline
 چه چیزی رو باید ببینیم:
 
 - مسیر پاداش با `beta = 0.1`vs `beta = 0.0`. .
-- این برنامه در مورد مراحل آموزش و پرورش است.
+- $\mathrm{KL}(\pi \Vert \pi_{\text{SFT}})$در مورد مراحل آموزش
 - توزیع نهایی اعمال در مقایسه با ترجیح برچسب
 
 ## -باده
@@ -109,7 +109,7 @@ al-instruct-pipeline
 |------|-----------------|------------------------|
 | SFT | "instruction tuning" | Stage 1: cross-entropy fine-tune on prompt-response pairs |
 | Reward model | "the RM" | Scalar regressor over (prompt, response) trained with Bradley-Terry on pairwise labels |
-| Bradley-Terry | "pairwise preference loss" | -log sigmoid(r_w - r_l); reduces pairwise ranking to binary classification |
+| Bradley-Terry | "pairwise preference loss" | $-\log \sigma(r_w - r_l)$; reduces pairwise ranking to binary classification |
 | KL penalty | "the regularizer" | `beta * KL(pi \|\| pi_SFT)` — keeps the RL policy near the SFT anchor |
 | PPO-ptx | "PPO with pretraining mix" | Adds a fraction of pre-training log-likelihood to the PPO objective to offset the alignment tax |
 | Alignment tax | "the RLHF regression" | Post-RLHF drop on standard benchmarks that RLHF did not target |

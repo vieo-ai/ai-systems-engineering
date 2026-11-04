@@ -18,20 +18,20 @@
 
 هدف RLHF (درس اول):
 
-```
-max_pi E_{x,y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 دارای یک بهینه شناخته شده است:
 
-```
-pi*(y|x) = (1/Z(x)) * pi_ref(y|x) * exp(r(x, y) / beta)
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{r(x, y)}{\beta}\right)
 ```
 
 پس پاداش به طور ضمنی توسط نسبت سیاست مطلوب به مرجع تعریف می شود:
 
-```
-r(x, y) = beta * log(pi*(y|x) / pi_ref(y|x)) + beta * log Z(x)
+```math
+r(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 اينو به احتمالي برادلي-تيري و تابع قسمتي تبديل کن`Z(x)`لغو ميکنه چون فقط بستگی داره`x`. آنچه باقی مانده تنها یک ضرر در پارامترهای سیاست است  هیچ مدل پاداش مورد نیاز نیست.
@@ -42,25 +42,25 @@ r(x, y) = beta * log(pi*(y|x) / pi_ref(y|x)) + beta * log Z(x)
 
 ### DPO (Rafailov و همکارانش، 2023)
 
-```
-L_DPO = -log sigmoid(
-  beta * log(pi(y_w | x) / pi_ref(y_w | x))
-  - beta * log(pi(y_l | x) / pi_ref(y_l | x))
-)
+```math
+L_{\text{DPO}} = -\log \sigma\!\left(
+  \beta \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)}
+  - \beta \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}
+\right)
 ```
 
 چه اتفاقی می تواند پیش بیاد؟
 
 - شکاف ضمنی پاداش`beta * (log(pi/pi_ref)_w - log(pi/pi_ref)_l)`یک ترجیح کوچک می تواند شکاف بزرگی را ایجاد کند.
 - این درایو از دست دادن، سوابق انتخاب شده و رد شده را در جهت های مخالف هدایت می کند. می تواند سوابق مطلق انتخاب شده را تا زمانی که سوابق رد شده سریعتر سقوط کند، پایین بکشد. این پدیده واکنش انتخاب شده است.
-- ترجیحات خارج از توزیع (دو زوج نادر به مقابل دو زوج نادر نادر) پاداش های ضمنی تعمیری را ایجاد می کند.
+- ترجیحات خارج از توزیع (زفت هایی که هر دو پاسخ در سیاست مرجع نادر است) پاداش ضمنی تعسفی را به ارمغان می آورد.
 
 ### IPO (Azar و همکارانش، 2024)
 
 بهینه سازی اولویت هویت، log-sigmoid را با نقشه برداری هویت بر روی احتمال اولویت جایگزین می کند. از دست دادن یک خطای مربع در یک هدف محدود می شود:
 
-```
-L_IPO = (log(pi(y_w | x) / pi_ref(y_w | x)) - log(pi(y_l | x) / pi_ref(y_l | x)) - 1/(2 beta))^2
+```math
+L_{\text{IPO}} = \left( \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} - \frac{1}{2\beta} \right)^2
 ```
 
 حاشیه توسط `1/(2 beta)`. قدرت ترجیح و تفاوت ضمنی پاداش متناسب است . هیچ انفجار
@@ -69,8 +69,8 @@ L_IPO = (log(pi(y_w | x) / pi_ref(y_w | x)) - log(pi(y_l | x) / pi_ref(y_l | x))
 
 بهینه سازی کانمن-تفرسکی ساختار جفت را کاملاً کاهش می دهد. با توجه به یک خروجی واحد برچسب گذاری شده و یک سیگنال دوگانه "خواسته" یا "غیرخواسته" ، آن را به یک ابزار نظریه چشم انداز نقشه می زند:
 
-```
-v(x, y) = sigma(beta * log(pi(y|x) / pi_ref(y|x)) - z_ref)
+```math
+v(x, y) = \sigma\!\left(\beta \log \frac{\pi(y \mid x)}{\pi_{\text{ref}}(y \mid x)} - z_{\text{ref}}\right)
 ```
 
 با وزن های مختلف برای سود و خسارت (حوادث از دست دادن) مزایای: شما می توانید از داده های غیر جفت استفاده کنید که بسیار فراوان تر است.
@@ -79,12 +79,12 @@ v(x, y) = sigma(beta * log(pi(y|x) / pi_ref(y|x)) - z_ref)
 
 بهینه سازی ساده ترجیحات سیگنال آموزش را با تولید هماهنگ می کند. سیاست مرجع را کاملا حذف کنید و احتمال ثبت را با طول عادی کنید:
 
-```
-L_SimPO = -log sigmoid(
-  (beta / |y_w|) * log pi(y_w | x)
-  - (beta / |y_l|) * log pi(y_l | x)
-  - gamma
-)
+```math
+L_{\text{SimPO}} = -\log \sigma\!\left(
+  \frac{\beta}{|y_w|} \log \pi(y_w \mid x)
+  - \frac{\beta}{|y_l|} \log \pi(y_l \mid x)
+  - \gamma
+\right)
 ```
 
 با یک حاشیه`gamma`به طور معمول، این انگیزه را برای بهره برداری از حالت شکست در طول DPO حذف می کند (در طول`y_w`با ساخت یک شکاف بزرگ تر از لاگ-برابر می دهد).
@@ -93,9 +93,11 @@ L_SimPO = -log sigmoid(
 
 بهینه سازی ترجیحات نسبت احتمالات رادای احتمال منفی SFT یک اصطلاح ترجیح را اضافه می کند:
 
-```
-L_ORPO = L_NLL(y_w) + lambda * L_OR
-L_OR = -log sigmoid(log(odds(y_w) / odds(y_l)))
+```math
+\begin{aligned}
+L_{\text{ORPO}} &= L_{\text{NLL}}(y_w) + \lambda L_{\text{OR}} \\
+L_{\text{OR}} &= -\log \sigma\!\left(\log \frac{\text{odds}(y_w)}{\text{odds}(y_l)}\right)
+\end{aligned}
 ```
 
 هیچ سیاست مرجعی  اصطلاح SFT تنظیم کننده است. در یک مرحله از مدل پایه تا مدل هموار. هیچ نقطه کنترل SFT جداگانه ای نیست.

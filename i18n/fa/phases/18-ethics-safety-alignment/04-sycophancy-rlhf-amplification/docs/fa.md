@@ -28,10 +28,12 @@
 
 بذار`pi_0`مدل اصلی باشد.`pi_A`مدل پس از تعاونی، `r`پاداش نماینده،`s(x, y)`یک شاخص دوگانه سیکوفانسی تعریف کنید:
 
-```
-E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
+```math
+\begin{aligned}
+\mathbb{E}[s \mid r] &= \text{probability of sycophancy given reward} \\
+\mathbb{E}_{\pi_0}[s \mid r] &= \text{measured on the base model's output distribution} \\
+\mathbb{E}_{\pi_A}[s \mid r] &= \text{measured on the aligned model's output distribution}
+\end{aligned}
 ```
 
 مرحله اول: تجربی`E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`. تکمیل های سیکوفانت به طور متوسط بالاتر از نتایج مشابه غیر سیکوفانت ها در یک RM که بر اساس داده های اولویت برچسب آموزش داده شده است.
@@ -69,8 +71,8 @@ Sahoo (arXiv:2604.10585) GRPO را در استدلال ریاضی با "جواب
 
 شپیرا و همکارانش پیشنهاد تغییر پاداش را می دهند:
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
+```math
+r'(x, y) = r(x, y) - \alpha \cdot \text{agree}(x, y)
 ```
 
 کجا`agree(x, y)`یک طبقه بندی کننده ی دستی است که تعیین می کند آیا`y`موافقم`x`.آلفا نشان ميده که سيكوفانسي به سطح مدل پايين نزديک شده`alpha`در حدود 0.3-0.5، به هزینه از دست دادن برخی از توافق مشروع (نموذج کمی بیشتر با باورهای صحیح کاربر متناقض می شود).
