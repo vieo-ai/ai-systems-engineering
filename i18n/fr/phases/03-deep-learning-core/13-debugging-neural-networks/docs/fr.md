@@ -22,7 +22,7 @@ Les réseaux neuraux ne vous donnent pas ce luxe.
 
 Un réseau neural cassé est terminé, imprime une valeur de perte et fait des prédictions. La perte pourrait diminuer. Les prédictions peuvent sembler plausibles. Mais le modèle est silencieusement faux: apprendre des raccourcis, mémoriser le bruit, ou converger à un minimum local inutile. Les chercheurs de Google ont estimé que 60-70% du temps de débogage ML est consacré à des bugs "silencieux" qui ne produisent aucune erreur mais dégradent la qualité du modèle.
 
-La différence entre un modèle de travail et un modèle cassé réside souvent dans une seule ligne manquante: une ligne manquante `zero_grad()`, une dimension transposée, un taux d'apprentissage de 10 fois supérieur. La recette canonique "Recipe pour la formation des réseaux neuronaux" (2019) commence par: "Les erreurs de réseau neuronal les plus courantes sont les bugs qui ne se crashent pas".
+La différence entre un modèle de travail et un modèle cassé réside souvent dans une seule ligne manquante: une ligne manquante `zero_grad()`Le "Recipe pour la formation des réseaux neuronaux" (2019) commence par ce qui suit: "Les erreurs de réseau neuronal les plus courantes sont les bugs qui ne se crashent pas".
 
 Cette leçon vous apprend à trouver ces insectes.
 
@@ -90,14 +90,14 @@ Comparer vos gradients analytiques (de l'arrière-prop) aux gradients numérique
 
 Gradient numérique pour paramètre `w`- Le numéro de la liste:
 
-```
-grad_numerical = (loss(w + eps) - loss(w - eps)) / (2 * eps)
+```math
+\text{grad\_numerical} = \frac{\text{loss}(w + \text{eps}) - \text{loss}(w - \text{eps})}{2 \cdot \text{eps}}
 ```
 
 Métrique de l'accord (différence relative):
 
-```
-rel_diff = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{rel\_diff} = \frac{\lvert \text{grad\_analytical} - \text{grad\_numerical} \rvert}{\max(\lvert \text{grad\_analytical} \rvert, \lvert \text{grad\_numerical} \rvert, 10^{-8})}
 ```
 
 Si vous`rel_diff < 1e-5`: correct. si`rel_diff > 1e-3`C'est presque certainement un insecte.
