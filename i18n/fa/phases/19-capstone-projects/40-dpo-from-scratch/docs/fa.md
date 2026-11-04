@@ -27,42 +27,46 @@ DPO هر دو مرحله را با یک ضرر تحت نظارت جایگزین 
 
 از مدل برادلي-تيري شروع کنيد.`x`و دو تا تکمیلش`y_w`(تخيلي شده) و`y_l`(منفي شد) احتمالي که انسان ترجیح ميده`y_w`است
 
-```text
-P(y_w > y_l | x) = sigmoid( r(x, y_w) - r(x, y_l) )
+```math
+P(y_w > y_l \mid x) = \sigma\big( r(x, y_w) - r(x, y_l) \big)
 ```
 
 کجا`r`يه تابع پاداش پنهان هست`r`از ترجیحات، سپس آموزش سیاست`pi`برای حداکثر کردن`r`با لنگر KL:
 
-```text
-max_pi   E_{x, y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 اخذ DPO نشان می دهد که سیاست مطلوب`pi*`در این هدف، شکل بسته ای دارد که در نظر گرفته می شود`r`:
 
-```text
-pi*(y | x) = (1/Z(x)) * pi_ref(y | x) * exp( r(x, y) / beta )
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left( \frac{r(x, y)}{\beta} \right)
 ```
 
 دوباره ترتيبش بده`r`:
 
-```text
-r(x, y) = beta * ( log pi*(y | x) - log pi_ref(y | x) ) + beta * log Z(x)
+```math
+r(x, y) = \beta \big( \log \pi^*(y \mid x) - \log \pi_{\text{ref}}(y \mid x) \big) + \beta \log Z(x)
 ```
 
 .`log Z(x)`اصطلاح برای هر دو مورد یکسان است`y_w`و`y_l`(باید بستگی به`x`نه`y`), پس وقتی تفاوت ترجیح را محاسبه می کنید، آن را لغو می کند:
 
-```text
-r(x, y_w) - r(x, y_l) = beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                                - log pi_theta(y_l|x) + log pi_ref(y_l|x) )
+```math
+\begin{aligned}
+r(x, y_w) - r(x, y_l) = \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+&- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big)
+\end{aligned}
 ```
 
 جایگزینش کن به سگمید بریلی-ترری و احتمال منفی ثبت را بر روی زوج های ترجیح بردار:
 
-```text
-L_DPO(theta) = - E_{(x, y_w, y_l)} [
-  log sigmoid( beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                       - log pi_theta(y_l|x) + log pi_ref(y_l|x) ) )
-]
+```math
+\begin{aligned}
+L_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l)} \Big[
+  \log \sigma\big( \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+  &- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big) \big)
+\Big]
+\end{aligned}
 ```
 
 این یک ضایعه است. این یک سیگمائید بر روی یک مقیاس واحد است به عنوان مثال، از چهار احتمال ثبت محاسبه شده است. هیچ مدل پاداش جداگانه ای. هیچ PPO. هیچ اصطلاح KL در ضایعه نیست. محدودیت KL به مشتق شکل بسته پخته شده است.
@@ -87,8 +91,8 @@ flowchart LR
 
 قبل از هر مسابقه تمرین، یک بررسی عقل مفید داشته باشید.`log pi_theta(y_w | x)`:
 
-```text
-d L_DPO / d log pi_theta(y_w | x) = - beta * (1 - sigmoid(z))
+```math
+\frac{\partial L_{\text{DPO}}}{\partial \log \pi_\theta(y_w \mid x)} = -\beta \big(1 - \sigma(z)\big)
 ```
 
 کجا`z`این برای همه منفی است`z`، که به این معنی است: افزایش احتمال ثبت سیاست از تکمیل انتخاب شده کاهش می یابد.`log pi_theta(y_l | x)`مثبت است: افزایش احتمال رد شده روزنامه، افزایش خسارت است. آموزش، انتخاب شده را بالا و رد شده را پایین می کشد. مرجع منجمد است؛ حرکت نمی کند.
