@@ -36,8 +36,8 @@
 
 سه خروجی شاخه از طریق یک دروازه یادگیری در هر موقعیت ترکیب می شوند:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
+```math
+\text{out} = g_{\text{cmp}} \cdot \text{out}_{\text{cmp}} + g_{\text{sel}} \cdot \text{out}_{\text{sel}} + g_{\text{win}} \cdot \text{out}_{\text{win}}
 ```
 
 `g_cmp, g_sel, g_win`آنها مجبور نیستند به 1  جمع شوند آنها می توانند شاخه ها را به طور مستقل وزن کنند.
@@ -46,7 +46,7 @@ out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
 
 مرحله انتخاب (بلاک های بالا-ک) متمایز است. عملیات متمایز جریان گرادینت را شکسته است. کار توجه کمی پیش از آن یا از طریق انتخاب (تدریس محدود کننده) به عقب می رود یا از آرامش های مداوم استفاده می شود که در نتیجه گیری کمکی واقعی را نمی دهد.
 
-NSA از این موضوع اجتناب می کند: توجه به شاخه های فشرده یک توجه قابل تفاوتی در کل دنباله است. عملیات top-k فقط از بالاترین امتیاز توجه از شاخه فشرده برای انتخاب بلوک های ذره ای برای بارگذاری استفاده می کند. گرادینت ها از طریق نمرات شاخه فشرده (که هم بر خروجی فشرده و هم منطق انتخاب تأثیر می گذارند) جریان می یابند و سهم بلوک های انتخاب شده به خروجی نهایی نیز قابل تفاوت است. غیر قابل تشخیص`top_k`این عملیات در نمودار محاسباتی پیش رو بدون کار است  فقط کنترل می کند که کدام بلوک ها از حافظه بارگذاری می شوند.
+NSA از این موضوع اجتناب می کند: توجه به شاخه های فشرده یک توجه قابل تفاوتی در کل دنباله است. عملیات top-k فقط از بالاترین امتیاز توجه از شاخه فشرده برای انتخاب بلوک های ذره ای برای بارگذاری استفاده می کند. درجه بندی ها به نمره های شاخه فشرده از طریق خروجی شاخه فشرده، نه از طریق انتخاب بلوک ها، می رسند. در داخل بلوک های انتخاب شده، توجه به کلید ها و ارزش های انتخاب شده توجه معمولی است، بنابراین سهم آنها به محصول نهایی نیز قابل تشخیص است. .`top_k`انتخاب شاخص خود هیچ گرادینتی ندارد: فقط کنترل می کند که کدام بلوک ها از حافظه بارگذاری می شوند.
 
 این دلیل است که NSA می تواند در آموزش های پیش از پایان استفاده شود. مدل یاد می گیرد تا اطلاعات را از طریق سه شاخه به طور مشترک هدایت کند، و یک الگوی نادر را تولید کند که در نتیجه در واقع سرعت وعده داده شده را ارائه می دهد.
 
@@ -171,7 +171,7 @@ NSA در خط لوله آموزش های پیش از دوره طولانی DeepS
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
+| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in $O(N/l)$ keys per query |
 | Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
 | Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
 | Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |

@@ -67,8 +67,8 @@ graph TD
 
 پیچیدگی اندازه گیری می کند که یک مدل با یک سری از توکن ها چقدر شگفت زده است. به طور رسمی، این احتمال منفی منفی متوسط است:
 
-```
-PPL = exp(-1/N * sum(log P(token_i | context)))
+```math
+\text{PPL} = \exp\left(-\frac{1}{N} \sum_i \log P(\text{token}_i \mid \text{context})\right)
 ```
 
 یک پیچیدگی 10 به این معنی است که مدل به طور متوسط، به عنوان نامشخص به طور یکسان در میان 10 گزینه در هر موقعیت توکن انتخاب می شود. پایین تر بهتر است. GPT-2 به یک پیچیدگی ~30 در ویکی متک 103 می رسد. GPT-3 به ~20 می رسد. Llama 3 8B به ~7 می رسد.
@@ -503,7 +503,7 @@ RAGAS اندازه گیری می کند که ارزیابی های عمومی چ
 | MMLU | "The benchmark" | Massive Multitask Language Understanding -- 15,908 multiple choice questions across 57 subjects, saturated above 88% by 2025 |
 | HumanEval | "Code eval" | 164 Python function-completion problems from OpenAI, tests only isolated function generation |
 | SWE-bench | "Real coding eval" | 2,294 GitHub issues from 12 Python repos, measures end-to-end bug fixing including test generation |
-| Perplexity | "How confused the model is" | exp(-avg(log P(token_i given context))) -- lower means the model assigns higher probability to the actual tokens |
+| Perplexity | "How confused the model is" | $\exp(-\mathop{\mathrm{avg}}(\log P(\text{token}_i \text{ given context})))$ -- lower means the model assigns higher probability to the actual tokens |
 | ELO rating | "Chess ranking for models" | A relative skill rating computed from pairwise win/loss records, used by Chatbot Arena to rank 100+ models |
 | LLM-as-judge | "Using AI to grade AI" | A strong model scores a weaker model's outputs against a rubric, ~80% agreement with human judges at ~$0.01/judgment |
 | Data contamination | "The model saw the test" | Training data includes benchmark questions, inflating scores without improving real capability |

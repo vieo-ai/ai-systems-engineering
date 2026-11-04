@@ -74,22 +74,22 @@ DeepSeek GRPO را در مقاله DeepSeekMath (2024) معرفی کرد و از
 
 به یادآوریم که هدف PPO (از درس 07):
 
-```
-L_PPO = E[min(r(theta) * A, clip(r(theta), 1-eps, 1+eps) * A)]
+```math
+L_{\text{PPO}} = \mathbb{E}\left[\min\left(r(\theta) \cdot A, \mathop{\mathrm{clip}}(r(\theta), 1-\epsilon, 1+\epsilon) \cdot A\right)\right]
 ```
 
 کجا`A`این مزیت است که معمولا با استفاده از شبکه ارزش آموخته با GAE تخمین زده می شود.`V(s)`شبکه ارزش یک مدل دوم با اندازه سیاست است. حافظه را دو برابر می کند و یک حلقه آموزشی خود را ایجاد می کند.
 
-GRPO تابع ارزش را خارج می کند. برای هر پرامپت، یک گروه از پاسخ های G را نمونه می کند (معمولا G = 16 یا 64). پاداش برای هر پاسخ محاسبه می شود، سپس در داخل گروه عادی می شود:
+GRPO تابع ارزش را خارج می کند. برای هر پرامپت، یک گروه از$G$پاسخ ها (معمولاً)$G=16$پاداش برای هر پاسخ محاسبه می شود، سپس در گروه عادی می شود:
 
-```
-A_i = (r_i - mean(r_1, ..., r_G)) / std(r_1, ..., r_G)
+```math
+A_i = \frac{r_i - \mathop{\mathrm{mean}}(r_1, \ldots, r_G)}{\mathop{\mathrm{std}}(r_1, \ldots, r_G)}
 ```
 
 این امتیاز امتیاز z در مقایسه با برادران و خواهران پاسخ است. هیچ تابع ارزش وجود ندارد. گروه به عنوان خط پایه خود عمل می کند.
 
-```
-L_GRPO = E[min(r(theta) * A_group, clip(r(theta), 1-eps, 1+eps) * A_group)] - beta * KL(pi || pi_ref)
+```math
+L_{\text{GRPO}} = \mathbb{E}\left[\min\left(r(\theta) \cdot A_{\text{group}}, \mathop{\mathrm{clip}}(r(\theta), 1-\epsilon, 1+\epsilon) \cdot A_{\text{group}}\right)\right] - \beta \cdot \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 مجازات KL علیه مدل مرجع هنوز هم وجود دارد، همان طور که PPO. نسبت کلپ هنوز هم وجود دارد. آنچه که رفته است، انتقاد جداگانه است.

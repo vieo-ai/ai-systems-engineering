@@ -53,8 +53,8 @@ For each drafted token x_t:
 
 اگر نرخ پذیرش در سطح توکن مدل طرح باشد`α`، توکن های انتظار شده تولید شده در هر گذرگاه هدف:
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 در`α = 0.8, K = 4`.`(1 - 0.8^5)/(1 - 0.8) = 3.36`توکن ها در هر پیش بینی. یک هدف پیش بینی تقریباً هزینه دارد`cost_q * K + cost_p`(K طرح مراحل و یک هدف تایید) اگر `cost_p >> cost_q * K`نسبت سرعت بالا `3.36× / 1 = 3.36×`در مورد تولید.
@@ -85,7 +85,7 @@ E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
 
 EAGLE-2 (2024) توپولوژی درختان پویا را اضافه می کند: درخت در جایی که طرحش نامشخص است، بزرگتر می شود و در جایی که مطمئن است، باریک می ماند.`α_effective`بدون افزایش هزینه های تایید.
 
-ایگل ۳ (Li et al. 2025, "EAGLE-3: مقیاس کردن سرعت گیری در مورد زبان های بزرگ از طریق آزمون زمان آموزش") وابستگی ثابت از ویژگی های لایه بالا را حذف می کند و طرح را با یک "تسلس زمان آزمون" جدید کاهش می دهد. نرخ پذیرش از 0.75 (EAGLE-2) به 0.82 (EAGLE-3) افزایش می یابد و میانگین توکن ها / تایید از 3.0 به 4.5.
+ایگل ۳ (Li et al. 2025, "EAGLE-3: مقیاس کردن سرعت گیری در مورد زبان های بزرگ از طریق آزمون زمان آموزش") وابستگی ثابت از ویژگی های لایه بالا را حذف می کند و طرح را با یک "تسلس زمان آزمون" جدید کاهش می دهد. نرخ پذیرش از 0.75 (EAGLE-2) به 0.82 (EAGLE-3) افزایش می یابد و میانگین توکن ها / تایید از 3.0 به 4.5. این ارقام از یک تنظیمات مرجع آمده اند. پذیرش بستگی به جفت مدل، درخت مسود و ترافیک دارد: مرحله 10 · 15 0.88 تا 0.92 قیمت برای هر توکن مسیر پذیرفته شده در شاخص های مقایسه ای چت و مرحله 17 · 05 برنامه های 0.6 تا 0.8 در چت عمومی تولید دارد.
 
 ### بررسی توجه درختان
 
@@ -132,13 +132,13 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     """One round of speculative decoding. Returns list of accepted tokens."""
     # 1. Draft K tokens
     draft_tokens = []
-    q_probs = []
+    q_dists = []
     state = draft_state_init()
     for _ in range(K):
         probs = softmax(q_draft(state) / temperature)
         t = np.random.choice(len(probs), p=probs)
         draft_tokens.append(t)
-        q_probs.append(probs[t])
+        q_dists.append(probs)
         state = draft_step(state, t)
 
     # 2. Target computes p at every drafted position + 1 extra
@@ -148,10 +148,10 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     accepted = []
     for k, tok in enumerate(draft_tokens):
         r = np.random.uniform()
-        if r < p_probs_all[k][tok] / q_probs[k]:
+        if r < p_probs_all[k][tok] / q_dists[k][tok]:
             accepted.append(tok)
         else:
-            residual = np.maximum(p_probs_all[k] - q_probs[k], 0)
+            residual = np.maximum(p_probs_all[k] - q_dists[k], 0)
             residual /= residual.sum()
             accepted.append(np.random.choice(len(residual), p=residual))
             return accepted
@@ -175,7 +175,7 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 1. قانون رد دقیق را اجرا کنید و آن را تجربیانه تأیید کنید.`speculative_decode`و از طریق نمونه گیری هدف ساده؛ فاصله تلویزیون بین دو توزیع خروجی را محاسبه کنید. باید < 0.01 باشد.
 
-2. فرمول سرعت را محاسبه کن`α`و`K`، نشان دهنده توکن های انتظار می رود در هر هدف پیش رو. K مطلوب را برای α ∈ {0.5 ، 0.7 ، 0.9}.
+2. فرمول سرعت را محاسبه کن`α`و`K`، نشان دادن توکن های انتظار می رود در هر هدف پیش رو.$K$برای$\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$. .
 
 3. يه مسوده کوچولو رو آموزش بده يه هدف 124 ميليون گپيت-2 رو بردار و يه مسوده 30 ميليون گپيت-2 رو در توکن 100 ميليون با از دست دادن KL تصفيه کن`α`در متن بازداشت شده انتظار می رود: 0.6-0.7.
 

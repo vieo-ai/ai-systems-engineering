@@ -16,7 +16,7 @@
 
 ## مشکل
 
-توجه استاندارد نرم ماکس دارای یک ویژگی ریاضی است که به یک سردرد عملیاتی در مقیاس تبدیل می شود.`q`، وزن توجه ها`softmax(qK^T / sqrt(d))`. نرم ماکس هرگز نمی تواند صفر های دقیق تولید کند  هر توکن غیر متناسب دارای برخی از جرم مثبت است. این جرم باقی مانده شور است و با طول زمینه مقیاس می گیرد. در توکن های 128k، حتی اگر هر توکن غیر متناسب فقط 0.001% احتمال را بدست آورد، 127,999 از آنها در مجموع حدود 12٪ از کل را به دست می آورند. مدل باید یاد بگیرد که در اطراف یک طبقه شور که با زمینه رشد می کند، مسیر را طی کند.
+توجه استاندارد نرم ماکس دارای یک ویژگی ریاضی است که به یک سردرد عملیاتی در مقیاس تبدیل می شود.`q`، وزن توجه ها`softmax(qK^T / sqrt(d))`Softmax هرگز نمی تواند صفر های دقیق را تولید کند: هر توکن غیر متناسب با مقدار مثبت را به دست می آورد. این مقدار باقی مانده شور است و با طول زمینه مقیاس می گیرد. در توکن های 128k، حتی اگر هر توکن غیر متناسب فقط 0.0001% احتمال را بدست آورد، 127,999 از آنها در مجموع حدود 13٪ از کل را به دست می آورند. مدل باید یاد بگیرد که در اطراف یک طبقه شور که با زمینه رشد می کند، مسیر را طی کند.
 
 از نظر تجربی این به عنوان اختلال توجه ظاهر می شود: نقل قول های توهم در RAG های طولانی، شکست های در میان در وظایف بازیابی 100k، و کاهش دقیق دقیق در معیار های سوزن در سنگ بخار بیش از 32k. کاغذ ترانسفارمرهای فرقی (arXiv:2410.05258, ICLR 2025) شکاف را اندازه گیری کرد: ترانسفارمرهای DIFF دچار کم پیچیدگی، دقت بیشتر در زمینه طولانی و توهم کمتر نسبت به خطوط پایه با اندازه مشابه هستند.
 
@@ -28,8 +28,8 @@ DIFF V1 سه مشکل داشت که آن را از خطوط لوله پیش از
 
 برای یه سوال`q`و کليدها`K = [k_1, ..., k_N]`، وزن توجه:
 
-```
-w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
+```math
+w_i = \frac{\exp(q \cdot k_i / \sqrt{d})}{\sum_j \exp(q \cdot k_j / \sqrt{d})}
 ```
 
 نه`w_i`همیشه صفر است.`k_i`کاملاً با `q`، نمره`q . k_i`0  نیست و با انحراف در اطراف صفر نوسان می کند`||q||^2 / d`بعد از نرمال شدن softmax، هر توکن مرتبط با آن هنوز هم کمک می کند`O(1/N)`به مبلغ وزن شده. کل سهم توکن های غیر مرتبط`O((N-1)/N) = O(1)` مقدار کمی نیست.
@@ -38,17 +38,19 @@ w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
 
 ### ایده تفاوت
 
-طرح های Q و K هر سر را به دو قسمت تقسیم کنید: Q = (Q_1, Q_2) و K = (K_1, K_2). دو نقشه توجه را محاسبه کنید:
+طرح های Q و K هر سر را به دو قسمت تقسیم کنید:$Q = (Q_1, Q_2)$و$K = (K_1, K_2)$دو نقشه توجه رو محاسبه کن
 
-```
-A_1 = softmax(Q_1 K_1^T / sqrt(d))
-A_2 = softmax(Q_2 K_2^T / sqrt(d))
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d})
+\end{aligned}
 ```
 
 تولید:
 
-```
-DiffAttn = (A_1 - lambda * A_2) V
+```math
+\mathop{\mathrm{DiffAttn}} = (A_1 - \lambda \cdot A_2) V
 ```
 
 این تخفیف هر گونه توزیع سر و صدا را که دو نقشه به اشتراک می گذارند لغو می کند. اگر هر دو نقشه وزن تقریباً یکسانی در توکن های 127k غیر مرتبط دارند (که آنها در ابتداء تصادفی می کنند) ، آنها لغو می شوند. سیگنال  وزن اوج در چند توکن واقعاً مرتبط  فقط لغو می شود اگر در هر دو نقشه با همان شدت ظاهر شود ، که این امر زمانی که مدل قطار نیست.
@@ -63,7 +65,7 @@ DiffAttn = (A_1 - lambda * A_2) V
 
 V1 تعداد پارامتر را برابر با خط پایه ترانسفورمتر نگه داشت. برای دریافت دو سوال در هر سر، اندازه سر را به نصف کاهش داد. این هزینه به معنای صریح و دردناک تر به نصف مقدار حافظه حافظه را به طور کامل کاهش داد. Decode باید به صورت دو بار در هر مرحله (یک بار در هر شاخه softmax) ، مقدار حافظه را بارگذاری کرد. نتیجه: decode به سرعت تر از خط پایه با وجود تعداد پارامتر های مطابقت.
 
-V2 تعداد سر سوال را دو برابر می کند و سر KV را یکسان نگه می دارد (پاراست های قرض گرفته از طرح بالا). ابعاد سر مانند خط اصلی باقی می ماند. پس از برداشت، ابعاد اضافی به پایین پیش بینی می شود تا با طرح O_W ترانسفورمر خط اصلی مطابقت داشته باشد. سه چیز همزمان اتفاق می افتد:
+V2 تعداد سر های جستجو را دو برابر می کند و سر های KV را یکسان نگه می دارد (پارامترهای قرض گرفته شده از پروژکتور بالا) ، ابعاد سر مانند خط اصلی باقی می ماند. پس از برداشت، ابعاد اضافی به پایین پیش بینی می شود تا با خط اصلی ترانسفورمتر مطابقت داشته باشد $O_W$سه اتفاق همزمان اتفاق می افتد:
 
 1. سرعت رمزگذاری با خط پایه مطابقت دارد (KV cache یک بار بار بارگذاری می شود).
 2. FlashAttention بدون تغییر اجرا می شود (هیچ هسته سفارشی وجود ندارد).
@@ -139,8 +141,8 @@ out = [[sum(w * v[j] for w, v in zip(row, V)) for j in range(d_v)] for row in di
 با توجه به یک پیکربندی (خفیده=4096, سر=32, d_head=128), چاپ:
 
 - ترانسفورماتور پایه: Q، K، V هر اندازه `hidden * hidden`، MLP در 4 * پنهان.
-- DIFF V1: Q، K هر اندازه `hidden * hidden`، اندازه V`hidden * hidden`(غیر تغییر یافته) ، سر کم نصف شده در داخل.`lambda`پارامترهای (O(سر* d_سر))
-- DIFF V2: اندازه Q `2 * hidden * hidden`، اندازه K`hidden * hidden`، اندازه V`hidden * hidden`. اضافه کم به پایین پیش از O_W. اضافه کردن همان `lambda`پارامترها
+- DIFF V1: Q، K هر اندازه `hidden * hidden`، اندازه V`hidden * hidden`(غیر تغییر یافته) ، سر کم نصف شده در داخل.`lambda`پارامترها$(O(\text{heads} \cdot d_{\text{head}}))$. .
+- DIFF V2: اندازه Q `2 * hidden * hidden`، اندازه K`hidden * hidden`، اندازه V`hidden * hidden`. اونم از قبل به پایین رونمایی شده$O_W$. همش اضافه میشه`lambda`پارامترها
 
 این اسباب بازی هزینه پارامتر اضافی V2 را اندازه گیری می کند (تقریباً `hidden * hidden`و آن را چاپ می کند.
 
@@ -182,8 +184,8 @@ DIFF V2 هنوز در هر سرور نتیجه گیری تولید از آوری
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by lambda) from the first, then multiply by V |
-| Noise floor | "The non-zero tail of softmax" | The O(1/N) weight softmax puts on every unrelated token, which sums to O(1) across long contexts |
+| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by $\lambda$) from the first, then multiply by V |
+| Noise floor | "The non-zero tail of softmax" | The $O(1/N)$ weight softmax puts on every unrelated token, which sums to $O(1)$ across long contexts |
 | lambda | "The subtraction scale" | Per-head learnable scalar parameterized as `exp(lq1.lk1) - exp(lq2.lk2) + lambda_init`; can be negative |
 | DIFF V1 | "The ICLR 2025 version" | Original Differential Transformer; halves head dim to preserve parameter count, needs custom kernel, slower decode |
 | DIFF V2 | "The January 2026 fix" | Doubles Q heads keeping KV heads; matches baseline decode speed and works with FlashAttention |

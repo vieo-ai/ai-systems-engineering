@@ -80,8 +80,8 @@ graph TD
 
 تابع از دست دادن از مدل برادلی-ترری از اولویت های جفت استفاده می کند:
 
-```
-loss = -log(sigmoid(reward(preferred) - reward(rejected)))
+```math
+\text{loss} = -\log\big(\mathop{\mathrm{sigmoid}}(\text{reward}(\text{preferred}) - \text{reward}(\text{rejected}))\big)
 ```
 
 اين معادله اصلي است.`sigmoid(reward(A) - reward(B))`این احتمال را می دهد که پاسخ A نسبت به پاسخ B ترجیح داده شود. از دست دادن باعث می شود مدل پاداش امتیاز بالاتر را به پاسخ ترجیح داده شود.
@@ -96,8 +96,8 @@ PPO یک الگوریتم یادگیری تقویت است. در RLHF، "ماح�
 
 هدف:
 
-```
-maximize: E[R(prompt, response)] - beta * KL(policy || reference)
+```math
+\text{maximize:} \quad \mathbb{E}[R(\text{prompt}, \text{response})] - \beta \cdot \mathrm{KL}(\text{policy} \,\|\, \text{reference})
 ```
 
 اصطلاح اول باعث می شود مدل پاسخ های پاداش بالا را تولید کند. اصطلاح دوم (جزای انحراف KL) مانع از انحراف مدل از نقطه کنترل SFT می شود.
@@ -110,7 +110,7 @@ maximize: E[R(prompt, response)] - beta * KL(policy || reference)
 
 مجازات KL میگه: شما می توانید بهبود پیدا کنید، اما نمی توانید یک مدل کاملا متفاوت باشید. به نسخه SFT نزدیک باشید، که قبلاً منطقی بود. خیلی دور بروید و هزینه KL بر پاداش غالب می شود.
 
-**InstructGPT numbers:**آموزش PPO از lr=1.5e-5، KOefficient beta=0.02، 256K (نسل های پاسخ سریع) و 4 دوره PPO در هر دسته استفاده شد. کل لوله RLHF چندین روز در یک دسته GPU طول کشید.
+**InstructGPT numbers:**آموزش PPO استفاده شده lr=1.5e-5, معادل KL $\beta=0.02$، 256K قسمت (نقاب سریع) و 4 دوره PPO در هر دسته. کل لوله RLHF چندین روز در یک دسته از GPU ها طول کشید.
 
 ```mermaid
 graph LR
@@ -133,12 +133,14 @@ graph LR
 
 ### هدف PPO به طور مفصل
 
-PPO از یک "هدف جایگزین کاهش یافته" برای جلوگیری از بروزرسانی های بیش از حد بزرگ استفاده می کند. نسبت بین سیاست جدید و احتمالات سیاست قدیمی به محدوده [1 - epsilon، 1 + epsilon] کاهش می یابد، جایی که epsilon به طور معمول 0.2 است.
+PPO از "هدف جایگزین کاهش یافته" برای جلوگیری از بروزرسانی های بیش از حد بزرگ استفاده می کند. نسبت بین سیاست جدید و احتمالات سیاست های قدیمی به محدوده کاهش می یابد $[1 - \epsilon, 1 + \epsilon]$، کجا$\epsilon$معمولاً 0.2 است.
 
-```
-ratio = pi_new(action | state) / pi_old(action | state)
-clipped_ratio = clip(ratio, 1 - epsilon, 1 + epsilon)
-loss = -min(ratio * advantage, clipped_ratio * advantage)
+```math
+\begin{aligned}
+\text{ratio} &= \pi_{\text{new}}(\text{action} \mid \text{state}) / \pi_{\text{old}}(\text{action} \mid \text{state}) \\
+\text{clipped\_ratio} &= \mathop{\mathrm{clip}}(\text{ratio}, 1 - \epsilon, 1 + \epsilon) \\
+\text{loss} &= -\min(\text{ratio} \cdot \text{advantage}, \text{clipped\_ratio} \cdot \text{advantage})
+\end{aligned}
 ```
 
 عملکرد مزیت تخمین می زند که پاسخ فعلی در مقایسه با کیفیت انتظار شده چقدر بهتر است.
@@ -606,9 +608,9 @@ if __name__ == "__main__":
 
 3. شبیه سازی هک پاداش. یک مدل پاداش ایجاد کنید که نمرات بالایی را برای پاسخ های طولانی (عایز = len(پاسخ) / 100) بدهد. PPO را با این مدل پاداش ناقص اجرا کنید و مدل سیاست را مشاهده کنید که تولیدات طولانی تر و تکراری را ایجاد می کند. سپس یک مجازات KL 0.1 اضافه کنید و نشان دهید که این از رفتارهای انحطاطی جلوگیری می کند.
 
-4. یک پاداش چند هدف را پیاده سازی کنید. دو مدل پاداش را تمرین کنید - یکی برای مفید بودن و دیگری برای خلاصه بودن. آنها را به صورت R = 0.7 * R_helpful + 0.3 * R_concise ترکیب کنید. نشان دهید که هدف ترکیبی پاسخ هایی را که هم مفید و هم خلاصه هستند، تولید می کند و از تله کلامی بودن یک پاداش مفید جلوگیری می کند.
+4. یک پاداش چند هدف را اجرا کنید. دو مدل پاداش را تمرین کنید - یکی برای کمک و دیگری برای خلاصه بودن. آنها را به عنوان$R = 0.7 \cdot R_{\text{helpful}} + 0.3 \cdot R_{\text{concise}}$نشان دهید که هدف ترکیبی پاسخ هایی را که هم مفید و هم خلاصه هستند، تولید می کند و از تله کلامی یک پاداش مفید جلوگیری می کند.
 
-5. مقایسه معادلات KL مختلف. اجرا PPO با beta=0.001 (بیتا کم، هک پاداش) ، beta=0.02 (استانداردی) و beta=0.5 (بیتا بالا، هیچ یادگیری). خط منحنی پاداش و منحنی KL برای هر یک. اجرا beta=0.02 باید بهبود ثابت پاداش را با محدود KL نشان دهد.
+5. تعادل های مختلف KL را مقایسه کنید.$\beta=0.001$(تراکم، هک کردن پاداش)$\beta=0.02$(استاندارده) و$\beta=0.5$و منحنی KL برای هر یک از آنها$\beta=0.02$با KL محدود، مسابقه باید بهبود ثابت پاداش را نشان دهد.
 
 ## اصطلاحات کلیدی
 
@@ -616,10 +618,10 @@ if __name__ == "__main__":
 |------|----------------|----------------------|
 | RLHF | "Training with human feedback" | Reinforcement Learning from Human Feedback: a three-stage pipeline (SFT, reward model, PPO) that optimizes language model outputs using human preference signals |
 | Reward model | "A model that scores responses" | A transformer with a scalar output head, trained on pairwise human preferences using the Bradley-Terry loss |
-| Bradley-Terry | "The comparison model" | A probabilistic model where P(A > B) = sigmoid(score(A) - score(B)), converting pairwise preferences into a consistent scoring function |
+| Bradley-Terry | "The comparison model" | A probabilistic model where $P(A > B) = \mathop{\mathrm{sigmoid}}(\text{score}(A) - \text{score}(B))$, converting pairwise preferences into a consistent scoring function |
 | PPO | "The RL algorithm" | Proximal Policy Optimization: updates the policy to maximize reward while clipping the update magnitude to prevent instability |
 | KL divergence | "How different two distributions are" | A measure of the difference between the policy model's token distribution and the reference model's -- used as a penalty to prevent reward hacking |
-| KL penalty | "The leash on the model" | Beta * KL(policy \|\| reference) subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
+| KL penalty | "The leash on the model" | $\beta \cdot \mathrm{KL}(\text{policy} \Vert \text{reference})$ subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
 | Reward hacking | "Gaming the reward" | When the policy finds degenerate high-reward outputs by exploiting weaknesses in the reward model instead of genuinely improving |
 | Preference pair | "Which is better, A or B?" | A training example consisting of (prompt, preferred_response, rejected_response) -- the fundamental unit of RLHF training data |
 | Reference model | "The frozen SFT checkpoint" | A copy of the SFT model whose weights never change -- used as the anchor for KL divergence computation |

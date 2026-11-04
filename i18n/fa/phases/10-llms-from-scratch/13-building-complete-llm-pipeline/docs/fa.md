@@ -9,7 +9,7 @@
 
 ## اهداف یادگیری
 
-- ترکیب یازده درس قبلی (توکنیزر، داده ها، پیش آموزش، مقیاس بندی، SFT، RLHF، DPO، CAI، ارزیابی، کوانتاسیون، نتیجه گیری) به یک مشخصات تولید مجدد پایپلی
+- ترکیب دوازده درس قبلی (دو درس توکنایزر، داده ها، پیش آموزش، مقیاس بندی، SFT، RLHF، DPO، CAI، ارزیابی، کوانتایی، نتیجه گیری) به یک مشخصات لوله قابل تکرار واحد
 - قرارداد آثار بین مراحل را تعریف کنید: هر مرحله چه مصرف می کند، چه چیزی تولید می کند و مرحله بعدی چگونه ورودی را تأیید می کند
 - سازنده ای بسازید که آزمایشات را ردیابی کند، آثار هنری را هاش کند و تصمیمات در مورد محدودیت های ارزیابی را در اختیار داشته باشد
 - طرح بازپرداخت: چه آثار هنری برای بازیافت ارزان هستند، کدامها گران هستند و هزینه یک نقطه بازرسی فاسد چیست
@@ -72,7 +72,7 @@ stages:
     cost_usd: 12
 ```
 
-هاش خروجی مرحله N هاش ورودی مرحله N+1 است. هر انحراف و لوله متوقف می شود. این نحوه تشخیص فساد داده ها در اوایل است. همچنین این نحوه بررسی یک همکار تیم در قاره دیگر است که بازی مجدد آنها همان اثر شما را تولید کرده است.
+هاش خروجی مرحله N هاش ورودی مرحله N+1 است. هر انحراف و لوله متوقف می شود. این نحوه تشخیص فساد داده ها در اوایل است. همچنین این نحوه است که یک همکار تیم در قاره دیگر تأیید می کند که بازی مجدد مرحله تعیین کننده آنها همان آرتیفکت شما را تولید کرده است.
 
 در عمل تیم ها از یک طرح کوچک YAML به همراه یک چکگر آشکار که با اجرای موفقیت آمیز قبلی متفاوت است استفاده می کنند. هر دلتا خارج از زمینه های انتظار می رود ( هزینه، ساعت دیوار) یک پرچم قرمز است.
 
@@ -150,7 +150,7 @@ gates:
 
 این موارد یکسان نیستند. * قابل تکرار* به معنای همان مانیست به علاوه همان کد به علاوه همان زیرساخت یک نقطه بازرسی با متریک های معادل در جریان پایین تولید می کند. * تعیین کننده* به معنای تولید بیت یکسان است.
 
-آموزش مدرن LLM قابل تکرار است اما تعیین کننده نیست. کاهش ترتیب آموزش توزیع شده، عدم تعیین گرایی هسته GPU (cuBLAS، flash-attn) و گرد کردن دقیق مخلوط به تولید شناور که در سطح 1e-5 بین اجرا ها متفاوت است. این برای معیارهای نهایی خوب است که حرکت نمی کنند. اگر با تفاوت های سطح بیت سعی کنید مشکل مرگبار است. درمان این است که هشتگ ورودی هر مرحله، هشتگ ورودی و متریک سرنامه را ثبت کنید -- اگر این ها مطابقت داشته باشند، اجرا "تبریز" می شود حتی اگر وزن ها با بیت یکسان نباشند.
+آموزش مدرن LLM قابل تکرار است اما تعیین کننده نیست. کاهش ترتیب آموزش توزیع شده، عدم تعیین گرایی هسته GPU (cuBLAS، flash-attn) و گرد کردن دقیق مخلوط به تولید شناور که در سطح 1e-5 بین اجرا ها متفاوت است. این برای معیارهای نهایی خوب است که حرکت نمی کنند. اگر با تفاوت های سطح بیت سعی کنید مشکل مرگبار است. درمان این است که هر مرحله از هاش ورودی، هاش ورودی و متریک سرنامه را ثبت کنیم. در بازی مجدد، هاشی ها فقط برای مراحل تعیین کننده، مانند پردازش داده ها و توکن سازی مطابقت دارند. مرحله آموزش وزن های جدید را می نویسد، بنابراین هاشای خروجی آن تغییر می کند. برای این مراحل، اجرا زمانی "تبریز" می شود که متریک های سرنامه با هم مطابقت داشته باشند، حتی اگر وزن ها کمی یکسان نباشند.
 
 ```mermaid
 graph LR
@@ -249,7 +249,7 @@ python code/main.py gate    # read manifest.out.yaml, apply eval gates, ship-or-
 | Manifest | "The recipe file" | YAML or JSON describing pipeline version, seed, per-stage config, and gate thresholds — sufficient to replay a run |
 | Content-addressed | "By hash not name" | Artifacts stored by SHA-256 of their contents, so you can never confuse version A with version B |
 | Eval gate | "The ship criteria" | Numeric thresholds on benchmark metrics and safety scores that must pass before an artifact is marked shippable |
-| KL budget | "How far alignment drifted" | A cap on cumulative KL(policy || reference) across alignment stages, enforced as a gate |
+| KL budget | "How far alignment drifted" | A cap on cumulative $\mathrm{KL}(\text{policy} \Vert \text{reference})$ across alignment stages, enforced as a gate |
 | MFU | "How much of the GPU you used" | Model FLOPs Utilization — achieved FLOPs divided by theoretical peak. 40% is typical at 70B scale, 55% at 7B |
 | Rollback plan | "What we do when it breaks" | Pre-written set of actions per stage on failure: re-run, fall back, retrain with revised inputs |
 | Orchestrator | "The conductor" | The process that reads the manifest, dispatches stages, verifies hashes, halts on any contract violation |

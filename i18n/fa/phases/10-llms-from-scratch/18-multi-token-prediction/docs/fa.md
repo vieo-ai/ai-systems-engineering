@@ -28,7 +28,7 @@ DeepSeek-V3 (دسامبر 2024) MTP را به عنوان ماژول های دن�
 
 ### دستور کار MTP دنباله دار
 
-DeepSeek-V3 اضافه می کنه `D`ماژول های MTP در بالای مدل اصلی.`k`(برای `k = 1..D`) نشان دهنده عمق رو پیش بینی می کنه`k` یعنی، `t_{i+k}`با پیشگویی از طریق موقعیت`i`. .
+DeepSeek-V3 اضافه می کنه `D`ماژول های MTP در بالای مدل اصلی. مدل اصلی پیش بینی می کند `t_{i+1}`. هر ماژول`k`(برای `k = 1..D`) نشان دهنده علامت است`k`قدم های بیشتر بیرون`t_{i+k+1}`، با پیشگویی از طریق موقعیت`i`. .
 
 ماژول`k`از:
 
@@ -39,27 +39,29 @@ DeepSeek-V3 اضافه می کنه `D`ماژول های MTP در بالای مد
 
 در آموزش، برای یک پیشگویی از طریق موقعیت`i`، حالت پنهان در عمق:
 
-```
-h_i^(0) = main model backbone at position i
-h_i^(k) = T_k( M_k * concat(RMSNorm(h_i^(k-1)), RMSNorm(E(t_{i+k}))) )   for k >= 1
+```math
+\begin{aligned}
+h_i^{(0)} &= \text{main model backbone at position } i \\
+h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMSNorm}}(h_i^{(k-1)}), \mathop{\mathrm{RMSNorm}}(E(t_{i+k}))\big) \Big) \quad \text{for } k \ge 1
+\end{aligned}
 ```
 
 پیش بینی دقیق اینه:
 
-```
-logits_{i+k} = Out(h_i^(k-1))   for k = 1..D
+```math
+\text{logits}_{i+k+1} = \mathop{\mathrm{Out}}(h_i^{(k)}) \quad \text{for } k = 1, \ldots, D
 ```
 
-از دست دادن عمق ، اين است که اينترپي در مقابل حقيقت عمومي`t_{i+k}`:
+از دست دادن عمق ، اين است که اينترپي در مقابل حقيقت عمومي`t_{i+k+1}`:
 
-```
-L_k = CE(logits_{i+k}, t_{i+k})
+```math
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k+1}, t_{i+k+1})
 ```
 
 از دست دادن مفاصل در طول عمق:
 
-```
-L_MTP = (lambda / D) * sum_{k=1..D} L_k
+```math
+L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 ```
 
 `lambda`در DeepSeek-V3 0.3 برای اولین 10٪ از آموزش و 0.1 پس از آن استفاده می شود.`L_main + L_MTP`. .
@@ -68,9 +70,9 @@ L_MTP = (lambda / D) * sum_{k=1..D} L_k
 
 MTP متوازی اصلی Gloeckle دارای سر های خروجی D بود، هر کدام مستقیماً به `h_i^(0)`هر سر پيش بيني ميکنه`t_{i+k}`از همون حالت پنهان ستون فقرات. که خوب راهبرده، اما پیش بینی ها به یکدیگر مشروط نیست. شما نمی توانید استفاده کنید`head_1`. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .`head_2` سر ها در موازی آتش می زنند
 
-طراحی دنباله دار DeepSeek-V3 ساخت می کند `h_i^(k)`از`h_i^(k-1)`به علاوه ورق گذاری واقعی next-token`E(t_{i+k})`که باعث حفظ زنجیره علتي ميشه: پيش بيني`t_{i+k+1}`, ماژول در عمق`k+1`میبینی چی شده`t_{i+k}`این ساختار مشابه با نحوه استفاده از یک دیکودر خودرویگریسیو از خروجی خود است  که ماژول های MTP را به طور مستقیم به عنوان طرح های دیکودر حدس زده می توان استفاده کرد.
+طراحی دنباله دار DeepSeek-V3 ساخت می کند `h_i^(k)`از`h_i^(k-1)`به علاوه ورق گذاری واقعی next-token`E(t_{i+k})`که باعث حفظ زنجیره علتي ميشه: پيش بيني`t_{i+k+1}`, ماژول در عمق`k`میبینی چی شده`t_{i+k}`این ساختار مشابه نحوه مصرف یک دیکودر خودرویگریسیو است که ماژول های MTP را به طور مستقیم به عنوان طرح های دیکودر تکمیلی قابل استفاده می کند.
 
-در نتیجه: تغذیه`h_i^(k-1)`و طرح شده`t_{i+k}`به ماژول`k+1`، پيش بيني براي`t_{i+k+1}`تکرار کنم. این دقیقا یک طرح به سبک EAGLE است، با استفاده از ماژول آموزش دیده MTP به عنوان شبکه طراحی. DeepSeek-V3 گزارش 80٪ + پذیرش در اولین ماژول MTP و ~ 1.8x سرعت.
+در نتیجه: تغذیه`h_i^(k-1)`و طرح شده`t_{i+k}`به ماژول`k`، پيش بيني براي`t_{i+k+1}`تکرار کنم. این دقیقا یک طرح به سبک EAGLE است، با استفاده از ماژول آموزش دیده MTP به عنوان شبکه طراحی. DeepSeek-V3 گزارش 80٪ + پذیرش در اولین ماژول MTP و ~ 1.8x سرعت.
 
 ### حسابداری پارامتر
 
@@ -139,7 +141,7 @@ def combine(prev_hidden, next_token_embed, M_k):
 
 ### مرحله 5: کاهش عمق
 
-انترپی متقابل نرم (logits) در برابر نشانه حقیقت در تعویض`k`. با عمق ها جمع کن`lambda / D`فاکتور مقیاس بندی
+انترپی متقابل نرم (logits) در برابر نشانه حقیقت در تعویض`k+1`. با عمق ها جمع کن`lambda / D`فاکتور مقیاس بندی
 
 ### مرحله 6: حسابداری پارامتر
 
@@ -174,24 +176,24 @@ MTP در DeepSeek-V3 (دسامبر 2024) و سری DeepSeek-R1 ادغام شده
 
 2. هزینه های بالای پارامتر را برای یک مدل 70B کثافت (پوشیده 8192, 80 لایه) با D=1 MTP محاسبه کنید. با هزینه های بالای 14B گزارش شده در DeepSeek-V3 مقایسه کنید. توضیح دهید که چرا تعداد DeepSeek بالاتر است: بلوک ترانسفورماتور MTP ساختار MoE مشابه را به ارث می برد و تعداد پارامترهای هر ماژول را افزایش می دهد.
 
-3. پیاده سازی D=2 در اسباب بازی: اضافه کردن یک ماژول دوم MTP که h^(1) را می گیرد و پیش بینی می کند `t_{i+2}`. بررسي كنيد که خسارت مشترک و حسابداري پارامتر ها با معادلات 19-21 در مقاله ديپ سيك مطابقت داشته باشند
+3. در بازی D=2 اجرا کنید: یک ماژول MTP دوم اضافه کنید که می گیرد $h^{(1)}$و پیش بینی می کنه`t_{i+3}`. بررسي كنيد که خسارت مشترک و حسابداري پارامتر ها با معادلات 19-21 در مقاله ديپ سيك مطابقت داشته باشند
 
 4. بازیکشی را به MTP متوازی (طریقه گلوکل) تغییر دهید: سر های خروجی D را بالای حالت پنهان اصلی اضافه کنید، هر کدام پیش بینی تعویض متفاوتی را انجام دهید. اندازه گیری چگونگی کاهش در عمق با نسخه دنباله دار در همان سیگنال مصنوعی مقایسه کنید. نسخه دنباله دار باید کاهش عمق k برای k > 1 را ایجاد کند زیرا بر پیش بینی های میانگین شرایط می گذارد.
 
-5. استفاده از ماژول آموزش دیده MTP به عنوان یک طرح به سبک EAGLE: ماژول k را برای پیشنهاد دعوت کنید `t_{i+k}`در نتیجه گیری. نرخ پذیرش این توکن های طرح را با پیش بینی های مدل اصلی در یک دنباله نگه داشته اندازه گیری کنید. اگر شما 50٪ + را در اسباب بازی نشان دهید، شما ویژگی تجربی MTP- به عنوان طرح را بازیافت کرده اید.
+5. استفاده از ماژول آموزش دیده MTP به عنوان یک طرح به سبک EAGLE: ماژول k را برای پیشنهاد دعوت کنید `t_{i+k+1}`در نتیجه گیری. نرخ پذیرش این توکن های طرح را با پیش بینی های مدل اصلی در یک دنباله نگه داشته اندازه گیری کنید. اگر شما 50٪ + را در اسباب بازی نشان دهید، شما ویژگی تجربی MTP- به عنوان طرح را بازیافت کرده اید.
 
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | MTP module | "Extra loss block" | A small transformer block plus projection that predicts a token `k` positions ahead of the main model |
-| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k}` from prefix through position `i` |
+| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k+1}` from prefix through position `i` (the main model is depth 0 and predicts `t_{i+1}`) |
 | Parallel MTP | "Gloeckle-style" | D independent heads on the same backbone hidden state, no conditional chain |
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |
 | Shared embedding | "Reuse the main table" | Same vocabulary embedding table is used everywhere; no duplicate parameters |
-| Projection matrix M_k | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
-| Joint loss L_MTP | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
+| Projection matrix $M_k$ | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
+| Joint loss $L_{\text{MTP}}$ | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
 | Acceptance rate at depth 1 | "How often MTP draft is right" | The rate at which the D=1 MTP module's top-1 prediction equals the main model's top-1 prediction; 80%+ on DeepSeek-V3 |
 | Lambda weighting | "Extra-loss importance" | Per-depth scaling factor; 0.3 at start of training, 0.1 later on DeepSeek-V3 |
 

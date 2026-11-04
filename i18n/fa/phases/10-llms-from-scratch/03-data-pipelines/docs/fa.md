@@ -161,11 +161,13 @@ graph TD
 
 ### قانون مقیاس بندی چینچیلا
 
-برای بودجه محاسباتی ثابت C (به صورت FLOP اندازه گیری شده) ، اندازه ی مطلوب مدل N و اندازه ی مجموعه داده ها D عبارتند از:
+برای بودجه ی ثابت حساب$C$(در FLOP اندازه گیری شده) ، اندازه ی مطلوب مدل $N$و اندازه مجموعه داده ها$D$این ها:
 
-```
-N_opt ~ C^0.5
-D_opt ~ C^0.5
+```math
+\begin{aligned}
+N_{\text{opt}} &\sim C^{0.5} \\
+D_{\text{opt}} &\sim C^{0.5}
+\end{aligned}
 ```
 
 در عمل، این بدان معنی است که شما باید اندازه مدل و اندازه مجموعه داده ها را تقریباً یکسان اندازه گیری کنید. یک مدل با 10 برابر پارامترهای بیشتر به حدود 10 برابر توکن های آموزش بیشتری برای رسیدن به همان ضرر نیاز دارد.
@@ -432,7 +434,7 @@ print(f"HuggingFace: {total_tokens:,} tokens in {hf_time:.2f}s ({total_tokens/hf
 |------|----------------|----------------------|
 | Common Crawl | "The internet" | A non-profit that crawls the web monthly -- ~250TB raw, the starting point for most LLM training data |
 | MinHash | "Some hashing trick" | A technique to estimate Jaccard similarity between sets using fixed-size signatures -- enables near-duplicate detection at scale |
-| LSH | "Locality-Sensitive Hashing" | A method to group similar items into the same bucket -- reduces pairwise comparisons from O(n^2) to near-linear |
+| LSH | "Locality-Sensitive Hashing" | A method to group similar items into the same bucket -- reduces pairwise comparisons from $O(n^2)$ to near-linear |
 | Sequence packing | "Concatenating documents" | Fitting multiple documents into fixed-length sequences with proper attention masks -- eliminates padding waste |
 | Chinchilla scaling | "Train on more data" | For a fixed compute budget, optimal performance requires scaling model size and training tokens roughly equally |
 | Fertility | "Tokens per word" | Average number of tokens per word -- 1.3 for English in GPT-4, higher for non-Latin scripts |

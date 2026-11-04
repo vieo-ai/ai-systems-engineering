@@ -52,8 +52,8 @@
 
 LayerNorm میانگین را از دست می دهد، به std، مقیاس ها و تغییرات تقسیم می شود. RMSNorm فقط مقیاس را حفظ می کند:
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 هیچ معادلات معادل. هیچ تعصب. یک ماتمل کمتر در هر توکن. ژانگ و سنریچ (2019) استدلال کردند که با LayerNorm در ترجمه ماشین مطابقت دارد در حالی که 10٪ سریعتر است. هر مدل باز مدرن آن را اجرا می کند.
@@ -78,8 +78,8 @@ score = q_rotated . k_rotated
 
 MLP GPT-2`x -> gelu(xW1 + b1) -> (...)W2 + b2`SwiGLU (Shazeer 2020) فعال سازی را با یک محصول بسته جایگزین می کند:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 دو طرح متوازی به جای یک، با فعال سازی سوئیس بسته شده است. به طور تجربی قوی تر در پیچیدگی هر پارامتر. Llama 2 آن را اتخاذ کرد، همه دنبال کردند. اندازه پنهان MLP معمولاً تنظیم می شود تا تعداد پارامتر کل با MLP کثیف اصلی مطابقت داشته باشد: اگر GPT-2 استفاده شد`ff_dim = 4 * hidden`, SwiGLU استفاده می کند`ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`. .
@@ -90,7 +90,7 @@ GPT-2 استفاده شده**Multi-Head Attention (MHA)**: هر سر طرح Q، 
 
 **Multi-Query Attention (MQA, Shazeer 2019)**یک K و یک V را در تمام سرها تقسیم می کند. KV cache را با num_heads کاهش می دهد، که در یک مدل معمولی 12x تا 32x کاهش می یابد. دقت کمی در معیار های سخت کاهش می یابد.
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**در این حالت، G گروه های Q یک K و یک V را به اشتراک می گذارند. Llama 3 8B از GQA با 32 Q سر و 8 KV سر استفاده می کند (G=8), بنابراین KV cache 4x نسبت به MHA کامل کاهش می یابد.
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .$G$گروه های Q heads یک K و یک V را به اشتراک می گذارند. Llama 3 8B GQA را با 32 Q head و 8 KV head ($G=8$), بنابراین KV cache 4x نسبت به MHA کامل کوچک می شود.
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**K و V را به یک خط پنهان مشترک پایین فشار می دهد و آنها را به سمت بالا به صورت سر باز می کند. علاوه بر این ، KV را به صورت پیش بینی کاهش می دهد و در عین حال بیانگرایی را در هر سر حفظ می کند. DeepSeek-V2 و V3 برای عملکرد طولانی مدت خود به این موضوع متکی هستند.
 
@@ -154,6 +154,7 @@ graph LR
 | Qwen 2.5 72B | 2024 | 72B | 72B | RMSNorm | SwiGLU | RoPE (YaRN) | GQA (64/8) | no | 128k |
 | DeepSeek V2 236B | 2024 | 236B | 21B | RMSNorm | SwiGLU | RoPE | MLA | yes (160 experts, top-6) | 128k |
 | DeepSeek V3 | 2024 | 671B | 37B | RMSNorm | SwiGLU | RoPE | MLA | yes (256 experts, top-8) | 128k |
+| Spark-X2.5 4B | 2026 | 4.1B | 4.1B | RMSNorm | GeGLU | RoPE + sliding (3:1) | GQA (16/4), gated output | no | 1M |
 
 ستون ها را اسکن کنید. RMSNorm جهانی است. SwiGLU یا پسر عموی GeGLU آن جهانی است. RoPE جهانی است. GQA جهانی است بالاتر از 7B به جز زمانی که توسط MLA جایگزین می شود. MoE تفاوت در انتهای بالا است.
 
@@ -176,6 +177,12 @@ graph LR
 ```
 
 هر زمینه با چیزی که قبلاً اجرا کرده اید مطابقت دارد.
+تنظیمات جدید تر چند زمینه اضافه می کنند که حساب را تغییر می دهند، بنابراین ماشین حساب
+وقتي حضور دارن ميخواد:
+
+- `head_dim`: مشخص شده که مشخص نیست`hidden_size / num_attention_heads`. جما 29 بي 3584 و 16 سر رو پنهان کرده`head_dim`256، پس پروژکتور Q آن 3584 x 4096 است، نه مربع.
+- `tie_word_embeddings`Llama 3 8B پیوند نمی دهد که 525M پارامتر است که اگر فقط یک بار شمارش پیوند را از دست دهید.
+- `layer_types`و`sliding_window`: چه لایه هایی به متن کامل توجه می کنند و چه لایه هایی فقط به آخرین توکن های W توجه می کنند.
 
 - `hidden_size`: ابعاد ادغام
 - `intermediate_size`: MLP پوشیده اندازه (3.5x پوشیده -- SwiGLU ریاضی).
@@ -212,6 +219,15 @@ Llama 3 8B در زمینه 128k، BF16، head_dim = پنهان / num_heads = 128
 
 وزن 8B 16 جی بی در BF16 است. حافظه حافظه KV برای یک سری 128k بزرگتر از وزن است. این فشار حافظه است که تحقیقات GQA، MLA و KV را هدایت می کند.
 
+این فرمول فرض می کند که هر لایه کل ردیابی را ذخیره می کند. یک لایه پنجره سلایدی فقط همیشه به آخرین توکن W نیاز دارد، بنابراین برای مدل های هیبریدی، مجموع هر لایه اجرا می شود:
+
+```
+kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
+           * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
+```
+
+Spark-X2.5 4B سه لایه پنجره ای را اجرا می کند ($W = 512$) برای هر لایه توجه کامل: 9 کامل و 27 پرتاب از 36. در زمینه 1M-توکن که حدود 38.7 GB (36 GiB) در هر ردیابی در BF16 است. اگر تمام 36 لایه به صورت کیش کامل را به صورت کامل به 154.6 GB (144 GiB) می رساند. لایه های کامل تقریبا تمام هزینه را تحمل می کنند، به همین دلیل نسبت لایه های کامل به لایه های پرتاب اولین شماره ای است که در یک مدل زمینه طولانی خوانده می شود.
+
 ### وقتی هر مدل برنده می شود
 
 - **Single 80GB GPU, no MoE**: لاما 3 8B، میسترال 7B، جما 2 9B. آسان به خدمت، ابزار گسترده.
@@ -219,6 +235,7 @@ Llama 3 8B در زمینه 128k، BF16، head_dim = پنهان / num_heads = 128
 - **Biggest open capability, accept MoE complexity**: DeepSeek V3، Mixtral 8x22B. بهترین قابلیت در هر FLOP فعال.
 - **Long-context needs**: Llama 3 (128k با مقیاس RoPE) ، DeepSeek (منافع MLA).
 - **Low-latency serving**: Gemma 2 9B (چندوی پرتاب، محاسبه متن طولانی را قطع می کند).
+- **Long context on a small memory budget**: مدل های هیبریدی پنجره های شیفت مانند Spark-X2.5 4B که تنها یک چهارم لایه ها برای زمینه کامل پرداخت می کنند.
 
 ```figure
 rmsnorm-vs-layernorm
@@ -237,13 +254,17 @@ config = {
 }
 ```
 
-اسکریپت میدان معماری را به لحاظ زمینه انجام می دهد، شمارش پارامای را برای گنجانیدن، توجه (با کاهش GQA) ، MLP (با گسترش SwiGLU) ، قوانین لایه و سر محاسبه می کند. سپس حافظه کش KV را در طول زمینه مشخص شده محاسبه می کند و خلاصه ای چاپ می کند.
+اسکریپت میدان معماری را به میدان می کند، شمارش پارامای برای گنجانده شدن، توجه (با کاهش GQA و یک صریح `head_dim`هنگامی که پیکربندی یک را تنظیم می کند) ، MLP (با گسترش SwiGLU یا GeGLU) ، layernorms و سر LM هنگامی که به گنجانده شدن متصل نیست. سپس KV cache را در طول زمینه مشخص شده، لایه به لایه محاسبه می کند تا لایه های پنجره های شیفت در پنجره خود قرار گیرند و خلاصه ای چاپ می کند.
+
+برای مدل های کثیف مجموعات مطابق با پارامتر منتشر شده دقیقاً محاسبه می شود: Llama 3 8B به 8,030,261,248، Gemma 2 9B به 9,241,705,984 و Spark-X2.5 4B به 4,112,079,360. Qwen 2.5 72B به 819,200، که تمرین 1 است.
 
 ببین`code/main.py`برای اجرای آن.
 
 ## ازش استفاده کن
 
 ماشین حساب را در اسکریپت پیکربندی های Llama 3 8B، Mistral 7B، Mixtral 8x7B و DeepSeek V3 اجرا کنید. تجزیه پارامترها را مقایسه کنید. توجه کنید که مدل های MoE تعداد پارامترهای کل را دارند که مدل های کثیف را کوچک می کند اما تعداد پارامترهای فعال که اغلب کوچکتر است. توجه کنید که کیش KV DeepSeek V3 کوچک تر از Llama 3 405B است با وجود داشتن پارامترهای کل بیشتر - که MLA در عمل است.
+
+سپس Gemma 2 9B و Spark-X2.5 4B را مقایسه کنید. برای هر دو، اسکریپت حافظه KV مورد نیاز خود را چاپ می کند و حافظه KV که اگر هر لایه توجه کامل داشته باشد نیاز دارد. Gemma 2 1:1 را در یک زمینه 8k جایگزین می کند، بنابراین پس انداز متوسط است. Spark-X2.5 با پنجره 512 توکن در 1M 3:1 می شود، بنابراین پس انداز 4x است.
 
 سپس یک پیکربندی برای هر مدل ای که در محل دارید وصل کنید، خلاصه را بخوانید و تصمیم بگیرید که آیا آن را با GPU شما مطابقت می دهد.
 
@@ -275,7 +296,7 @@ config = {
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## خواندن بیشتر
