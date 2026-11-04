@@ -49,15 +49,14 @@ Para cada uma (imagem, pergunta, resposta), codifique a imagem, incrusta a pergu
 
 ### BLEU-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 Onde ?`p_n`é a precisão modificada de n-gram (contação reduzida de n-grams gerados que aparecem em qualquer referência, dividida pelo total de n-grams gerados), e `BP`é a pena de brevidade:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 É necessário suavizar as amostras pequenas, onde algumas`p_n`A implementação usa o "método 1" de Chen e Cherry ( Adicionar 1 ao numerador e denominador para qualquer contagem de zero), que é o padrão mais seguro para regimes de baixa contagem.
@@ -109,7 +108,7 @@ Resultado: a tabela métrica antes/após mostra a recuperação melhorando de qu
 
 Cada métrica mapeia diretamente um índice de referência de produção:
 
-- **Retrieval.**MS-COCO 5K val, Flickr30K, ImageNet zero-shot são todos problemas R@K na mesma matriz de semelhança.
+- **Retrieval.**MS-COCO 5K val e Flickr30K são problemas R@K na mesma matriz de semelhança. ImageNet zero-shot usa essa matriz também, com uma embuxação de prompt por classe, mas relata a precisão de classificação top-1, que é R@1 sobre as instruções de classe. Substitua a avaliação sintética com os arquivos reais e a assinatura da função é inalterada.
 - **VQA.**VQA v2, GQA, OK-VQA usam a mesma forma de correspondência exata (com ac em vez de EM de resposta única para VQA v2).
 - **BLEU-4.**A legenda MS-COCO, NoCaps, Flickr30K, todas usam o BLEU-4 mais CIDER e METEOR.
 
@@ -142,7 +141,7 @@ python3 -m unittest code/test_main.py
 
 4. Computação média de grau recíproco (MRR) ao lado de R@K. O MRR é sensível aonde o item correto cai além do topo K; o R@K é sensível a se cai no topo K.
 
-5. Execute a avaliação no modelo em cinco pontos de controlo durante o treinamento (passo 0, 10, 20, 30, 40, 50) e trace a curva de aprendizagem.
+5. Exercer a avaliação no modelo em seis pontos de controlo durante o treinamento (passo 0, 10, 20, 30, 40, 50) e traçar a curva de aprendizagem.
 
 ## Termos-chave
 
