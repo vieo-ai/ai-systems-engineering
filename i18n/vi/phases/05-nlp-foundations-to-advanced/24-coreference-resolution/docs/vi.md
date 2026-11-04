@@ -36,7 +36,7 @@ Tại sao nó quan trọng vào năm 2026:
 **Architectures.**
 
 1. **Rule-based (Hobbs, 1978).**- Định nghĩa từ ngữ dựa trên cây hợp pháp, sử dụng quy tắc ngữ pháp, cơ sở tốt, khó đánh bại từ ngữ.
-2. **Mention-pair classifier.**Đối với mỗi cặp đề cập (m_i, m_j), dự đoán xem chúng có được cốt lõi hơn hay không.
+2. **Mention-pair classifier.**Đối với mỗi cặp đề cập $(m_i, m_j)$, dự đoán liệu chúng có được hợp tác hơn hay không.
 3. **Mention-ranking.**Đối với mỗi đề cập, xếp hạng trước tiên ứng cử viên (bao gồm cả "không có tiền nhiệm").
 4. **Span-based end-to-end (Lee et al., 2017).**Các bộ mã hóa biến đổi. Đếm tất cả các ứng cử viên trải dài lên đến một giới hạn chiều dài. Dự đoán điểm số đề cập. Dự đoán xác suất tiền sử cho mỗi khoảng thời gian. Nhóm tham lam.
 5. **Generative (2024+).**Đưa ra một LLM: "Dài danh nghĩa mỗi từ trong văn bản này và tiền thân của nó".
@@ -61,14 +61,14 @@ coref-links
 ```python
 import spacy
 nlp = spacy.load("en_coreference_web_trf")   # experimental model
-doc = nlp("Apple announced new products. The company said they would ship soon.")
+doc = nlp("Apple announced new products. The company said it would ship them soon.")
 for cluster in doc._.coref_clusters:
     print(cluster, "->", [m.text for m in cluster])
 ```
 
 Trong một tài liệu dài hơn, bạn có được một cái gì đó như:
-- Nhóm 1: [Apple, Công ty, họ]
-- Nhóm 2: [Sản phẩm mới]
+- Nhóm 1: [Apple, Công ty, nó]
+- Nhóm 2: [Sản phẩm mới, chúng]
 
 ### Bước 2: giải quyết nhân từ dựa trên quy tắc (lạy)
 
