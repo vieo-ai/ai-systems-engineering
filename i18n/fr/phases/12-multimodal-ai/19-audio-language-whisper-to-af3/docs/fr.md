@@ -36,7 +36,7 @@ Chaque encodeur audio commence par la même fonctionnalité: un spectrogramme lo
 2. Transformation Fourier à court terme avec des fenêtres de 25 ms, saut de 10 ms.
 3. Prenez l'ampleur du résultat de la FFT.
 4. Appliquer des bancs de filtres Mel (habituellement 80 filtres à intervalles logs de 0 à 8000 Hz) pour déformer la fréquence perceptuelle.
-5. Compresseur de log (log(1 + x)) pour la plage dynamique.
+5. Compresseur de logs$(\log(1 + x))$pour la portée dynamique.
 
 Résultat: un tableau en 2D de forme (T, 80) où T est le nombre de cadres temporels. Pour un clip de 30 secondes à la fréquence d'image de 100 Hz: (3000, 80).
 
@@ -54,7 +54,7 @@ Whisper a été formé sur des données dominantes par la parole.
 
 BEATs (Chen et coll., 2022) est un transformateur auto-supervisé formé sur AudioSet. Capture la musique et les sons environnementaux mieux que Whisper au même nombre de paramètres.
 
-AF-Whisper (hybride d'Audio Flamingo 3): Whisper + BEATs est le signal audio de l'audio.
+AF-Whisper (encodeur d'Audio Flamingo 3): commencez à partir du codeur Whisper-large-v3 et continuez à l'entraîner sur la parole, le son et la musique ensemble, de sorte qu'un encodeur transporte à la fois le signal linguistique et l'acoustique.
 
 ### Le Q-former audio
 
@@ -70,7 +70,7 @@ Qwen-Audio (Chu et coll., 2023): architecture similaire, formée sur un ensemble
 
 LTU  Écoutez, pensez, comprenez (Gong et coll., 2023): données explicites de raisonnement, se concentrent sur la chaîne de pensée sur les clips audio.
 
-Audio Flamingo 3 (Goel et coll., juillet 2025): le SOTA ouvert en cours. 8B LLM spine dorsale (Qwen2 7B), Whisper-grand encodeur concat BEATs, 64 requêtes Q-former, formation sur 1M + paires d'instructions audio-texte. MMAU 0.72, correspond à la frontière propriétaire sur certaines sous-tasques.
+Audio Flamingo 3 (Goel et coll., juillet 2025): le SOTA ouvert actuel. 7B LLM backbone (Qwen2.5-7B), un encodeur audio AF-Whisper construit à partir de Whisper-large-v3, de petites couches d'adaptateur dans le LLM, de formation sur 1M + paires d'instructions audio-texte. MMAU 0.72, correspond à la frontière propriétaire sur certaines sous-tasques.
 
 AF3 introduit également une chaîne de pensée sur demande pour l'audio: le modèle peut émettre optionnellement des jetons de pensée ("laissez-moi d'abord identifier les instruments: ...") avant la réponse finale.
 

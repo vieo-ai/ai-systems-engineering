@@ -20,7 +20,7 @@ BLIP-2 alimente 32 jetons visuels dans la couche d'entrée d'un LLM gelé. Fonct
 
 La réponse de Flamingo: ne modifiez pas du tout le flux d'entrée du LLM. Insérer des couches de croisement supplémentaires entre les blocs de LLM existants. Les jetons de texte circulent toujours à travers l'auto-attention de la LLM comme toujours. Entre quelques blocs de LLM, les jetons de texte interagissent également avec les caractéristiques de l'image via une nouvelle couche fermée. La porte (initialisée à zéro) signifie que à l'étape zéro les nouvelles couches sont sans opérations  le modèle se comporte exactement comme le LLM prétrainé. Au fur et à mesure que l'entraînement progresse, la porte s'ouvre et les informations visuelles commencent à circuler.
 
-La deuxième question Flamingo a répondu: comment gérer un nombre variable d'images (0, 1 ou plusieurs) par prompt? Un rééchantillon Perceiver  un petit module de réflexion croisée qui prend le nombre de patches que vous avez et produit un nombre fixe de jetons visifs latents. La couche d'attention croisée LLM voit la même forme indépendamment du nombre d'images dans le prompt.
+La deuxième question a été posée par Flamingo: comment gérer un nombre variable d'images (0, 1 ou plusieurs) par requête ? Un rééchantillonneur Percepteur  un petit module d'attention croisée qui prend le nombre de patchs que vous avez et produit un nombre fixe de jetons visuels latents par image. Le total augmente avec le nombre d'images, mais chaque jeton texte ne lit que les latences d'une seule image, donc ce que tout jeton texte voit en croisée d'attention a la même forme indépendamment du nombre d'images dans le prompt.
 
 ## Le concept
 
@@ -30,18 +30,18 @@ Flamingo commence par un LLM de Chinchilla 70B gelé. Tous les poids 70B intacts
 
 ### Remplacement de l'échantillon de percepteur
 
-Pour chaque image dans le prompt, le ViT produit N patch tokens. Le resampler Percepteur a K fixes latences apprenables (Flamingo utilise K=64).
+Pour chaque image dans le prompt, le ViT produit $N$Le rééchantillon du percepteur a$K$Les données de formation sont à l'origine de données de formation.$K=64$) Chaque bloc de repérage est constitué de deux sous-étapes:
 
-1. Attention croisée: les K latences sont présentes sur les N patch tokens (Q des latences, K/V des patches).
+1. Attention croisée: le $K$Les latents assistent à la$N$les jetons de patch (Q à partir de latences, K/V à partir de patches).
 2. Autotentification + FFN dans les latences.
 
-Après 6 blocs de repérage, la sortie est K = 64 jetons visuels de dim 1024, quel que soit le nombre de correctifs produits par le ViT. Une image 224x224 (196 patches) et une image 480x480 (900 patches) sortent tous deux en 64 jetons de repérage.
+Après 6 blocs de repérage, la sortie est $K=64$Les images de la vitesse de vie de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de la vitesse de l'image de l'image de la vitesse de l'image de l'image de la vitesse de l'image de la vitesse de l'image de l'image de la vitesse de l'image de la vitesse de l'image de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de la vit de l'image de la vitesse de l'image de la vitesse de la vitesse de l'image de la vitesse de l'image de la vit de la vitesse de la vit de la vit de la vitesse de la vit de la vitesse de l'image de la vit de l'image de la vitesse de la vit de la vitesse de la vitesse de la vitesse de la vitesse de la vitesse de la vitesse de la vitesse de la vit à la vit.
 
-Pour la vidéo, le resampler est appliqué temporairement: les patchs de chaque cadre produisent 64 latences, et un codage positionnel temporel permet au modèle de distinguer t=0 de t=N. La vidéo complète devient des jetons visuels T * 64.
+Pour la vidéo, le resampler est appliqué temporairement: les patchs de chaque cadre produisent 64 latences, et un codage positionnel temporel permet au modèle de distinguer $t=0$de $t=N$La vidéo complète devient$T \cdot 64$des jetons visuels.
 
 ### Attention croisée par voie ferrée
 
-Entre chaque couche M du LLM gelé (Flamingo utilise M=4), insérer un nouveau bloc de l'attention croisée fermé:
+Entre chaque$M$Les couches de la MLL gelée (utilisées par Flamingo $M=4$), insérer un nouveau bloc de l'attention croisée fermé:
 
 ```
 x_after_llm_block = llm_block(x_before)
@@ -59,7 +59,7 @@ C'est le choix de conception le plus important dans Flamingo: le conditionnement
 
 ### Attention croisée masquée pour les entrées interdites
 
-Dans un prompt comme "<image A> caption A <image B> caption B <image C> ?", chaque jeton de texte ne doit voir que des images qui lui ont précédé dans la séquence.`t`ne prend en charge que les jetons de repérage d'image dont l'index d'image `i < i_t`où `i_t`est l' image la plus récente avant la position `t`"Voice seulement la dernière image précédente" ou "Voice toutes les images précédentes" sont tous deux des choix valides; Flamingo a choisi le premier.
+Dans un prompt comme "<image A> caption A <image B> caption B <image C> ?", chaque jeton de texte ne doit voir que des images qui lui ont précédé dans la séquence.`t`ne prend en charge que les jetons de repérage d' image `i_t`Où ?`i_t`est l' image la plus récente avant la position `t`Les "Vie seulement la dernière image précédente" ou "Vie toutes les images précédentes" sont tous deux des choix valides; Flamingo a choisi la première.
 
 ### Apprendre en quelques coups dans le contexte
 
@@ -76,7 +76,7 @@ Le modèle voit le schéma de finition et produit "oiseau" (ou ce que l'image3 m
 Flamingo a été formé sur trois ensembles de données:
 
 1. MultiModal MassiveWeb (M3W): 43 millions de pages Web avec des images et du texte interligés, reconstruisant l'ordre de lecture.
-2. Pares image-texte (ALIGN + LTIP): 4,4B pares.
+2. Pares image-texte: ALIGN (1,8B pares) plus LTIP (312M pares), soit environ 2,1B pares au total.
 3. Parts vidéo-texte (VTP): 27 millions de courts clips vidéo.
 
 OBELICS (2023) est une reproduction ouverte du corpus web interlevé, sur lequel Idefics, Idefics2 et la plupart des modèles "flamingo-like" ouverts s'entraînent.
@@ -102,7 +102,7 @@ Otter (2023) s'appuie sur OpenFlamingo avec l'ajustement des instructions sur MI
 | Frozen LLM | Yes | Yes |
 | Few-shot in-context | Weak | Strong — the paper's centerpiece |
 | Interleaved inputs | No native support | Yes, the design target |
-| Training data | 130M pairs | 1.3B pairs + 43M interleaved pages |
+| Training data | 130M pairs | ~2.1B pairs + 27M video clips + 43M interleaved pages |
 | Parameter count | 188M trained | ~10B trained (cross-attn layers) |
 | Compute | Days on 8 A100s | Weeks on thousands of TPUv4 |
 
@@ -148,7 +148,7 @@ Cette leçon produit `outputs/skill-gated-bridge-diagnostic.md`. Compte tenu de 
 | OBELICS | "Interleaved web corpus" | Open dataset of 141M web pages with images and text in reading order |
 | Chinchilla | "70B frozen base" | Flamingo's frozen text LLM, from DeepMind's Chinchilla paper |
 | Gate schedule | "How alpha moves" | The rate at which the cross-attention gate opens during training |
-| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses M=4 |
+| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses $M=4$ |
 | OpenFlamingo | "Open reproduction" | MosaicML/LAION open checkpoint at 3-9B; architecture-identical to Flamingo |
 
 ## Pour en savoir plus
