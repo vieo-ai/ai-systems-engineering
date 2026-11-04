@@ -30,7 +30,7 @@ Việc phục vụ LLM đa khu vực là một vấn đề cache, một vấn đ
 
 Các yêu cầu đến với một lời nhắc. Router hashes tiền đề (chẳng hạn, đầu tiên 512 token); nó hỏi mỗi bản sao "bạn có tiền đề này được lưu trữ trong cache không?". Các bản sao xuất bản các sự kiện lưu trữ KV trên một kênh pub / sub khi họ phân bổ và loại bỏ các khối. Router chọn bản sao với sự phù hợp, rơi qua vào tie-breaker dựa trên GPU-util nếu không ai làm.
 
-**vLLM Router**(Rust, 2026 sản xuất-phân): đăng ký `kv.cache.block_added`events, duy trì một prefix-hash → replica index, đường dẫn với O(1) tìm kiếm.
+**vLLM Router**(Rust, 2026 sản xuất-phân): đăng ký `kv.cache.block_added`events, duy trì một prefix-hash → replica index, đường với $O(1)$Nhìn xuống, đi qua độ sâu thấp nhất khi không có sự phù hợp.
 
 **llm-d router**: cùng một mô hình, Kubernetes bản địa. xuất bản các sự kiện thông qua ControlPlane API.
 
@@ -51,7 +51,7 @@ RTT liên khu vực:
 - US-East-1  eu-west-1: ~ 75 ms.
 - US-East-1  ap-southeast-1: ~ 220 ms.
 
-Nếu định tuyến đưa yêu cầu từ us-east-1 đến một tiền tố nóng ở ap-southeast-1, prefill lưu (800 → 80 ms) sẽ bị làm nhỏ hơn 440 ms đi lại. GORGO (2026 nghiên cứu) làm cho điều này rõ ràng  giảm thiểu `prefill_time + network_latency`Thông thường câu trả lời là tiếp tục định tuyến khu vực ngoại trừ trên các tiền tố đa MB lớn nơi prefill thống trị.
+Nếu định tuyến đưa một yêu cầu từ us-east-1 đến một tiền tố nóng ở ap-southeast-1, prefill lưu (800 → 80 ms, do đó 720 ms) sẽ giảm xuống khoảng 500 ms khi RTT ~220 ms được thanh toán, và biên biến mất nếu khu vực xa xôi xếp hàng yêu cầu hoặc đã loại bỏ tiền tố. GORGO (2026 nghiên cứu) làm cho điều này rõ ràng  giảm thiểu `prefill_time + network_latency`Thông thường câu trả lời là tiếp tục định tuyến khu vực ngoại trừ trên các tiền tố đa MB lớn nơi prefill thống trị.
 
 ### "Phân luận xuyên khu vực" thương mại không giúp ở đây
 
