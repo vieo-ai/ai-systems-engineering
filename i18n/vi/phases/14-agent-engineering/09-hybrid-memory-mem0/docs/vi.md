@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Một cửa hàng sai cho một trong ba lớp truy vấn:
+Mỗi cửa hàng chỉ phù hợp với một trong ba lớp truy vấn:
 
 - **Semantic similarity**"Chúng ta đã thảo luận về sự trôi dạt của đại lý tuần trước?" Vector thắng; KV và biểu đồ thất bại.
 - **Fact lookup** "nọm điện thoại của người dùng là gì?" KV thắng; vector là lãng phí, biểu đồ là quá chết.
@@ -32,7 +32,7 @@ Mem0 (arXiv:2504.19413, tháng 4 năm 2025) ngày `add(text, user_id, metadata)`
 
 1. Thu thập các sự kiện ứng cử viên từ văn bản (một bước được thúc đẩy bởi LLM).
 2. Viết từng sự thật vào kho vector (trình tích hợp) để tìm kiếm ngữ nghĩa.
-3. Viết từng dữ liệu vào kho KV được khóa vào (user_id, fact_type, entity) để tìm kiếm O(1).
+3. Viết từng sự kiện vào kho KV được khóa vào (user_id, fact_type, entity) cho $O(1)$Tìm kiếm.
 4. Viết từng sự kiện vào kho đồ họa (Mem0g) như các cạnh được gõ cho các truy vấn mối quan hệ.
 
 - Đưa ra`search(query, user_id)`- Có thể là:
