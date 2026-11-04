@@ -36,8 +36,8 @@ Deixe-me .`p(t)`ser a distribuição do esboço para o próximo símbolo dado al
 
 Deixe-me .`α`O valor de receção de cada token elaborado deve ser o valor esperado.`c = cost(draft) / cost(verifier)`O número esperado de tokens aceites por verificador a prazo é:
 
-```
-E[accepted] = (1 - α^(N+1)) / (1 - α)
+```math
+\mathbb{E}[\text{accepted}] = \frac{1 - \alpha^{N+1}}{1 - \alpha}
 ```
 
 O tempo total esperado de parede por token aceito é `(N * c + 1) / E[accepted]`Minimizar isso em relação a`N`E você tem o ponto de amor.`α = 0.8, c = 0.05`: óptimo `N`é de cerca de 57, velocidade é de 3,2×.`α = 0.95, c = 0.02`: óptimo `N`É cerca de 8×10, aceleração empurra 5×.
@@ -70,6 +70,8 @@ Para a pesquisa de árvores EAGLE-2, o verificador corre a atenção com uma má
 | EAGLE-2 | EAGLE-1 + dynamic draft tree | 0.80-0.88 | 3-4× | ~60B tokens |
 | EAGLE-3 | Multi-layer feature fusion + TTT | 0.88-0.92 | 3.5-6.5× | ~60-200B tokens |
 | Lookahead | No draft (Jacobi iteration) | N/A | 1.3-1.6× | None |
+
+O `α`A coluna é a taxa de aceitação por token ao longo do caminho aceito, em benchmarks de chat, com um esboço treinado em dados de chat correspondentes. É a banda superior. Fase 10 · 25 cita 0,82 para EAGLE-3 de uma configuração diferente, e Fase 17 · 05 planeja implantações de produção com 0,6 a 0,8 no chat geral. Medida `α`em seu próprio tráfego antes de escolher `N`- Não .
 
 Em 2026 produção: vLLM e SGLang padrão para EAGLE-3 quando disponível, EAGLE-2 de outra forma. TensorRT-LLM tem o caminho mais rápido Medusa para os modelos públicos Meta e NVIDIA. llama.cpp navega vanilla draft para implantações de CPU.
 
