@@ -52,18 +52,20 @@ flowchart LR
 
 یک طبقه بندی کننده تولید می کند`C`اعداد هر تصویر به نام logits. استفاده از softmax آنها را به توزیع احتمال تبدیل می کند:
 
-```
-softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```math
+\mathop{\mathrm{softmax}}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
 ```
 
 اینترپی متقابل احتمال منفی ثبت کلاس درست را اندازه گیری می کند:
 
-```
-CE(z, y) = -log( softmax(z)_y )
-        = -z_y + log( sum_j exp(z_j) )
+```math
+\begin{aligned}
+\mathrm{CE}(z, y) &= -\log\left( \mathop{\mathrm{softmax}}(z)_y \right) \\
+&= -z_y + \log\left( \sum_j \exp(z_j) \right)
+\end{aligned}
 ```
 
-شکل دست راست ثابت عددی است (log-sum-exp).`nn.CrossEntropyLoss`نرم ماکس + NLL را در یک عملیات ترکیب می کند و به طور مستقیم logits خام را می گیرد. استفاده از نرم ماکس خود را به صورت اولیه تقریبا همیشه یک خطا است.
+شکل دست راست ثابت عددی است (log-sum-exp).`nn.CrossEntropyLoss`نرم ماکس + NLL را در یک عملیات ترکیب می کند و به طور مستقیم logits خام را می گیرد.$\log(\mathop{\mathrm{softmax}}(\mathop{\mathrm{softmax}}(z)))$، مقدار بی معنی
 
 ### چرا افزونه کار می کند
 
@@ -98,14 +100,14 @@ Cutmix:
 
 ### صاف کردن برچسب
 
-يه پسر عموي اشتباه به جاي آموزش در مقابل`[0, 0, 1, 0, 0]`، قطار ضد`[eps/C, eps/C, 1-eps, eps/C, eps/C]`برای یه بچه کوچک`eps`مانند 0.1 . مانع از تولید الگوی به طور تعسفی تیز و بهبود کالیبریشن تقریبا بدون هزینه.`nn.CrossEntropyLoss(label_smoothing=0.1)`از پيترش 1.10
+يه پسر عموي اشتباه به جاي آموزش در مقابل`[0, 0, 1, 0, 0]`، قطار ضد`[eps/C, eps/C, 1-eps+eps/C, eps/C, eps/C]`برای یه بچه کوچک`eps`مانند 0.1 (هدف یک گرم با توزیع یکسانی مخلوط شده است، بنابراین هنوز هم به 1 می رسد). مانع از تولید الگوهای به طور تصادفی تیز می شود و کالیبری را تقریبا بدون هزینه بهبود می بخشد.`nn.CrossEntropyLoss(label_smoothing=0.1)`از پيترش 1.10
 
 ### ارزیابی فراتر از دقت
 
 دقت جمع آوری عدم تعادل را پنهان می کند. یک طبقه بندی کننده دوگانه 90-10 که همیشه نمره اکثریت را پیش بینی می کند 90٪ است. ابزارهای که واقعا به شما می گویند چه اتفاقی می افتد:
 
 - **Per-class accuracy** یک عدد در هر کلاس؛ بلافاصله دسته های کم عملکرد را ظاهر می کند.
-- **Confusion matrix** C x C grid با ردیف i col j = تعداد کلاس واقعی i پیش بینی شده به عنوان کلاس j؛ قطر قطر درست است، قطر خارج از قطر قطر جایی است که مدل شما زندگی می کند.
+- **Confusion matrix** $C \times C$شبکه با صف$i$کل$j$= شمارش کلاس واقعی$i$به عنوان کلاس پیش بینی شده$j$. دیگاکال درست است، دیگاکال های خارج از آن جایی هستند که مدل شما زندگی می کند
 - **Top-1 / Top-5** اینکه آیا کلاس درست در پیش بینی های 1 یا 5 برتر قرار دارد؛ Top-5 برای ImageNet مهم است زیرا کلاس هایی مانند "نورویچ تریئر" در مقابل "نورفولک تریئر" واقعاً مبهم هستند.
 - **Calibration (ECE)** آیا پیش بینی 0.8 اطمینان در 80٪ زمان درست است؟ شبکه های مدرن به طور سیستماتیک بیش از حد مطمئن هستند؛ با مقیاس گذاری دمای یا صاف کردن برچسب درست کنید.
 
@@ -413,7 +415,7 @@ val_ds   = CIFAR10(root="./data", train=False, download=True, transform=eval_tf)
 | DataLoader | "The batcher" | Wraps a dataset with shuffling, batching, and (optional) multi-worker loading; gets blamed for half of training bugs |
 | Augmentation | "Random transforms" | Any pixel-level transform at training time that preserves the label; teaches invariances the CNN does not have natively |
 | Mixup / Cutmix | "Mix two images" | Blend both inputs and labels so the classifier learns smooth interpolations instead of hard boundaries |
-| Label smoothing | "Softer targets" | Replace one-hot with (1-eps, eps/(C-1), ...); improves calibration and slightly boosts accuracy |
+| Label smoothing | "Softer targets" | Replace one-hot with (1-eps+eps/C, eps/C, ...); improves calibration and slightly boosts accuracy |
 | Top-k accuracy | "Top-5" | The correct class is in the k highest-probability predictions; used on datasets with genuinely ambiguous classes |
 | Confusion matrix | "Where errors live" | C x C table where entry (i, j) counts images of true class i predicted as j; diagonal is right, off-diagonal tells you what to fix |
 

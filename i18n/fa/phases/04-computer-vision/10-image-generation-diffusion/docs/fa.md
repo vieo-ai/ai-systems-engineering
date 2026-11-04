@@ -26,35 +26,32 @@
 
 ### روند پیشروی
 
-يه عکس بگير`x_0`. يه مقدار کوچيک از شور گاسي اضافه کن تا بدست بياي`x_1`يه مقدار كوچك بيشتر اضافه کن تا بدست بياي`x_2`. تا وقتي که قدم هاي T رو ادامه بدي`x_T`تقریباً از صداهای خالص گوس تشخیص داده نمیشه
+يه عکس بگير`x_0`. يه مقدار کوچيک از شور گاسي اضافه کن تا بدست بياي`x_1`يه مقدار كوچك بيشتر اضافه کن تا بدست بياي`x_2`ادامه بده$T$تا مرحله`x_T`تقریباً از صداهای خالص گوس تشخیص داده نمیشه
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1 - beta_t) * x_{t-1},  beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1 - \beta_t} \, x_{t-1}, \; \beta_t I\right)
 ```
 
-`beta_t`یک جدول متغیر کوچک است که معمولاً خطی از 0.0001 تا 0.02 در طول T=1000 مرحله است. هر مرحله سیگنال را کمی کاهش می دهد و صدا تازه را تزریق می کند.
+`beta_t`یک جدول کوچک متفاوت است، معمولا خطی از 0.0001 تا 0.02 بر روی $T=1000$هر مرحله سيگنال رو به طور خفيفي كاهش ميده و صداي تازه اي به وجود مياد
 
 ### پرش بند
 
 اضافه کردن صدا یک قدم در یک زمان یک زنجیره مارکوف است، اما ریاضیات خمیده می شود: شما می توانید نمونه `x_t`مستقیما از`x_0`در يک قدم
 
-```
-Define alpha_t = 1 - beta_t
-Define alpha_bar_t = prod_{s=1..t} alpha_s
-
-Then:
-  q(x_t | x_0) = N(x_t; sqrt(alpha_bar_t) * x_0,  (1 - alpha_bar_t) * I)
-
-Equivalently:
-  x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon
-  where epsilon ~ N(0, I)
+```math
+\begin{aligned}
+&\text{Define } \alpha_t = 1 - \beta_t \\
+&\text{Define } \bar{\alpha}_t = \prod_{s=1}^{t} \alpha_s \\[6pt]
+&\text{Then: } q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \, x_0, \; (1 - \bar{\alpha}_t) I\right) \\[6pt]
+&\text{Equivalently: } x_t = \sqrt{\bar{\alpha}_t} \, x_0 + \sqrt{1 - \bar{\alpha}_t} \, \epsilon \quad \text{where } \epsilon \sim \mathcal{N}(0, I)
+\end{aligned}
 ```
 
 این معادله ی تک تک دلیل این است که انتشار عملی است. در طول تمرین شما یک عدد تصادفی را انتخاب می کنید`t`نمونه`x_t`مستقیما از`x_0`، و در یک مرحله قطار بدون محاكاة کل زنجیره مارکوف مورد نیاز است.
 
 ### فرآیند معکوس
 
-روند جلو ثابت شده است.`p(x_{t-1} | x_t)`این چیزی است که شبکه عصبی می آموزد. مدل های انتشار پیش بینی نمی کنند.`x_{t-1}`به طور مستقیم، آنها صدا را پیش بینی می کنند`epsilon`در مرحله t اضافه شده و ریاضیات حاصل می شود`x_{t-1}`از اون
+روند جلو ثابت شده است.`p(x_{t-1} | x_t)`این چیزی است که شبکه عصبی می آموزد. مدل های انتشار پیش بینی نمی کنند.`x_{t-1}`به طور مستقیم، آنها صدا را پیش بینی می کنند`epsilon`در مرحله اضافه شده$t$، و ریاضیات نتیجه می دهد`x_{t-1}`از اون
 
 ```mermaid
 flowchart LR
@@ -79,7 +76,7 @@ flowchart LR
 برای هر مرحله آموزش:
 
 1. نمونه ای از تصویر واقعی`x_0`. .
-2. نمونه ای از مرحله زمان`t`یکنواخت از [1, T]
+2. نمونه ای از مرحله زمان`t`به طور متساوی از$[1, T]$. .
 3. صداي نمونه`epsilon ~ N(0, I)`. .
 4. حساب کردن`x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon`. .
 5. پیش بینی`epsilon_theta(x_t, t)`با شبکه
@@ -103,7 +100,7 @@ return x_0
 
 ### چرا هزار قدم
 
-برنامه های پیشروی صدا انتخاب می شود تا هر مرحله فقط صدا کافی را اضافه کند تا مرحله معکوس تقریبا گاوسیان باشد. گام های بسیار کمی و گام معکوس از گاوسیان دور است، شبکه نمی تواند آن را به خوبی مدل کند. گام های زیادی و نمونه گیری با کاهش سود گران می شود. T = 1000 با برنامه خطی پیش فرض DDPM است.
+برنامه های پیشروی صدا انتخاب می شود تا هر مرحله فقط صدا کافی را اضافه کند تا مرحله برگشت تقریبا گاوسیان باشد. گام های بسیار کمی و گام برگشت از گاوسیان دور است، شبکه نمی تواند آن را به خوبی مدل کند. گام های زیادی و نمونه گیری با کاهش سود گران می شود. $T=1000$با یک برنامه خطی، پیش فرض DDPM است.
 
 ### DDIM: نمونه گیری 20 برابر سریعتر
 
@@ -263,7 +260,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     x = torch.randn(shape, device=device)
     alphas_cumprod = schedule["alphas_cumprod"].to(device)
 
-    ts = torch.linspace(T - 1, 0, steps + 1).long()
+    ts = torch.linspace(T - 1, -1, steps + 1).round().long()
     for i in range(steps):
         t = ts[i]
         t_prev = ts[i + 1]
@@ -279,7 +276,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     return x
 ```
 
-`eta=0`کاملاً تعیین کننده است (درآمدی از همان صدا همیشه همان output را تولید می کند). `eta=1`بازیافت DDPM
+برنامه در ساعت 6 تموم میشه`t_prev = -1`، پس آخرین مرحله استفاده می کنه`a_prev = 1.0`و پاک کننده را بازمی گرداند`x0_pred`بدون شور باقی مانده`eta=0`کاملاً تعیین کننده است (درآمدی از همان صدا همیشه همان output را تولید می کند). `eta=1`بازیابی DDPM زمانی که برنامه به هر مرحله زمانی مراجعه می کند (`steps=T`)
 
 ## ازش استفاده کن
 
@@ -313,14 +310,14 @@ scheduler = DDPMScheduler(num_train_timesteps=1000)
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over T steps |
+| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over $T$ steps |
 | Reverse process | "Denoise step by step" | Learned distribution that walks back from noise to image |
-| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step t |
-| Beta schedule | "Noise amounts" | Sequence of T small variances that define how much noise enters per step |
-| alpha_bar_t | "Cumulative retain factor" | Product of (1 - beta_s) up to time t; bigger t means less signal left |
-| DDPM sampler | "Ancestral, stochastic" | Samples each x_{t-1} from its conditional Gaussian; 1000 steps |
+| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step $t$ |
+| Beta schedule | "Noise amounts" | Sequence of $T$ small variances that define how much noise enters per step |
+| $\bar{\alpha}_t$ | "Cumulative retain factor" | Product of $(1 - \beta_s)$ up to time $t$; bigger $t$ means less signal left |
+| DDPM sampler | "Ancestral, stochastic" | Samples each $x_{t-1}$ from its conditional Gaussian; 1000 steps |
 | DDIM sampler | "Deterministic, fast" | Rewrites sampling as a deterministic ODE; 20-100 steps with similar quality |
-| Time conditioning | "Tell the model which t" | Sinusoidal embedding of t injected into the U-Net so it knows the noise level |
+| Time conditioning | "Tell the model which t" | Sinusoidal embedding of $t$ injected into the U-Net so it knows the noise level |
 
 ## خواندن بیشتر
 

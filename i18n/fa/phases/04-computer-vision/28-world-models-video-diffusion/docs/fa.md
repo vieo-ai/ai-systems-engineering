@@ -60,7 +60,7 @@ Resulting tokens:      (T / P_t) * (H / P_h) * (W / P_w) tokens
 
 کدگذاری موقعیت 3D: یک ادغام چرخش یا آموخته شده در هر هماهنگی (t، h، w) است. توجه می تواند:
 
-- **Full joint** تمام توکن ها به تمام توکن ها توجه می کنند. O ((N ^ 2) با توکن های N. ممنوع برای فیلم های طولانی.
+- **Full joint** تمام توکن ها به تمام توکن ها توجه می کنند. $O(N^2)$با$N$توکن ها، ممنوعه برای فیلم های بلند
 - **Divided** توجه متناوب زمانی (موقع فضایی یکسان، در طول زمان: `(H*W) * T^2`) و توجه فضایی (هم زمان، در سراسر فضا: `T * (H*W)^2`) توسط TimeSformer و بیشتر DiTs ویدیویی استفاده می شود.
 - **Window** پنجره های محلی در (t, h, w). توسط Video Swin استفاده می شود.
 
@@ -213,7 +213,7 @@ class DividedAttentionBlock(nn.Module):
         return xs
 ```
 
-توجه زمان در هر موقعیت فضایی در طول زمان، توجه فضایی در هر فریم در طول موقعیت ها. دو عملیات O  T ^ 2 + (HW) ^ 2) به جای یک O  THW) ^ 2). این هسته TimeSformer و هر ویدئو مدرن DiT است.
+توجه زمان در هر موقعیت فضایی در طول زمان، توجه فضایی در هر چارچوب در طول موقعیت ها. دو $O(T^2 + (HW)^2)$عملیات به جای یک$O((THW)^2)$اين هسته TimeSformer و هر ويديو مدرن DiT است
 
 ### مرحله 4: یک ویدیو کوچک را بنویسید
 
@@ -286,7 +286,7 @@ print(f"output {tuple(out.shape)}")
 | World model | "Learned simulator" | A model that predicts future observations given state and action |
 | Video DiT | "Spacetime transformer" | Diffusion transformer with 3D patchification and divided attention |
 | Latent action | "Inferred control" | Discrete or continuous action latent inferred from frame pairs; used to condition next-frame generation |
-| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep O(N^2) manageable |
+| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep $O(N^2)$ manageable |
 | Object permanence | "Things stay real" | Scene property that video models must learn; classic failure mode on food, glassware |
 | FVD | "Fréchet Video Distance" | Video equivalent of FID; primary visual quality metric |
 | Inverse dynamics model | "Observations to actions" | Given (state, next state), output the action that connects them; closes robotics loop |

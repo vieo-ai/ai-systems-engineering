@@ -59,8 +59,8 @@ DDPM فرآیند پیشروی را به عنوان یک SDE شور و صدا ت
 
 جریان اصلاح شده تعریف می کند**straight-line**تعادل بین داده های پاک و صداهای پاک:
 
-```
-x_t = (1 - t) * x_0 + t * epsilon,     t in [0, 1]
+```math
+x_t = (1 - t) \, x_0 + t \, \epsilon, \qquad t \in [0, 1]
 ```
 
 شبکه ای را آموزش بده تا سرعت را پیش بینی کند`v_theta(x_t, t) = epsilon - x_0` جهت جلو در طول مسیر خط مستقیم از داده های پاک تا صدا (`dx_t/dt`در طول نمونه گیری، شما این سرعت را به عقب برای قدم زدن از صدا به سمت داده ها ادغام می کنید. ODE حاصل شده بسیار نزدیک به یک خط مستقیم است، بنابراین برای نمونه گیری مراحل ادغام کمتری مورد نیاز است.
@@ -338,7 +338,7 @@ out = pipe(prompt, guidance_scale=3.5, num_inference_steps=28).images[0]
 | DiT | "Diffusion transformer" | Transformer that replaces the U-Net as the diffusion denoiser; operates on patchified latents |
 | AdaLN | "Adaptive layer norm" | Timestep/text conditioning via learned scale, shift, gate applied after LayerNorm; standard in every modern DiT |
 | MMDiT | "Multi-modal DiT (SD3)" | Separate weight streams for text and image tokens that share a joint self-attention |
-| Single-stream / double-stream | "FLUX trick" | First N blocks double-stream (separate weights per modality), later blocks single-stream (concat + shared weights) for efficiency |
+| Single-stream / double-stream | "FLUX trick" | First $N$ blocks double-stream (separate weights per modality), later blocks single-stream (concat + shared weights) for efficiency |
 | Rectified flow | "Straight-line noise-to-data" | Linear interpolation between data and noise; network predicts velocity; fewer ODE steps needed at inference |
 | Velocity target | "epsilon - x_0" | The regression target in rectified flow; points from clean data to noise |
 | CFG guidance | "classifier-free guidance" | Mix conditional and unconditional predictions; still used in rectified-flow models |

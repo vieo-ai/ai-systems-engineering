@@ -74,11 +74,13 @@ At each grid cell, every anchor emits (tx, ty, tw, th, obj, c_1, ..., c_C).
 
 خام`tx, ty, tw, th`هماهنگی های جعبه ای نیستند، بلکه اهداف بازپسین هستند که قبل از نقشه برداری باید تغییر داده شوند:
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`در داخل سلول، تعویضات مرکز را حفظ می کند. `exp`اجازه می دهد که مقیاس عرض بدون تغییر علامت از لنگر آزاد شود.`stride`این مرحله رمزگذاری در هر نسخه یولو از v2 به بعد یکسان است.
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 متریک شباهت جهانی تشخیص بین دو جعبه:
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 به معنای یکسان است؛ IoU = 0 به معنای هیچ تعادل نیست. IoU بین پیش بینی و جعبه حقیقت اصلی است که آنچه تصمیم می گیرد آیا یک پیش بینی به عنوان یک مثبت واقعی حساب می شود (به طور معمول IoU > = 0.5). IoU بین دو پیش بینی است که NMS برای تخفیف استفاده می کند.
+$\mathrm{IoU} = 1$معنی یکسان است$\mathrm{IoU} = 0$IoU بین پیش بینی و جعبه حقیقت اصلی است که آنچه تعیین می کند آیا یک پیش بینی به عنوان یک مثبت واقعی حساب می شود (معمولاً$\mathrm{IoU} \ge 0.5$) IoU بین دو پیش بینی است که NMS برای تخفیف استفاده می کند.
 
 ### سرکوب غیر حداکثر
 
@@ -113,11 +115,13 @@ NMS(boxes, scores, iou_threshold):
 
 یولو خسارت سه خسارت را با وزن اضافه می کند:
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 تنها سلول هایی که حاوی یک شی هستند به بازپسین جعبه و از دست دادن طبقه بندی کمک می کنند. سلول های بدون شی فقط به از دست دادن شی (تعلیم دادن مدل به سکوت) کمک می کنند. `lambda_noobj`معمولاً کوچک است (~0.5) زیرا اکثریت عظیمی از سلول ها خالی هستند و در غیر این صورت بر کل از دست دادن تسلط می گذارند.
@@ -199,8 +203,10 @@ def encode(box_xyxy, cell_x, cell_y, stride, anchor_wh):
     cy = 0.5 * (y1 + y2)
     w = x2 - x1
     h = y2 - y1
-    tx = cx / stride - cell_x
-    ty = cy / stride - cell_y
+    off_x = np.clip(cx / stride - cell_x, 1e-6, 1 - 1e-6)
+    off_y = np.clip(cy / stride - cell_y, 1e-6, 1 - 1e-6)
+    tx = np.log(off_x / (1 - off_x))
+    ty = np.log(off_y / (1 - off_y))
     tw = np.log(w / anchor_wh[0] + 1e-8)
     th = np.log(h / anchor_wh[1] + 1e-8)
     return np.array([tx, ty, tw, th])
@@ -219,7 +225,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 ```
 
-آزمون: کد یک جعبه و سپس کد را پاک کنید  شما باید چیزی را به اصل بسیار نزدیک به دست آورید (تا اینکه برعکس sigmoid کاملا قابل برگشت نباشد وقتی `tx`در محدوده پس از سیگمائید نیست).
+آزمون: یک جعبه را که مرکز آن به طور دقیق در داخل سلول است رمزگذاری کنید، سپس رمزگذاری کنید، و باید جعبه اصلی را به خطا شناور برگردانید. `encode`ذخیره می کند مرکز تعویض به عنوان یک logit، برعکس از `sigmoid`در`decode`. کلپ باعث می شود که لوجیت محدود باشد. مرکز دقیقا در کنار سلول به حداکثر حرکت می کند`1e-6`سلول ها`assign_targets`در زیر همان جاستانها ذخیره می شود، بنابراین سر در فضا حرکت می کند که`decode`انتظار داره
 
 ### مرحله چهارم: حداقل سر یولو
 
@@ -269,8 +275,10 @@ def assign_targets(boxes_xyxy, classes, anchors, stride, grid_size, num_classes)
         best = int(np.argmax(ious))
         aw, ah = anchors[best]
 
-        target[gy, gx, best, 0] = cx / stride - gx
-        target[gy, gx, best, 1] = cy / stride - gy
+        off_x = np.clip(cx / stride - gx, 1e-6, 1 - 1e-6)
+        off_y = np.clip(cy / stride - gy, 1e-6, 1 - 1e-6)
+        target[gy, gx, best, 0] = np.log(off_x / (1 - off_x))
+        target[gy, gx, best, 1] = np.log(off_y / (1 - off_y))
         target[gy, gx, best, 2] = np.log(bw / aw + 1e-8)
         target[gy, gx, best, 3] = np.log(bh / ah + 1e-8)
         target[gy, gx, best, 4] = 1.0
@@ -315,7 +323,7 @@ def yolo_loss(pred, target, has_obj, lambda_coord=5.0, lambda_obj=1.0, lambda_no
                    "obj_neg": loss_obj_neg.item(), "cls": loss_cls.item()}
 ```
 
-پنج پارامتر هاي فوق العاده که هر آموزش YOLO يا سخت کد يا پاکش ميکنه`lambda_coord=5, lambda_noobj=0.5`در اصل YOLOv1 کاغذ است و هنوز هم به عنوان یک پیش فرض معقول کار می کند.
+چهار وزن از دست دادن که هر آموزش یولو یا کد سخت یا پاک کننده است.`lambda_coord=5, lambda_noobj=0.5`در اصل YOLOv1 کاغذ است و هنوز هم به عنوان یک پیش فرض معقول کار می کند.
 
 ### مرحله 7: خط لوله ی انفراس
 

@@ -61,12 +61,13 @@ flowchart LR
 
 گاسيان 3D در موقعیت جهان`mu`با همگوشی 3D `Sigma`پروژه ها به یک گاسین 2D در موقعیت صفحه نمایش`mu'`با همتای دو بعدی `Sigma'`:
 
-```
-mu' = project(mu)
-Sigma' = J W Sigma W^T J^T          (2 x 2)
-
-W = viewing transform (rotation + translation of camera)
-J = Jacobian of the perspective projection at mu'
+```math
+\begin{aligned}
+\mu' &= \mathop{\mathrm{project}}(\mu) \\
+\Sigma' &= J W \Sigma W^T J^T \qquad (2 \times 2) \\[6pt]
+W &= \text{viewing transform (rotation + translation of camera)} \\
+J &= \text{Jacobian of the perspective projection at } \mu'
+\end{aligned}
 ```
 
 اثر پاى گاوسي 2D يک elipse است که محورها خودکاره هاي`Sigma'`هر پیکسل داخل این elipse سهم Gaussian را دریافت می کند، وزن شده توسط`exp(-0.5 * (p - mu')^T Sigma'^-1 (p - mu'))`. .
@@ -75,12 +76,13 @@ J = Jacobian of the perspective projection at mu'
 
 برای یک پیکسل، گاسیان هایی که آن را پوشش می دهند به صورت پیش رو (یا به طور معادل پیش رو به عقب با فرمول معکوس) مرتب می شوند. رنگ با همان معادله مانند هر راسترایسر نیمه شفاف از دهه 1980 ترکیب شده است:
 
-```
-C_pixel = sum_i alpha_i * T_i * c_i
-
-T_i = prod_{j < i} (1 - alpha_j)       transmittance up to i
-alpha_i = opacity_i * exp(-0.5 * d^T Sigma'^-1 d)   local contribution
-c_i = eval_SH(SH_i, view_direction)    view-dependent colour
+```math
+\begin{aligned}
+C_{\text{pixel}} &= \sum_i \alpha_i T_i c_i \\[6pt]
+T_i &= \prod_{j < i} (1 - \alpha_j) && \text{transmittance up to } i \\
+\alpha_i &= \text{opacity}_i \cdot \exp\left(-0.5 \, d^T \Sigma'^{-1} d\right) && \text{local contribution} \\
+c_i &= \mathop{\mathrm{eval\_SH}}(\text{SH}_i, \text{view\_direction}) && \text{view-dependent colour}
+\end{aligned}
 ```
 
 اینم**the same equation as NeRF's volumetric render**این هویت است که چرا کیفیت ارائه شده مطابقت دارد NeRF  هر دو یکسانی را در یک معادله میدان تابش می کنند.
@@ -97,7 +99,7 @@ c_i = eval_SH(SH_i, view_direction)    view-dependent colour
 - **Split**یک گاسین بزرگ در دو گاسین کوچک تر در زمانی که گرادینت آن بالا است  یک گاسین بزرگ بیش از حد صاف است تا به منطقه مناسب شود.
 - **Prune**گاسیان که ناپاکیش زیر یک حد پایین می آید، آنها کمک نمی کنند.
 
-فشرده سازی هر تکرار N را اجرا می کند. یک صحنه معمولا از ~ 100k Gaussians اولیه (به عنوان دانه از نقاط SfM) تا 1-5M در پایان آموزش رشد می کند.
+فشرده شدن هر وقت ادامه داره$N$تکرار: یک صحنه معمولا از ~ 100k Gaussians اولیه (به عنوان دانه از نقاط SfM) به 1-5M در پایان آموزش رشد می کند.
 
 ### هارمونیک های کروی در یک پاراگراف
 

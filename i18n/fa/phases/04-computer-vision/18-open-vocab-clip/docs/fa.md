@@ -42,7 +42,7 @@ flowchart LR
 
 ### هدف
 
-با توجه به دسته ای از زوج های N (تصاویر، عنوان) ، یک ماتریس شباهت NxN بسازید. هر دو کدگر را تمرین کنید تا دیگاکال (دو زوج مطابقت) شباهت بالایی داشته باشد و دیگاکال های خارج از (غیر مطابقت) شباهت کمتری داشته باشند.
+با توجه به تعداد زیادی$N$(تصویر، سرشناسي) جفت، ساخت یک $N \times N$متریکس شباهت. هر دو کدگر را تمرین کنید تا دیگاکال (دو زوج مطابقت) شباهت بالایی داشته باشد و دیگاکال های خارج از (غیر مطابقت) شباهت کمتری داشته باشند.
 
 ```
 sim_matrix = image_embeddings @ text_embeddings.T / tau
@@ -58,9 +58,11 @@ loss = (loss_i2t + loss_t2i) / 2
 
 SigLIP (Zhai et al., 2023) نرمترین را با sigmoid در هر جفت جایگزین کرد:
 
-```
-loss = mean over pairs of log(1 + exp(-y_ij * sim_ij))
-y_ij = +1 if matching, -1 otherwise
+```math
+\begin{aligned}
+\text{loss} &= \mathop{\mathrm{mean}}\limits_{\text{pairs}} \log\left(1 + \exp(-y_{ij} \cdot \text{sim}_{ij})\right) \\
+y_{ij} &= \begin{cases} +1 & \text{if matching} \\ -1 & \text{otherwise} \end{cases}
+\end{aligned}
 ```
 
 کاهش هر جفت استاندارد سازی سطح دسته ای را که CLIP نیاز دارد حذف می کند. SigLIP در اندازه های دسته کوچک بهتر و با داده های برابر مطابقت دارد یا CLIP را فراتر می برد.

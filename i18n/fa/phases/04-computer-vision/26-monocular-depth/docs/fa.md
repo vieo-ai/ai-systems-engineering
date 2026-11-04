@@ -83,14 +83,16 @@ Deep Anything V3 کدگر را منجمد می کند و تنها کدگر سب�
 
 برای بلند کردن یک پیکسل`(u, v)`با عمق`d`به نقطه 3D`(X, Y, Z)`در هماهنگی دوربین:
 
-```
-fx, fy, cx, cy = camera intrinsics
-X = (u - cx) * d / fx
-Y = (v - cy) * d / fy
-Z = d
+```math
+\begin{aligned}
+f_x, f_y, c_x, c_y &= \text{camera intrinsics} \\
+X &= (u - c_x) \cdot d / f_x \\
+Y &= (v - c_y) \cdot d / f_y \\
+Z &= d
+\end{aligned}
 ```
 
-درونی از متاداتا EXIF، یک الگوی کالیبریشن یا یک تخمین دهنده داخلی یکپارچه (Perspective Fields، UniDepth) می آید. بدون درونی، شما هنوز هم می توانید یک ابر نقطه ای را با فرض یک 60-70 درجه FOV و اصول با وضوح متوسط  برای تصویربرداری استفاده کنید، نه برای اندازه گیری.
+در واقع، این میتا داده ها از EXIF، یک الگوی کالیبریشن یا یک تخمین دهنده داخلی یکپارچه (Perspective Fields، UniDepth) گرفته می شوند. بدون این که درونی وجود داشته باشد، شما هنوز هم می توانید یک ابر نقطه را با فرض یک FOV 60-70 درجه و یک نقطه اصلی در مرکز تصویر ارائه دهید. این برای تصویربرداری، نه برای اندازه گیری استفاده می شود.
 
 ### ارزیابی
 
@@ -246,7 +248,7 @@ depth_np = np.array(out["depth"])
 | Monocular depth | "Single-image depth" | Depth estimation from one RGB frame, no stereo or LiDAR |
 | Relative depth | "Ordered depth" | Ordered z-values without real-world units |
 | Metric depth | "Absolute distance" | Depth in metres; requires calibration or a model trained with metric supervision |
-| AbsRel | "Absolute relative error" | Mean of |d_pred - d_gt| / d_gt; standard depth metric |
+| AbsRel | "Absolute relative error" | Mean of $\lvert d_{\text{pred}} - d_{\text{gt}} \rvert / d_{\text{gt}}$; standard depth metric |
 | Delta accuracy | "delta < 1.25" | Fraction of pixels with prediction within 25% of ground truth |
 | Pinhole camera | "fx, fy, cx, cy" | The camera model used to lift (u, v, d) to (X, Y, Z) |
 | DPT | "Dense Prediction Transformer" | The conv-based decoder used on top of frozen ViT encoders for depth |
