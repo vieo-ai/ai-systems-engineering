@@ -52,18 +52,20 @@ Cada línea en este bucle es donde un insecto puede vivir.`model(x).softmax()`La
 
 Un clasificador produce `C`Los números por imagen llamados logits. Aplicando softmax los convierte en una distribución de probabilidades:
 
-```
-softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```math
+\mathop{\mathrm{softmax}}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
 ```
 
 La entropía cruzada mide la probabilidad de registro negativo de la clase correcta:
 
-```
-CE(z, y) = -log( softmax(z)_y )
-        = -z_y + log( sum_j exp(z_j) )
+```math
+\begin{aligned}
+\mathrm{CE}(z, y) &= -\log\left( \mathop{\mathrm{softmax}}(z)_y \right) \\
+&= -z_y + \log\left( \sum_j \exp(z_j) \right)
+\end{aligned}
 ```
 
-La forma de la mano derecha es la estable numéricamente (log-sum-exp).`nn.CrossEntropyLoss`La aplicación de softmax por primera vez es casi siempre un error  se calcula log(softmax(softmax(z))), una cantidad sin sentido.
+La forma de la mano derecha es la estable numéricamente (log-sum-exp).`nn.CrossEntropyLoss`Se puede utilizar el software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de software de base de software de software de software de base de software de software de software de software de software de software de base de software de software de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de base de$\log(\mathop{\mathrm{softmax}}(\mathop{\mathrm{softmax}}(z)))$, una cantidad sin sentido.
 
 ### Por qué funciona el aumento
 
@@ -98,14 +100,14 @@ Por qué ayuda: el modelo deja de memorizar objetivos espinosos y aprende a inte
 
 ### Limpiación de etiquetas
 
-Un primo de la confusión.`[0, 0, 1, 0, 0]`, tren contra`[eps/C, eps/C, 1-eps, eps/C, eps/C]`para un pequeño `eps`El modelo de la producción de logits arbitrariamente afilados y mejora la calibración a casi ningún costo.`nn.CrossEntropyLoss(label_smoothing=0.1)`desde PyTorch 1.10.
+Un primo de la confusión.`[0, 0, 1, 0, 0]`, tren contra`[eps/C, eps/C, 1-eps+eps/C, eps/C, eps/C]`para un pequeño `eps`El modelo de calibración de la marca de la marca de la marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de marca de`nn.CrossEntropyLoss(label_smoothing=0.1)`desde PyTorch 1.10.
 
 ### Evaluamiento más allá de la precisión
 
 La precisión agregada oculta el desequilibrio. Un clasificador binario de 90-10 que siempre predice la clase mayoritaria obtiene un puntaje del 90%.
 
 - **Per-class accuracy** un número por clase; inmediatamente aparece las categorías con menos resultados.
-- **Confusion matrix** C x C cuya fila i col j = el recuento de la clase verdadera i predicho como clase j; la diagonal es correcta, las diagonales fuera de la línea son donde vive el modelo.
+- **Confusion matrix**¿ Qué es esto ?$C \times C$cuadrícula con fila $i$Col.$j$= recuento de clase verdadera $i$se predijo como clase $j$La diagonal es correcta, las fuera de diagonales son donde vive su modelo.
 - **Top-1 / Top-5** si la clase correcta está en las predicciones de 1 o 5 principales; Top-5 importa para ImageNet porque clases como "Norwich terrier" vs "Norfolk terrier" son genuinamente ambigüas.
 - **Calibration (ECE)**¿Se obtiene la predicción de confianza de 0,8 el 80% de las veces? las redes modernas son sistemáticamente demasiado seguras; fija con la escala de temperatura o el suavización de las etiquetas.
 
@@ -413,7 +415,7 @@ Esta lección produce:
 | DataLoader | "The batcher" | Wraps a dataset with shuffling, batching, and (optional) multi-worker loading; gets blamed for half of training bugs |
 | Augmentation | "Random transforms" | Any pixel-level transform at training time that preserves the label; teaches invariances the CNN does not have natively |
 | Mixup / Cutmix | "Mix two images" | Blend both inputs and labels so the classifier learns smooth interpolations instead of hard boundaries |
-| Label smoothing | "Softer targets" | Replace one-hot with (1-eps, eps/(C-1), ...); improves calibration and slightly boosts accuracy |
+| Label smoothing | "Softer targets" | Replace one-hot with (1-eps+eps/C, eps/C, ...); improves calibration and slightly boosts accuracy |
 | Top-k accuracy | "Top-5" | The correct class is in the k highest-probability predictions; used on datasets with genuinely ambiguous classes |
 | Confusion matrix | "Where errors live" | C x C table where entry (i, j) counts images of true class i predicted as j; diagonal is right, off-diagonal tells you what to fix |
 

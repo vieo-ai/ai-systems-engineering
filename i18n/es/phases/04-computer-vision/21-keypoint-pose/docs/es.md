@@ -50,8 +50,8 @@ Top-down (HRNet, ViTPose) es el líder de precisión; bottom-up (OpenPose, Highe
 
 En lugar de regredir `(x, y)`directamente, predicir un `H x W`mapa de calor por punto clave con una mancha gaussiana centrada en la ubicación real.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 En la inferencia, el argmax de cada heatmap es la ubicación del punto clave prevista.
@@ -60,7 +60,7 @@ Por qué las mapas de calor funcionan mejor que la regresión directa: la estruc
 
 ### Localización de subpixel
 
-Argmax da coordenadas enteras. Para la precisión de sub píxeles, refina ajustando una parábola al argmax y sus vecinos, o utiliza el conocido offset `(dx, dy) = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1], ...)`dirección.
+Argmax da coordenadas de números enteros. Para la precisión de sub píxeles, refina ajustando una parábola a la argmax y sus vecinos, o desplaza la argmax hacia el vecino superior con `dx = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1])`y lo mismo para `dy`, como lo hace el código.
 
 ### Los campos de afinidad de parte (PAF)
 
