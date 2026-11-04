@@ -245,6 +245,16 @@ Esta lição produz:
 3. Converte um conjunto de dados para Parquet e compare o tamanho do arquivo para CSV
 4. Criar uma divisão de trens/val/teste 70/15/15 com uma semente fixa e verificar os tamanhos
 
+### Indicios
+
+**Exercise 1.**Liga-me .`load_and_inspect("glue", "mrpc")`de`code/data_utils.py`, ou `load_dataset("glue", "mrpc")`Directamente e impressão`ds["train"][:5]`Cada exemplo deve ter`sentence1`- Não .`sentence2`, e `label`campos.
+
+**Exercise 2.**Carregar o conjunto de dados com `streaming=True`, como `stream_dataset`e ler exemplos em um ciclo que pára quando `time.time()`Imprima a contagem; executa-a duas vezes, porque a primeira corrida inclui a inicialização da conexão.
+
+**Exercise 3.**Salvar o mesmo conjunto de dados com `to_csv`E ...`to_parquet`, como `convert_format`faz, então compare os tamanhos com `ls -lh`ou `os.path.getsize`- Carregue o ficheiro do Parquet .`load_from_parquet`e verifique se a contagem das filas não mudou.
+
+**Exercise 4.**Utilização`train_test_split`duas vezes com um fixo `seed`A primeira divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |

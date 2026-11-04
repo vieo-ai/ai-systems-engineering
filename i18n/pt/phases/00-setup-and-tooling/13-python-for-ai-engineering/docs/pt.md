@@ -1029,6 +1029,18 @@ Relata cada descoberta com um local, o problema e uma solução.
 4. Escreva .`matvec(matrix, vector)`Em Python puro e em NumPy.`best_time`Para tamanhos 4, 64 e 1024. Encontre o tamanho onde NumPy se torna mais rápido na sua máquina.
 5. Escreva a imagem do Concept.`ast.parse`E ...`ast.walk`em cada arquivo em `phases/*/*/code/*.py`Contar os ficheiros que contêm`ast.ListComp`- Não .`ast.Yield`, e `ast.With`, e comparar as suas contagens com a mesa.
 
+### Indicios
+
+**Exercise 1.**Importação`run_demo`de`code/main.py`E chamá-lo com `seed=7`E com`seed=8`, e depois imprimir ambos os resultados com `format_report`. Os valores que vêm de dados aleatórios mudam; os tamanhos divididos dependem apenas de `n`E ...`test_fraction`, para que permaneçam iguais.
+
+**Exercise 2.**Primeiro, classifique uma cópia da lista, depois tome o item médio para comprimentos impares e a média dos dois itens médios para comprimentos par.`statistics.median`em listas como `[3, 1, 2]`E ...`[4, 1, 3, 2]`Os dois devem indicar os mesmos números.
+
+**Exercise 3.**Leia `load_records`em `code/main.py`E mantenha o seu passo de análise, mas `yield`Cada um .`Record`Em vez de adicioná-lo a uma lista.`save_records`com`make_dataset(200_000)`para fazer o arquivo, então comparar `peak_bytes(lambda: load_records(path))`com`peak_bytes(lambda: sum(1 for _ in your_generator(path)))`O gerador deve ser consumido dentro do dispositivo de chamada, ou`peak_bytes`O Conselho, em nome da Comissão, tem de apresentar um relatório que, em primeiro lugar, é um relatório sobre a criação de um mercado único.
+
+**Exercise 4.**Utilização`dot`como o modelo para a versão pura Python e chamá-lo uma vez para cada linha, então use `np.array(matrix) @ np.array(vector)`Tempo para ambos.`best_time`e imprimir uma linha de tabela para cada tamanho; os dois resultados devem ser iguais antes de comparar os tempos.
+
+**Exercise 5.**Leia cada arquivo com `Path.read_text`, analisá-lo com `ast.parse`, e usar `any(isinstance(node, ast.ListComp) for node in ast.walk(tree))`Para testar uma construção. Conte cada arquivo uma vez, porque a tabela no Concept conta arquivos.
+
 ## Termos-chave
 
 | Term | What people say | What it means |
