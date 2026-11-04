@@ -38,15 +38,15 @@ minimize L(w) where:
 
 ساده ترین بهینه ساز. تراز خسارت را نسبت به هر وزن محاسبه کنید. هر وزن را به سمت مخالف ترازش حرکت دهید. مرحله را با سرعت یادگیری مقیاس دهید.
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 این کل الگوریتم است. یک خط.
 
 ```mermaid
 graph TD
-    A["* Starting point (high loss)"] --> B["Moving downhill along gradient"]
+    A["* Starting point (high loss)"] --> B["Moving downhill, against the gradient"]
     B --> C["Approaching minimum"]
     C --> D["o Minimum (low loss)"]
 ```
@@ -94,9 +94,11 @@ graph LR
 
 کاهش گرادینت وانیل فقط به گرادینت فعلی نگاه می کند. اگر گرادینت زیگزاک (معمولا در دره های باریک) باشد، پیشرفت کند است. پمنتوم این را با جمع آوری گرادینت های گذشته به یک اصطلاح سرعت تنظیم می کند.
 
-```
-v = beta * v + gradient
-w = w - lr * v
+```math
+\begin{aligned}
+v &= \beta \cdot v + \text{gradient} \\
+w &= w - \text{lr} \cdot v
+\end{aligned}
 ```
 
 این شبیه سازی: یک توپ که به پایین می چرخد، در هر ضربه متوقف نمی شود و دوباره شروع نمی شود. سرعت را در جهت های ثابت افزایش می دهد و نوسانات را کاهش می دهد.
@@ -124,17 +126,17 @@ graph TD
 
 آدم (تقدير لحظه سازي) دو چيز رو به وزن ميگيره:
 
-1. اولین لحظه (m): متوسط جاری گرادینت ها (مانند حرکت)
-2. لحظه دوم (v): متوسط جاری گرادینت های مربع (حجم گرادینت)
+1. لحظه اول ($m$): متوسط جاری گرادینت ها (مانند حرکت)
+2. لحظه دوم ($v$): متوسط جاری گرادینت های مربع (بزرگ بودن گرادینت)
 
-```
-m = beta1 * m + (1 - beta1) * gradient
-v = beta2 * v + (1 - beta2) * gradient^2
-
-m_hat = m / (1 - beta1^t)    bias correction
-v_hat = v / (1 - beta2^t)    bias correction
-
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+\begin{aligned}
+m &= \beta_1 \cdot m + (1 - \beta_1) \cdot \text{gradient} \\
+v &= \beta_2 \cdot v + (1 - \beta_2) \cdot \text{gradient}^2 \\[4pt]
+\hat{m} &= m / (1 - \beta_1^t) \quad \text{bias correction} \\
+\hat{v} &= v / (1 - \beta_2^t) \quad \text{bias correction} \\[4pt]
+w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
+\end{aligned}
 ```
 
 تقسیم توسط`sqrt(v_hat)`در این زمینه، وزن با گرادینت های بزرگ با یک عدد بزرگ (خطای موثر کوچک) تقسیم می شود. وزن با گرادینت های کوچک با یک عدد کوچک (خطای موثر بزرگ) تقسیم می شود. هر وزن نرخ یادگیری سازنده خود را می یابد.
@@ -149,14 +151,14 @@ w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
 
 | Schedule | Formula | Use case |
 |----------|---------|----------|
-| Step decay | lr = lr * factor every N epochs | Simple, manual control |
-| Exponential decay | lr = lr_0 * decay^t | Smooth reduction |
-| Cosine annealing | lr = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T)) | Transformers, modern training |
+| Step decay | $\text{lr} = \text{lr} \cdot \text{factor}$ every $N$ epochs | Simple, manual control |
+| Exponential decay | $\text{lr} = \text{lr}_0 \cdot \text{decay}^t$ | Smooth reduction |
+| Cosine annealing | $\text{lr} = \text{lr} _{\min} + 0.5 \cdot (\text{lr} _{\max} - \text{lr} _{\min}) \cdot (1 + \cos(\pi t / T))$ | Transformers, modern training |
 | Warmup + decay | Linear ramp up, then decay | Large models, prevents early instability |
 
 ### مخلوط با غیر مخلوط
 
-یک تابع مخلوط حداقل یک تابع دارد.`f(x) = x^2`مخروط است.
+یک تابع مخروط حداقل های محلی بدی ندارد: هر حداقل محلی حداقل جهانی است. برای یک تابع مخروط صاف که حداقل دارد، کاهش گرادینت با نرخ یادگیری کمی به اندازه کافی به آن نزدیک می شود. یک شکل مربع مانند $f(x) = x^2$مخلوط است و حداقل آن منحصر به فرد است.
 
 عملکردهای از دست دادن شبکه عصبی غیر خم هستند. آنها دارای بسیاری از حداقل های محلی، نقاط سیله و مناطق صاف هستند.
 
@@ -205,8 +207,8 @@ gradient-descent
 
 تابع روزنبروک یک معیار بهینه سازی کلاسیک است. حداقل آن در (1, 1) در داخل یک دره باریک منحنی است که پیدا کردن آسان است اما دنبال کردن دشوار است.
 
-```
-f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
+```math
+f(x, y) = (1 - x)^2 + 100 \cdot (y - x^2)^2
 ```
 
 ```python
@@ -351,9 +353,19 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)
 
 2. **Momentum comparison.**SGD را با ارزش های حرکت [0.0, 0.5, 0.9, 0.99] بر روی تابع روزنبروک اجرا کنید. از دست دادن در هر مرحله پیگیری کنید. کدام ارزش حرکت سریعتر به هم می پیوندد؟ کدام تخلیه می شود؟
 
-3. **Saddle point escape.**تابع را تعریف کنید`f(x, y) = x^2 - y^2`با این حال، با این که این نوع مواد به صورت "گند" و "گند" و "آدم" در حال حرکت هستند، مقایسه کنید که کدام یک از آنها از نقطه "گند" فرار می کند.
+3. **Saddle point escape.**تابع را تعریف کنید$f(x, y) = x^2 - y^2$با این حال، با این که این نوع مواد به صورت "گند" و "گند" و "آدم" در حال حرکت هستند، مقایسه کنید که کدام یک از آنها از نقطه "گند" فرار می کند.
 
 4. **Implement learning rate decay.**یک جدول تعارفی از انحلال را به کلاس GradientDescent اضافه کنید: `lr = lr_0 * 0.999^step`.با هم تراز و بدون انحلال در تابع روزنبروک مقایسه کنید
+
+### اشاره ها
+
+**Exercise 1.**به سرعت در حال یادگیری باشید و یک`GradientDescent(lr=...)`برای هر یک، و آن را به `optimize`با`rosenbrock`و`rosenbrock_gradient`. يه رين که متراکم ميشه نشان ميده خسارت داره که رشد ميکنه يا ميشه`nan`حداقل:$(1, 1)$با ضایعات 0.
+
+**Exercise 2.**ایجاد کنید`SGDMomentum(momentum=m)`برای هر ارزش و ثبت خسارت پس از هر مرحله.`find_convergence_step`برای مقایسه سرعت، و به دنبال خسارات که بالا و پایین می روند تا بیش از حد پیدا کنند.
+
+**Exercise 3.**تراز را بنویسید$(2x, -2y)$و سه بهینه کننده را از (0.01, 0.01) اجرا کنید.$y$هر 100 قدم: بهینه سازي که فرار ميکنه اونه که$\lvert y \rvert$بزرگ می شود.
+
+**Exercise 4.**ذخیره`lr_0`و يه قدم ميزني`GradientDescent`و محاسبه`lr = lr_0 * 0.999 ** step`داخل`step`. نرخ یادگیری را در مرحله 0 و مرحله 1000 چاپ کنید.`lr_0`به حدود$0.37 \times \text{lr}_0$. .
 
 ## اصطلاحات کلیدی
 
@@ -365,7 +377,7 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)
 | SGD | "Random sampling" | Stochastic gradient descent. Compute gradient on a random subset instead of the full dataset. Almost always means mini-batch SGD in practice. |
 | Mini-batch | "A chunk of data" | A small subset of training data (32-256 samples) used to estimate the gradient. Balances speed and gradient accuracy. |
 | Adam | "The default optimizer" | Adaptive Moment Estimation. Tracks per-weight running averages of gradients and squared gradients to give each weight its own learning rate. |
-| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by (1 - beta^t) to compensate during early steps. |
+| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by $(1 - \beta^t)$ to compensate during early steps. |
 | Learning rate schedule | "Change lr over time" | A function that adjusts the learning rate during training. Large steps early, small steps late. |
 | Convex function | "One valley" | A function where any local minimum is the global minimum. Gradient descent always finds it. Neural network losses are not convex. |
 | Saddle point | "Flat but not a minimum" | A point where the gradient is zero but it is a minimum in some directions and a maximum in others. Common in high dimensions. |

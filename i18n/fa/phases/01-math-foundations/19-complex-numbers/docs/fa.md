@@ -45,40 +45,42 @@ where:
 
 **Addition.**قسمت های واقعی رو هم جمع کنید، قسمت های خیالی رو هم جمع کنید.
 
+```math
+\begin{aligned}
+(a + bi) + (c + di) &= (a + c) + (b + d)i \\[4pt]
+\text{Example: } (3 + 2i) + (1 + 4i) &= 4 + 6i
+\end{aligned}
 ```
-(a + bi) + (c + di) = (a + c) + (b + d)i
 
-Example: (3 + 2i) + (1 + 4i) = 4 + 6i
-```
+**Multiplication.**از قانون توزیع استفاده کن و به خاطر داشته باش$i^2 = -1$. .
 
-**Multiplication.**از قانون توزیع استفاده کنید و به یاد داشته باشید که i^2 = -1.
-
-```
-(a + bi)(c + di) = ac + adi + bci + bdi^2
-                 = ac + adi + bci - bd
-                 = (ac - bd) + (ad + bc)i
-
-Example: (3 + 2i)(1 + 4i) = 3 + 12i + 2i + 8i^2
-                            = 3 + 14i - 8
-                            = -5 + 14i
+```math
+\begin{aligned}
+(a + bi)(c + di) &= ac + adi + bci + bdi^2 \\
+&= ac + adi + bci - bd \\
+&= (ac - bd) + (ad + bc)i \\[8pt]
+\text{Example: } (3 + 2i)(1 + 4i) &= 3 + 12i + 2i + 8i^2 \\
+&= 3 + 14i - 8 \\
+&= -5 + 14i
+\end{aligned}
 ```
 
 **Conjugate.**علامت قسمت خیالی رو برگردونی
 
-```
-conjugate of (a + bi) = a - bi
+```math
+\text{conjugate of } (a + bi) = a - bi
 ```
 
 محصول یک عدد پیچیده و مخلوط آن همیشه واقعی است:
 
-```
+```math
 (a + bi)(a - bi) = a^2 + b^2
 ```
 
 **Division.**عدد و نامگذاری را با مخلوط نامگذاری ضرب کنید.
 
-```
-(a + bi) / (c + di) = (a + bi)(c - di) / (c^2 + d^2)
+```math
+\frac{a + bi}{c + di} = \frac{(a + bi)(c - di)}{c^2 + d^2}
 ```
 
 این بخش خیالی را از نامزن حذف می کند، و به شما یک عدد پیچیده پاک می دهد.
@@ -99,23 +101,24 @@ z = 0 + 4i  corresponds to the point (0, 4) on the imaginary axis
 
 هر نقطه ای در خط می تواند با فاصله اش از اصل و زاویه اش از محور واقعی مثبت توصیف شود.
 
+```math
+\begin{aligned}
+z &= r (\cos\theta + i \sin\theta) \\[4pt]
+\text{where: } r &= |z| = \sqrt{a^2 + b^2} \quad \text{(magnitude, or modulus)} \\
+\theta &= \mathop{\mathrm{atan2}}(b, a) \quad \text{(phase, or argument)}
+\end{aligned}
 ```
-z = r * (cos(theta) + i*sin(theta))
 
-where:
-  r = |z| = sqrt(a^2 + b^2)     (magnitude, or modulus)
-  theta = atan2(b, a)             (phase, or argument)
-```
-
-شکل مستطیل (a + bi) برای جمع کردن خوب است. شکل قطبی (r، theta) برای ضرب خوب است.
+شکل مستطیل$(a + bi)$برای اضافه کردن خوب است.$(r, \theta)$برای ضرب خوب است.
 
 **Multiplication in polar form.**مقادیر را ضرب کنید، زاویه ها را اضافه کنید.
 
-```
-z1 = r1 * e^(i*theta1)
-z2 = r2 * e^(i*theta2)
-
-z1 * z2 = (r1 * r2) * e^(i*(theta1 + theta2))
+```math
+\begin{aligned}
+z_1 &= r_1 e^{i\theta_1} \\
+z_2 &= r_2 e^{i\theta_2} \\[4pt]
+z_1 z_2 &= (r_1 r_2) \, e^{i(\theta_1 + \theta_2)}
+\end{aligned}
 ```
 
 به همین دلیل اعداد پیچیده برای چرخش مناسب هستند. ضرب با یک عدد پیچیده با مقادیر 1 یک چرخش خالص است.
@@ -124,38 +127,38 @@ z1 * z2 = (r1 * r2) * e^(i*(theta1 + theta2))
 
 پل بین نمادین پیچیده و تریگونومیتری:
 
-```
-e^(i*theta) = cos(theta) + i*sin(theta)
-```
-
-این مهم ترین فرمول در این درس است. وقتی تیتا = پی:
-
-```
-e^(i*pi) = cos(pi) + i*sin(pi) = -1 + 0i = -1
-
-Therefore: e^(i*pi) + 1 = 0
+```math
+e^{i\theta} = \cos\theta + i \sin\theta
 ```
 
-پنج ثابت اساسی (e, i, pi, 1, 0) در یک معادله مرتبط هستند.
+اين مهمترين فرمول در اين درس است.$\theta = \pi$:
+
+```math
+\begin{aligned}
+e^{i\pi} &= \cos\pi + i \sin\pi = -1 + 0i = -1 \\[4pt]
+\text{Therefore: } e^{i\pi} + 1 &= 0
+\end{aligned}
+```
+
+پنج ثابت اساسی ($e$،$i$،$\pi$، 1 ، 0) با یک معادله مرتبط است.
 
 ### چرا فرمول یولر برای ML مهم است
 
-فرمول "ایلر" میگه`e^(i*theta)`در theta = 0 شما در (1, 0) هستید. در theta = pi/2, شما در (0, 1). در theta = pi, شما در (-1, 0) هستید. در theta = 3 * pi/2, شما در (0, -1). یک چرخش کامل theta = 2 * pi است.
+فرمول "ایلر" میگه$e^{i\theta}$دایره واحد را به عنوان $\theta$در$\theta = 0$، تو در$(1, 0)$. در$\theta = \pi/2$، تو در$(0, 1)$. در$\theta = \pi$، تو در$(-1, 0)$. در$\theta = 3\pi/2$، تو در$(0, -1)$. یک چرخش کامل$\theta = 2\pi$. .
 
 این بدان معنی است که نمادین پیچیده چرخش هستند. و چرخش ها در هر جا در پردازش سیگنال و ML هستند.
 
 ### اتصال به چرخش دو بعدی
 
-ضرب عدد پیچیده (x + yi) با e^(i*theta) نقطه (x, y) را با زاویه theta در اطراف اصل چرخش می کند.
+ضرب عدد پیچیده$(x + yi)$از طرف$e^{i\theta}$نقطه رو می چرخد$(x, y)$به لحاظ زاویه$\theta$در مورد اصل
 
-```
-Rotation via complex multiplication:
-  (x + yi) * (cos(theta) + i*sin(theta))
-  = (x*cos(theta) - y*sin(theta)) + (x*sin(theta) + y*cos(theta))i
-
-Rotation via matrix multiplication:
-  [cos(theta)  -sin(theta)] [x]   [x*cos(theta) - y*sin(theta)]
-  [sin(theta)   cos(theta)] [y] = [x*sin(theta) + y*cos(theta)]
+```math
+\begin{aligned}
+&\text{Rotation via complex multiplication:} \\
+&\quad (x + yi)(\cos\theta + i \sin\theta) = (x \cos\theta - y \sin\theta) + (x \sin\theta + y \cos\theta)i \\[8pt]
+&\text{Rotation via matrix multiplication:} \\
+&\quad \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} = \begin{bmatrix} x \cos\theta - y \sin\theta \\ x \sin\theta + y \cos\theta \end{bmatrix}
+\end{aligned}
 ```
 
 آنها نتایج مشابهی را تولید می کنند. ضرب پیچیده چرخش دو بعدی است. ماتریس چرخش فقط ضرب پیچیده ای است که با نماد ماتریس نوشته شده است.
@@ -173,55 +176,56 @@ graph TD
 
 ### فیزورها و سیگنال های چرخش
 
-یک نمادین پیچیده e^(i*omega*t) یک نقطه است که در اطراف دایره واحد در فرکانس زاویه ای omega چرخش می کند.
+یک نمادین پیچیده$e^{i\omega t}$نقطه ای است که در اطراف دایره واحد در فرکانس زاویه ای چرخش می کند$\omega$. مثل$t$افزایش می یابد، نقطه به دنبال دایره است.
 
-بخش واقعی این نقطه چرخش cos(omega*t است. بخش خیالی sin(omega*t است. یک سیگنال سینوسایدی سایه یک عدد پیچیده چرخش است.
+بخش اصلي اين نقطه چرخش$\cos(\omega t)$قسمت خيالي اينه$\sin(\omega t)$. سیگنال سینوسوائدی سایه یک عدد پیچیده چرخش است
 
-```
-e^(i*omega*t) = cos(omega*t) + i*sin(omega*t)
-
-Real part:      cos(omega*t)    -- a cosine wave
-Imaginary part: sin(omega*t)    -- a sine wave
+```math
+\begin{aligned}
+e^{i\omega t} &= \cos(\omega t) + i \sin(\omega t) \\[4pt]
+\text{Real part: } & \cos(\omega t) \quad \text{-- a cosine wave} \\
+\text{Imaginary part: } & \sin(\omega t) \quad \text{-- a sine wave}
+\end{aligned}
 ```
 
 این است که تصویر فیزور. به جای ردیابی یک موج سینوس حرکت می کنید، شما یک تیر چرخش را به آرامی ردیابی می کنید. تغییر مراحل تبدیل به تعویض زاویه می شود. تغییرات amplitude تبدیل به تغییرات بزرگی می شود. اضافه شدن سیگنال ها تبدیل به اضافه شدن ویکتور می شود.
 
 ### ریشه ی وحدت
 
-ریشه های N-th یگانگی N نقطه های مساوی در دایره واحد هستند:
+.$N$-اين ریشه ي اتحاد است$N$نقاط مساوی در دایره واحد:
 
+```math
+w_k = e^{2\pi i k/N} \quad \text{for } k = 0, 1, 2, \ldots, N-1
 ```
-w_k = e^(2*pi*i*k/N)    for k = 0, 1, 2, ..., N-1
-```
 
-برای N = 4، ریشه ها عبارتند از: 1، i، -1، -i (چهار نقطه کامپوس).
-برای N=8، چهار نقطه کامپوس و چهار قطب قطب قطب را دریافت می کنید.
+برای$N = 4$، ریشه ها اینه:$1, i, -1, -i$(چهار نقطه کامپوس)
+برای$N = 8$، شما چهار نقطه کامپوس و چهار قطب قطب را دریافت می کنید
 
-ریشه های وحدت پایه ی ترانسفورم فوریتر متمایز هستند. DFT سیگنال را به اجزای این فرکانس های N با فاصله برابر تجزیه می کند.
+ریشه های وحدت پایه ی ترانسفورم فوریتر متمایز هستند. DFT یک سیگنال را به اجزای در این نقاط تجزیه می کند.$N$فرکانس های مساوی
 
 ### اتصال به DFT
 
-تغییر فوریتر متمایز یک سیگنال x[0], x[1], ..., x[N-1] عبارت است از:
+ترانسفورم فوريري متناظر سيگنال$x[0], x[1], \ldots, x[N-1]$این است:
 
-```
-X[k] = sum_{n=0}^{N-1} x[n] * e^(-2*pi*i*k*n/N)
+```math
+X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N}
 ```
 
-هر X[k] اندازه گیری می کند که سیگنال چقدر با ریشه kth اتحاد ارتباط دارد - یک سینوساید پیچیده در فرکانس k. DFT سیگنال را به N فازورهای چرخش تقسیم می کند و به شما طول و عرض و مرحله هر یک از آنها می گوید.
+هرکدوم$X[k]$اندازه گیری می کند که سیگنال چقدر با $k$-سرچين اتحاد-- يک سينوسايد پیچیده در فرکانس$k$. DFT يک سيگنال رو به$N$فازورهای چرخش و به شما در طول و مرحله هر یک از آنها می گوید.
 
 ### چرا من خيالي نيستم
 
-کلمه "تصور" یک تصادف تاریخی است. دکارتس آن را به طور رد کننده استفاده کرد. اما من از اعداد منفی بیشتر از زمانی که مردم آنها را برای اولین بار رد کردند، تصور نمی کنم. اعداد منفی پاسخ می دهند "چه چیزی را از 5 برای بدست آوردن 3 حذف می کنید؟" واحد تخیل پاسخ می دهد "چه چیزی را به مربع برای بدست آوردن -1 تقسیم می کنید؟"
+کلمه "خيال" تصادفي تاريخي است. "دکارت" ازش استفاده کرد$i$تعداد منفی پاسخ می دهد "چه چیزی را از 3 حذف می کنید تا بدست آورید؟" واحد خیالی پاسخ می دهد "چه چیزی را به مربع تقسیم می کنید تا -1 بدست آورید؟"
 
-به طور مفیدی تر: i یک عامل چرخش ۹۰ درجه است. یک عدد واقعی را با i ضرب کنید، ۹۰ درجه به محور خیالی چرخش می کنید. دوباره با i ضرب کنید (i^2) ، ۹۰ درجه دیگر چرخش می کنید - اکنون شما در جهت منفی واقعی اشاره می کنید. به همین دلیل i^2 = -۱. این معجزه نیست. این یک نیمه چرخش است که از دو چهار چهارم چرخش ساخته شده است.
+به طور مفيد تر:$i$یک عامل چرخش 90 درجه است.$i$یک بار، 90 درجه به محور خیالی چرخش می کنید.$i$دوباره ($i^2$در حال حاضر شما در جهت منفی واقعی اشاره می کنید.$i^2 = -1$. اين رازگير نيست . اين يه نصف چرخ ساخته شده از دو چهارم چرخ
 
 به همین دلیل اعداد پیچیده در همه جا در مهندسی وجود دارد. هر چیزی که چرخش می کند -- امواج الکترومغناطیسی، حالت های کوانتومی، نوسانات سیگنال، کد بندی موقعیت - به طور طبیعی توسط اعداد پیچیده توصیف می شود.
 
 ### نمادین پیچیده در مقابل عملکردهای تریگونومیتی
 
-قبل از فرمول یولر، مهندسان سیگنال ها را به عنوان A*cos(omega*t + phi) - امپلیتوود A، فرکانس omega، فاز phi نوشتند. این کار می کند اما ریاضیات را دردناک می کند. اضافه کردن دو کوسین با مراحل مختلف به هویت های تریگونومیتری نیاز دارد.
+قبل از فرمول یولر، مهندسان سیگنال ها را به عنوان$A \cos(\omega t + \phi)$-- حجم$A$, فرکانس$\omega$، مرحله$\phi$اين کار ميکنه ولي حساب رو دردناك ميکنه. اضافه کردن دو كوسين با مراحل مختلف به هویت تگونوميتري نياز داره.
 
-با نمادین پیچیده، همان سیگنال A*e^(i*(omega*t + phi است)). اضافه کردن دو سیگنال فقط اضافه کردن دو عدد پیچیده است. ضرب (مودول کردن) فقط ضرب بزرگی و اضافه کردن زاویه است. تغییر مرحله تبدیل به اضافه زاویه می شود. تغییر فرکانس تبدیل به ضربات توسط فازورها می شود.
+با نمادین پیچیده، همان سیگنال$A e^{i(\omega t + \phi)}$اضافه کردن دو سیگنال فقط اضافه کردن دو عدد پیچیده است. ضرب (مودول کردن) فقط ضرب بزرگی و اضافه کردن زاویه است. تغییر مرحله به اضافه زاویه تبدیل می شود. تغییر فرکانس به ضرب شدن توسط فازورها تبدیل می شود.
 
 کل زمینه پردازش سیگنال به علامت های نمایی پیچیده تغییر داد زیرا ریاضیات تمیز تر است. "سیگنال واقعی" همیشه تنها بخشی واقعی از نمایش پیچیده است. بخش خیالی به عنوان حسابداری همراه است، به طوری که تمام الجبر به طور طبیعی کار می کند.
 
@@ -229,9 +233,11 @@ X[k] = sum_{n=0}^{N-1} x[n] * e^(-2*pi*i*k*n/N)
 
 **Sinusoidal positional encodings**(ورق اصلی ترانسفورماتور):
 
-```
-PE(pos, 2i) = sin(pos / 10000^(2i/d))
-PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
+```math
+\begin{aligned}
+PE(pos, 2i) &= \sin\left(pos / 10000^{2i/d}\right) \\
+PE(pos, 2i+1) &= \cos\left(pos / 10000^{2i/d}\right)
+\end{aligned}
 ```
 
 جفت های گناه و cos بخش های واقعی و خیالی از نمادین پیچیده در فرکانس های مختلف هستند. هر فرکانس یک "تحلیل" مختلف برای موقعیت کدگذاری را فراهم می کند. فرکانس های پایین به آرامی تغییر می کنند (وضعیت خشن). فرکانس های بالا به سرعت تغییر می کنند (وضعیت خوب). با هم آنها به هر موقعیت یک اثر انگشت فرکانس منحصر به فرد می دهند.
@@ -240,13 +246,13 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
 
 | Operation | Algebraic Form | Geometric Meaning |
 |-----------|---------------|-------------------|
-| Addition | (a+c) + (b+d)i | Vector addition in the plane |
-| Multiplication | (ac-bd) + (ad+bc)i | Rotate and scale |
-| Conjugate | a - bi | Reflect over real axis |
-| Magnitude | sqrt(a^2 + b^2) | Distance from origin |
-| Phase | atan2(b, a) | Angle from positive real axis |
+| Addition | $(a+c) + (b+d)i$ | Vector addition in the plane |
+| Multiplication | $(ac-bd) + (ad+bc)i$ | Rotate and scale |
+| Conjugate | $a - bi$ | Reflect over real axis |
+| Magnitude | $\sqrt{a^2 + b^2}$ | Distance from origin |
+| Phase | $\mathop{\mathrm{atan2}}(b, a)$ | Angle from positive real axis |
 | Division | multiply by conjugate | Reverse rotation and rescale |
-| Power | r^n * e^(i*n*theta) | Rotate n times, scale by r^n |
+| Power | $r^n e^{in\theta}$ | Rotate $n$ times, scale by $r^n$ |
 
 ```mermaid
 graph LR
@@ -326,7 +332,7 @@ def euler(theta):
 
 ### مرحله سوم: چرخش
 
-چرخش یک نقطه (x، y) با زاویه theta یک ضرب پیچیده است:
+چرخش نقطه ای$(x, y)$به لحاظ زاویه$\theta$یک ضرب پیچیده است:
 
 ```python
 point = Complex(3, 4)
@@ -350,11 +356,11 @@ def dft(signal):
     return result
 ```
 
-این O(N^2) DFT است. هر خروجی X[k] مجموعه نمونه های سیگنال ضرب شده توسط ریشه های وحدت است.
+اينم$O(N^2)$DFT. هر محصول$X[k]$مجموع نمونه های سیگنال ضرب شده با ریشه های وحدت است.
 
 ### مرحله 5: DFT معکوس
 
-DFT معکوس سیگنال اصلی را از طیف خود بازسازی می کند. تنها تغییرات از DFT پیش رو: علامت را در نماد تبدیل کنید و با N تقسیم کنید.
+DFT معکوس سیگنال اصلی را از طیف خود بازسازی می کند. تنها تغییرات از DFT پیش رو: علامت را در نماد تبدیل کنید و به $N$. .
 
 ```python
 def idft(spectrum):
@@ -380,7 +386,7 @@ def roots_of_unity(N):
 
 دو ویژگی رو بررسی کن:
 - هر ریشه به طور دقیق 1 است.
-- مجموع تمام ریشه های N صفر است (آن ها با همپردازی حذف می شوند).
+- مجموع همه اش$N$ریشه ها صفر هستند (با همتایی حذف می شوند).
 
 این خواص چیزی هستند که DFT را قابل برگشت می کند. ریشه های وحدت یک پایه ارتوگانل برای دامنه فرکانس تشکیل می دهند.
 
@@ -424,30 +430,42 @@ freqs = np.fft.fftfreq(128, d=1/128)
 
 ## تمرینات
 
-1. **Complex arithmetic by hand.**محاسبه (2 + 3i) * (4 - i) و با کد تأیید کنید. سپس محاسبه (5 + 2i) / (1 - 3i). هر دو نتیجه را در سطح پیچیده کشیده و بررسی کنید که ضرب به طور خودکار گردش کرده و شماره اول را مقیاس بندی کرده است.
+1. **Complex arithmetic by hand.**حساب کردن$(2 + 3i)(4 - i)$و با کدش تایید کن.$(5 + 2i) / (1 - 3i)$هر دو نتیجه را روی سطح پیچیده بکشید و بررسی کنید که ضرب به طور چرخش و مقیاس اولین عدد انجام شده است.
 
-2. **Rotation sequence.**با نقطه (1, 0) شروع کنید. به e^(i*pi/6) بارزید. بررسی کنید که پس از ضرب 12 به (1, 0) باز می گردید. مختصات را در هر مرحله چاپ کنید و تایید کنید که آنها یک 12gon منظم را دنبال می کنند.
+2. **Rotation sequence.**از نکته شروع کن$(1, 0)$. چندانش با$e^{i\pi/6}$12 بار، مطمئن شو که به$(1, 0)$بعد از 12 ضرب، هماهنگی ها را در هر مرحله چاپ کنید و تایید کنید که آنها یک 12gon منظم را دنبال می کنند.
 
-3. **DFT of a known signal.**یک سیگنال ایجاد کنید که مجموع 2*pi*3*t) و 0.5*sin(2*pi*7*t) نمونه شده در 32 نقطه باشد. DFT خود را اجرا کنید. بررسی کنید که طیف بزرگی در فرکانس های 3 و 7 دارای اوج است، با اوج در 7 نصف ارتفاع اوج در 3 است.
+3. **DFT of a known signal.**يه سيگنال بسازيد که مجموعي باشه$\sin(2\pi \cdot 3t)$و$0.5 \sin(2\pi \cdot 7t)$نمونه در 32 نقطه انجام دهید. DFT خود را اجرا کنید. بررسی کنید که طیف بزرگی دارای ذروه در فرکانس های 3 و 7 است، با ذروه در 7 نصف ارتفاع ذروه در 3 است.
 
-4. **Roots of unity visualization.**8-مثل ریشه ی وحدت را محاسبه کنید. بررسی کنید که آنها به صفر جمع می شوند. بررسی کنید که ضرب هر ریشه ای با ریشه ی ابتدایی e^(2*pi*i/8) ریشه بعدی را می دهد.
+4. **Roots of unity visualization.**8-مثل روت های وحدت را محاسبه کنید، بررسی کنید که آنها به صفر جمع می شوند، بررسی کنید که ضرب هر روت با روت اولیه$e^{2\pi i/8}$ریشه بعدی را می دهد.
 
 5. **Rotation matrix equivalence.**برای 10 زاویه تصادفی و 10 نقطه تصادفی، تایید کنید که ضرب پیچیده همان نتیجه را به عنوان ضرب ماتریس-وکتور با ماتریس چرخش 2x2 می دهد. حداکثر تفاوت عددی چاپ کنید.
+
+### اشاره ها
+
+**Exercise 1.**محصول رو با $i^2 = -1$، سپس با ضرب بالا و پایین با مخلوط تقسیم کنید$1 + 3i$. محصول رو با`Complex(2, 3) * Complex(4, -1)`: آن`magnitude()`باید برابر محصول دو شدت باشد و`phase()`باید برابر با مجموع دو مرحله باشد.
+
+**Exercise 2.**قدم رو بردار`euler(math.pi / 6)`و 12 بار ضرب کنید. در هر مرحله، بررسی کنید که آیا شدت 1 باقی می ماند و زاویه 30 درجه رشد می کند. نقطه نهایی باید در حدود 1e-12 از (1, 0 باشد.
+
+**Exercise 3.**با $t = n/32$و تماس بگیرید`dft`فقط به کاشی های 0 تا 15 نگاه کنید چون نیمه بالا یک عکس آینه است.$k$برای یک سینوس از آمپلتوید$A$.$AN/2$، پس انتظار داشته باشید که در بین 3 حدود 16 و در بین 7 حدود 8 باشد
+
+**Exercise 4.**تماس بگیرید`roots_of_unity(8)`و ریشه ها را اضافه کنید: مقدار مجموع باید نزدیک به 0 باشد. هر ریشه را با ریشه قبلی تقسیم کنید و بررسی کنید که هر نتیجه برابر است.`euler(2 * math.pi / 8)`. .
+
+**Exercise 5.**ماتریس چرخش [[cos t، -sin t، [sin t، cos t] است. برای هر زاویه و نقطه، محاسبه کنید `euler(t) * Complex(x, y)`و محصول ماتریکس، سپس بزرگترین تفاوت مطلق را ثبت کنید. انتظار دارید که یک مقدار نزدیک باشد $10^{-15}$. .
 
 ## اصطلاحات کلیدی
 
 | Term | What it means |
 |------|---------------|
-| Complex number | A number a + bi where a is the real part, b is the imaginary part, and i^2 = -1 |
-| Imaginary unit | The number i, defined by i^2 = -1. Not imaginary in the philosophical sense -- it is a rotation operator |
+| Complex number | A number $a + bi$ where $a$ is the real part, $b$ is the imaginary part, and $i^2 = -1$ |
+| Imaginary unit | The number $i$, defined by $i^2 = -1$. Not imaginary in the philosophical sense -- it is a rotation operator |
 | Complex plane | The 2D plane where the x-axis is real and the y-axis is imaginary. Also called the Argand plane |
-| Magnitude (modulus) | The distance from the origin: sqrt(a^2 + b^2). Written as \|z\| |
-| Phase (argument) | The angle from the positive real axis: atan2(b, a). Written as arg(z) |
-| Conjugate | The mirror image across the real axis: conjugate of a + bi is a - bi |
-| Polar form | Expressing z as r * e^(i*theta) instead of a + bi. Makes multiplication easy |
-| Euler's formula | e^(i*theta) = cos(theta) + i*sin(theta). Connects exponentials to trigonometry |
-| Phasor | A rotating complex number e^(i*omega*t) representing a sinusoidal signal |
-| Roots of unity | The N complex numbers e^(2*pi*i*k/N) for k = 0 to N-1. N equally spaced points on the unit circle |
+| Magnitude (modulus) | The distance from the origin: $\sqrt{a^2 + b^2}$. Written as $\lvert z \rvert$ |
+| Phase (argument) | The angle from the positive real axis: $\mathop{\mathrm{atan2}}(b, a)$. Written as $\arg(z)$ |
+| Conjugate | The mirror image across the real axis: conjugate of $a + bi$ is $a - bi$ |
+| Polar form | Expressing $z$ as $r e^{i\theta}$ instead of $a + bi$. Makes multiplication easy |
+| Euler's formula | $e^{i\theta} = \cos\theta + i \sin\theta$. Connects exponentials to trigonometry |
+| Phasor | A rotating complex number $e^{i\omega t}$ representing a sinusoidal signal |
+| Roots of unity | The $N$ complex numbers $e^{2\pi i k/N}$ for $k = 0$ to $N-1$. $N$ equally spaced points on the unit circle |
 | DFT | Discrete Fourier Transform. Decomposes a signal into complex sinusoidal components using roots of unity |
 | RoPE | Rotary Position Embedding. Uses complex multiplication to encode relative position in transformer attention |
 
@@ -456,6 +474,6 @@ freqs = np.fft.fftfreq(128, d=1/128)
 - [Visual Introduction to Euler's Formula](https://betterexplained.com/articles/intuitive-understanding-of-eulers-formula/)- بدون علامت سنگینی، حس هندسی را ایجاد می کند
 - [Su et al.: RoFormer (2021)](https://arxiv.org/abs/2104.09864)- مقاله معرفی نصب موقعیت روتر با استفاده از چرخش پیچیده
 - [Vaswani et al.: Attention Is All You Need (2017)](https://arxiv.org/abs/1706.03762)- کاغذ اصلی ترانسفورماتور با کد بندی موقعیت سینوسایدی
-- [3Blue1Brown: Euler's formula with introductory group theory](https://www.youtube.com/watch?v=mvmuCPvRoWQ)- توضیح بصری از اینکه چرا e^(i*pi) = -1
+- [3Blue1Brown: Euler's formula with introductory group theory](https://www.youtube.com/watch?v=mvmuCPvRoWQ)- توضیح بصری که چرا$e^{i\pi} = -1$
 - [Needham: Visual Complex Analysis](https://global.oup.com/academic/product/visual-complex-analysis-9780198534464)- بهترین درمان بصری اعداد پیچیده، پر از بینش هندسی
 - [Strang: Introduction to Linear Algebra, Ch. 10](https://math.mit.edu/~gs/linearalgebra/)- اعداد پیچیده در زمینه الجبر خطی و ارزش های خاص

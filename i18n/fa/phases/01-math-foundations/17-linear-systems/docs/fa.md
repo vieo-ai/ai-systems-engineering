@@ -1,6 +1,6 @@
 # سیستم های خطی
 
-> حل Ax = b قدیمی ترین مشکل ریاضی است که هنوز شبکه عصبی شما را اداره می کند.
+> حلش$Ax = b$قدیمی ترین مشکل ریاضی است که هنوز شبکه عصبی شما را اداره می کند.
 
 **Type:** Build
 **Language:**پیتون
@@ -9,7 +9,7 @@
 
 ## اهداف یادگیری
 
-- Ax = b را با استفاده از حذف گوسسی با محور بخشی و جایگزینی عقب حل کنید
+- حلش کن$Ax = b$با استفاده از حذف گاسین با محور بخشی و جایگزینی عقب
 - ماتریس فاکتور با تجزیه LU، QR و Cholesky و توضیح دهید که هر کدام مناسب است
 - معادلات معمولی را برای کمترین مربع ها بازیافت کنید و آنها را به بازپسین خطی و خطک متصل کنید
 - تشخیص سیستم های بد حالت با استفاده از شماره وضعیت و اعمال تنظیم برای ثبات آنها
@@ -18,7 +18,7 @@
 
 هر بار که یک رجریشن خطی را تمرین می کنید، یک سیستم خطی را حل می کنید. هر بار که یک تناسب کمترین مربع را محاسبه می کنید، یک سیستم خطی را حل می کنید. هر بار که یک لایه شبکه عصبی محاسبه می کند.`y = Wx + b`وقتی شما یک طرف از یک سیستم خطی را ارزیابی می کنید. وقتی شما تنظیم را اضافه می کنید، سیستم را تغییر می دهید. وقتی شما از فرآیندهای گوسین استفاده می کنید، یک ماتریس را فاکتور می کنید. وقتی شما یک ماتریس کوویاریانس را برای فاصله ماهالانوبیس معکوس می کنید، یک سیستم خطی را حل می کنید.
 
-معادله Ax = b در همه جا ظاهر می شود. A یک ماتریس از معادلات شناخته شده است. b یک متری از خروجی شناخته شده است. x متری ناشناخته است که می خواهید پیدا کنید. در بازپسین خطی، A ماتریس داده شما است، b متری هدف شما است، و x متری وزن شما است. کل مدل به: پیدا کنید x به طوری که Ax به b نزدیک تر باشد.
+معادله$Ax = b$همه جا ظاهر ميشه$A$یک ماتریس از معادلات شناخته شده است.$b$یک ویکتور از خروجی های شناخته شده است.$x$در رجریشن خطی، $A$ماتریک داده های شما است$b$وکتور هدف شما است و$x$این مدل به: پیدا کنید$x$مثل اين$Ax$به اندازه ي ممکنه$b$تا حد امکان
 
 در این درس هر روش اصلی برای حل این معادله از ابتدا ساخته شده است. شما درک خواهید کرد که چرا برخی از روش ها سریع و برخی دیگر پایدار هستند، چرا برخی فقط برای سیستم های مربع کار می کنند و برخی دیگر برای سیستم های بیش از حد تعیین شده کار می کنند و چرا شماره شرط ماتریک شما تعیین می کند که آیا پاسخ شما به هیچ وجه معنی دارد.
 
@@ -54,15 +54,15 @@ graph TD
     end
 ```
 
-در قالب ماتریکس، "یک راه حل" به معنای A است قابل برگشت. "هیچ راه حل" به معنای سیستم ناسازگار است. "حل های نامحدود" به معنای A دارای فضای صفر است. اکثر مشکلات ML در دسته "هیچ راه حل دقیق" قرار دارند زیرا شما معادلات (قطعات داده) بیشتری نسبت به نامعلومها (پارامترها) دارید. این جایی است که کمترین مربع وارد می شود.
+در قالب ماتریکس، "یک راه حل" یعنی$A$"هیچ راه حل" به معنای سیستم ناسازگار است. "حل های نامحدود" به معنای$A$بیشتر مشکلات ML در دسته "حل دقیق نیست" قرار می گیرند زیرا شما معادلات (قطعات داده) بیشتری نسبت به نامعلومها (پارامترها) دارید. این جایی است که کمترین مربع وارد می شود.
 
 ### تصویر ستون مقابل تصویر ردیف
 
-دو راه برای خواندن Ax = b وجود دارد.
+دو راه براي خواندن هست$Ax = b$. .
 
-**Row picture.**هر خط از A یک معادله را تعریف می کند. هر معادله یک سطح بالا است. راه حل جایی است که همه آنها متقاطع هستند.
+**Row picture.**هر ردیف از$A$هر معادله یک سطح بالا است. راه حل آن جایی است که همه آنها متقاطع هستند.
 
-**Column picture.**هر ستون A یک ویکتور است. سوال این است که: کدام ترکیب خطی از ستون های A b را تولید می کند؟
+**Column picture.**هر ستون از$A$سوال این است که: کدام ترکیب خطی از ستون های $A$تولید می کند$b$؟
 
 ```
 A = | 2  1 |    b = | 5 |
@@ -75,11 +75,11 @@ Column picture: find x1, x2 such that:
   2 * [2, 1] + 1 * [1, -1] = [4+1, 2-1] = [5, 1]   check.
 ```
 
-تصویر ستون اساسی تر است. اگر b در فضای ستون A قرار دارد، سیستم یک راه حل دارد. اگر b نباشد، نزدیک ترین نقطه را در فضای ستون پیدا می کنید. نزدیک ترین نقطه راه حل کمترین مربع است.
+تصویر ستون اساسی تر است.$b$در فضای ستون ها قرار دارد$A$، سیستم یه راه حل داره$b$اگر این اتفاق نیفتد، نزدیک ترین نقطه را در فضای ستون پیدا می کنید. نزدیک ترین نقطه حل کمترین مربع است.
 
 ### حذف گاسیان
 
-حذف گاوسیون Ax = b را به یک سیستم مثلث بالا Ux = c تبدیل می کند که شما با جایگزینی عقب حل می کنید. این مستقیم ترین روش است.
+حذف گاسيان تبديل ميکنه$Ax = b$به یک سیستم سه مثلث بالا$Ux = c$که شما با جایگزینی پشت حل می کنید. این مستقیم ترین روش است.
 
 الگوریتم:
 
@@ -111,7 +111,7 @@ Back substitute:
   2*x1 + 2 + 2 = 8 --> x1 = 2
 ```
 
-حذف گاوسیان هزینه های O ((n^3) عملیات است. برای یک سیستم 1000x1000، این حدود یک میلیارد عملیات نقطه شناور است. سریع، اما شما می توانید بهتر اگر شما نیاز به حل چندین سیستم با همان A.
+هزینه های حذف گاسین $O(n^3)$عملیات. برای یک$1000 \times 1000$سیستم، که حدود یک میلیارد عملیات نقطه شناور است. سریع، اما شما می توانید بهتر اگر شما نیاز به حل چندین سیستم با همان$A$. .
 
 ### محور بخشی: چرا اهمیت دارد
 
@@ -136,7 +136,7 @@ x1 = (1.001 - 1)/0.001          x1 = (2 - 1)/1 = 1.000 (correct)
 
 ### تجزیه LU
 
-عوامل تجزیه LU A به یک ماتریس سه بعدی پایین L و یک ماتریس سه بعدی بالا U: A = LU. ماتریس L ضربات از حذف گوسین را ذخیره می کند. ماتریس U نتیجه حذف است.
+عوامل تجزیه LU $A$به یک ماتریس مثلث پایین تر$L$و یک ماتریس سه مثلث بالا$U$.$A = LU$.$L$ماتریکس ضربات از حذف گوسسی را ذخیره می کند.$U$ماتریکس نتیجه حذف است.
 
 ```
 A = L @ U
@@ -146,25 +146,27 @@ A = L @ U
 | 2  3  1 |   | 1  2  1 |   | 0  0  -2 |
 ```
 
-چرا فاکتور به جای حذف؟ چون وقتی L و U دارید، حل Ax = b برای هر b جدید تنها O ((n^2) را هزینه می کند:
+چرا فاکتور بجای حذف؟ چون وقتی که این موضوع رو حل کرد$L$و$U$، حل کردن$Ax = b$برای هر چیز جدید$b$فقط هزینه ها$O(n^2)$:
 
+```math
+\begin{aligned}
+Ax &= b \\
+LUx &= b \\
+&\text{Let } y = Ux\text{:} \\
+Ly &= b \quad \text{(forward substitution, } O(n^2)\text{)} \\
+Ux &= y \quad \text{(back substitution, } O(n^2)\text{)}
+\end{aligned}
 ```
-Ax = b
-LUx = b
-Let y = Ux:
-  Ly = b    (forward substitution, O(n^2))
-  Ux = y    (back substitution, O(n^2))
-```
 
-هزینه O (n^3) در طول فاکتورسازی یک بار پرداخت می شود. هر حل بعدی O (n^2) است. اگر شما نیاز به حل 1000 سیستم با همان A اما متری بی متفاوت دارید، LU یک عامل 1000/3 در کل کار را ذخیره می کند.
+.$O(n^3)$هزینه یک بار در طول فاکتورسازی پرداخت می شود.$O(n^2)$اگه ميخواي 1000 سيستم رو با هم حل کني$A$اما متفاوت$b$در این حالت، LU یک فاکتور 1000/3 در کل کار را ذخیره می کند.
 
-با محور بخشی، PA = LU را دریافت می کنیم که P یک ماتریس تغییراتی است که سوئیپ های ردیف را ثبت می کند.
+با محور جزئي، شما ميگيد$PA = LU$کجا$P$یک ماتریس تغییراتی است که تبادل صف را ثبت می کند.
 
 ### تجزیه QR
 
-عوامل تجزیه QR A به یک ماتریس Q راست راست و یک ماتریس سه مثلث بالا R: A = QR.
+عوامل تجزیه QR $A$به یک ماتریس راست راست$Q$و یک ماتریس سه مثلث بالا$R$.$A = QR$. .
 
-یک ماتریس راست راستو دارای خواص Q^T Q = I است. ستون های آن متری های راستو طبیعی هستند. ضرب با Q طول و زاویه ها را حفظ می کند.
+یک ماتریکس راست راستین دارای ویژگی است$Q^T Q = I$ستون های آن متریکهای آرتونورمال هستند.$Q$طول و زاویه ها را حفظ می کند.
 
 ```
 A = Q @ R
@@ -178,7 +180,7 @@ To solve Ax = b:
   Back substitute to get x.
 ```
 
-QR برای حل مشکلات کمترین مربع از نظر عددی پایدارتر از LU است. فرآیند گرام-شمیدت ستون به ستون Q را ایجاد می کند:
+QR برای حل مشکلات کمترین مربع از نظر عددی پایدارتر از LU است.$Q$ستون به ستون:
 
 ```
 Given columns a1, a2, ... of A:
@@ -194,11 +196,11 @@ q3 = q3 / ||q3||
 R[i][j] = qi . aj    for i <= j
 ```
 
-هر مرحله بخش را در طول تمام متری های q قبلی حذف می کند و تنها جهت جدید ارتگونال را باقی می گذارد.
+هر مرحله ي اين بخش رو در طول تمام مراحل قبلی حذف ميکنه$q$متری که تنها جهت جدید ارتگونال را باقی می گذارد.
 
 ### تجزیه چولسکی
 
-وقتی A متقابل است (A = A^T) و مثبت تعریف شده (همه ارزش های خاص مثبت) ، می توانید آن را به عنوان A = L L^T در حالی که L مثلث پایین تر است، فاکتور کنید. این تجزیه چولسکی است.
+چه وقت$A$همتایی است ($A = A^T$) و مثبت مشخص (همه ارزش های خاص مثبت) ، می توانید آن را به عنوان $A = L L^T$کجا$L$مثلث پایین تر است. این تجزیه چولسکی است.
 
 ```
 A = L @ L^T
@@ -215,13 +217,13 @@ L[i][j] = (A[i][j] - sum(L[i][k]*L[j][k] for k < j)) / L[j][j]    for i > j
 - ماتریس های کوویاریانس نیمه تعریف مثبت همتایی هستند (محدود مثبت با تنظیم).
 - ماتریس هسته در فرآیندهای گوس متراکی مثبت مشخص است.
 - Hessian یک تابع مخروط حداقل متقابل مثبت مشخص است.
-- A^T A همیشه نیمه تعریف مثبت همتایی است.
+- $A^T A$همیشه هم تراز مثبت نیمه تعریف شده است.
 
-در فرآیند های گاوسی، شما ماتریس هسته K را با Cholesky فاکتور می کنید، سپس K alpha = y را برای بدست آوردن متوسط پیش بینی حل می کنید. فاکتور Cholesky همچنین تعیین کننده ی log را برای احتمال حاشیه ای به شما می دهد: log det(K) = 2 * مجموع ((log(diag(L))).
+در فرآیند های گاوسی، شما ماتریس هسته را فاکتور می کنید$K$با چولسکي، پس حلش کن$K \alpha = y$فاکتور چولسکی همچنین تعیین کننده ی تاریخ برای احتمال حاشیه را به شما می دهد:$\log \det(K) = 2 \sum \log(\mathop{\mathrm{diag}}(L))$. .
 
 ### کمترین مربع ها: زمانی که Ax = b هیچ راه حل دقیق ندارد
 
-اگر A m x n با m > n (معادلات بیشتر از نامعلوم ها) باشد، سیستم بیش از حد تعیین شده است. هیچ راه حل دقیق وجود ندارد. در عوض، شما خطای مربع را به حداقل می رسانید:
+اگه$A$.$m \times n$با$m > n$(معادلات بیشتر از نامعلوم ها) ، سیستم بیش از حد تعیین شده است. هیچ راه حل دقیق وجود ندارد. در عوض، شما خطای مربع را به حداقل می رسانید:
 
 ```
 minimize ||Ax - b||^2
@@ -232,11 +234,11 @@ This is the sum of squared residuals:
 
 کم کردن معادلات معمول را برآورده می کند:
 
-```
+```math
 A^T A x = A^T b
 ```
 
-مشتق: گسترش دهیدAx - b b ≠ b^2 = (Ax - b) ^T (Ax - b) = x^T A^T A x - 2 x^T A^T b + b^T b. گریادینتی را نسبت به x بگیرید و آن را به صفر تنظیم کنید: 2 A^T A x - 2 A^T b = 0.
+مشتق: گسترش$\lVert Ax - b \rVert^2 = (Ax - b)^T (Ax - b) = x^T A^T A x - 2 x^T A^T b + b^T b$. به سمت گرادينت نسبت به$x$، صفرش رو تنظیم کن:$2 A^T A x - 2 A^T b = 0$. .
 
 ```
 Original system (overdetermined, 4 equations, 2 unknowns):
@@ -256,35 +258,40 @@ This is linear regression. x[0] is the intercept, x[1] is the slope.
 
 ### معادلات طبیعی = بازپسین خطی
 
-ارتباط دقیق است. در بازپسین خطی، ماتریس داده X شما دارای یک ردیف در هر نمونه و یک ستون در هر ویژگی است. متری هدف شما y دارای یک ورودی در هر نمونه است. متری وزن w را برآورده می کند:
+ارتباط درست است. در بازپسین خطی، ماتریس داده شما$X$یک ردیف در هر نمونه و یک ستون در هر ویژگی دارد. متری هدف شما $y$یک ورودی در هر نمونه دارد.$w$رضایت می دهد:
 
-```
-X^T X w = X^T y
-w = (X^T X)^(-1) X^T y
+```math
+\begin{aligned}
+X^T X w &= X^T y \\
+w &= (X^T X)^{-1} X^T y
+\end{aligned}
 ```
 
 این راه حل بسته برای بازپسین خطی است.`sklearn.linear_model.LinearRegression.fit()`محاسبه این (یا معادل آن از طریق QR یا SVD)
 
-یک اصطلاح تنظیم کننده lambda * I را به ماتریکس اضافه کنید و شما بازپسین ریج را دریافت می کنید:
+یک اصطلاح تنظیم کننده اضافه کنید$\lambda I$به ماتریکس و شما به رجس ترسیم می رسید:
 
-```
-(X^T X + lambda * I) w = X^T y
-w = (X^T X + lambda * I)^(-1) X^T y
+```math
+\begin{aligned}
+(X^T X + \lambda I) w &= X^T y \\
+w &= (X^T X + \lambda I)^{-1} X^T y
+\end{aligned}
 ```
 
-تنظیمات باعث می شود که ماتریس بهتر شرایط شود (با دقت برگشت آن را آسان تر کند) و با کوچک کردن وزن به سمت صفر از اضافه شدن جلوگیری می کند. ماتریس X^T X + lambda * I همیشه مثبت متقابل است وقتی lambda > 0 است، بنابراین می توانید از Cholesky برای حل آن استفاده کنید.
+تنظیمات باعث می شود که ماتریس بهتر شرایط شود (به طور دقیق برگشت آن را آسان تر کند) و با کوچک کردن وزن به سمت صفر از اضافه شدن جلوگیری می کند.$X^T X + \lambda I$همیشه مثبت متقابل و مشخصه وقتی$\lambda > 0$، تا بتوني از چولسکي براي حلش استفاده کني
 
 ### پلویدونورس (موور-پینروز)
 
-پسودو انورس A+ معکوس متیریک را به ماتریس های غیر مربع و تک تک عمومی می کند. برای هر ماتریس A:
+. " پلوادونورس "$A^+$متریکس انورژن را به ماتریکس غیر مربع و تک تک عمومی می کند.$A$:
 
+```math
+\begin{aligned}
+x &= A^+ b \\[4pt]
+\text{where } A^+ &= V \Sigma^+ U^T \quad \text{(computed via SVD)}
+\end{aligned}
 ```
-x = A+ b
 
-where A+ = V Sigma+ U^T    (computed via SVD)
-```
-
-سیگما+ با گرفتن متقابل هر یکتا غیر صفر و انتقال نتیجه تشکیل می شود. اگر A = U Sigma V^T، پس A+ = V Sigma+ U^T.
+$\Sigma^+$با گرفتن متقابل هر یکتا ارزش غیر صفر و انتقال نتیجه تشکیل می شود. اگر$A = U \Sigma V^T$، پس$A^+ = V \Sigma^+ U^T$. .
 
 ```
 A = U Sigma V^T        (SVD)
@@ -297,21 +304,21 @@ A+ = V Sigma+ U^T
 ```
 
 این پسودو انورس، حداقل حل کمترین مربع را می دهد. اگر سیستم:
-- یک راه حل: A + b می دهد.
-- هیچ راه حل: A + b راه حل کمترین مربع را می دهد.
-- راه حل های بی نهایت: A + b به یکی با کوچکترین مقدار B را می دهد.
+- یک راه حل:$A^+ b$می دهد.
+- راه حل نداره:$A^+ b$به حداقل حلچه مربع می دهد.
+- راه حل های بی نهایت:$A^+ b$به اون که کوچکترین رو داره$\lVert x \rVert$. .
 
 NumPy's`np.linalg.lstsq`و`np.linalg.pinv`هر دو از SVD در داخل استفاده ميکنن
 
 ### شماره شرط
 
-شماره شرط اندازه گیری می کند که محلول چقدر نسبت به تغییرات کوچک در ورودی حساس است. برای ماتریس A، شماره شرط عبارت است از:
+شماره شرط اندازه گیری می کند که راه حل چقدر نسبت به تغییرات کوچک در ورودی حساس است.$A$, شماره شرط:
 
-```
-kappa(A) = ||A|| * ||A^(-1)|| = sigma_max / sigma_min
+```math
+\kappa(A) = \lVert A \rVert \cdot \lVert A^{-1} \rVert = \frac{\sigma_{\max}}{\sigma_{\min}}
 ```
 
-جایی که sigma_max و sigma_min بزرگترین و کوچکترین مقادیر تک تک هستند.
+کجا$\sigma_{\max}$و$\sigma_{\min}$بزرگترین و کوچکترین مقادیر تک تک
 
 ```
 Well-conditioned (kappa ~ 1):        Ill-conditioned (kappa ~ 10^15):
@@ -323,17 +330,17 @@ small change in x                    huge change in x
 ```
 
 قوانین عمومي:
-- kappa < 100: ایمن، محلول دقیق است.
-- kappa ~ 10^k: شما از دست دادن حدود k ارقام دقت از ارقام شناور نقطه خود را.
-- kappa ~ 10^16 (برای float64): راه حل بی معنی است. ماتریس به طور موثر تک تک است.
+- $\kappa < 100$: ایمن، راه حل درست است.
+- $\kappa \approx 10^k$: شما در مورد$k$ارقام دقت از حسابات نقطه شناور شما
+- $\kappa \approx 10^{16}$(برای float64): راه حل بی معنی است. ماتریس به طور موثر تک تک است.
 
-در ML، شرایط بد زمانی اتفاق می افتد که ویژگی ها تقریباً هم خطی باشند. تنظیم (با اضافه کردن lambda * I) تعداد شرایط را از sigma_max / sigma_min به (sigma_max + lambda) / (sigma_min + lambda) بهبود می بخشد.
+در ML، شرایط بد زمانی اتفاق می افتد که ویژگی ها تقریباً هم خطی باشند.$\lambda I$) تعداد شرایط را از $\sigma_{\max} / \sigma_{\min}$به$(\sigma_{\max} + \lambda) / (\sigma_{\min} + \lambda)$. .
 
 ### روش های تکراری: گرادینت کنجوجت
 
 برای سیستم های بسیار بزرگ و نادر (میلیون ها ناشناخته) ، روش های مستقیم مانند LU یا Cholesky بسیار گران هستند. روش های تکراری با بهبود حدس در طول چندین تکرار راه حل را نزدیک می کنند.
 
-گرادیانت کنجوجات (CG) Ax = b را هنگامی حل می کند که A مثبت متقابل است. این راه حل دقیق را در حداکثر n تکرار (در حساب دقیق) پیدا می کند، اما معمولاً اگر ارزش های خاص A به گروه بندی شوند، بسیار سریعتر به هم می پیوندد.
+تراز کنجوجات (CG) حل می شود $Ax = b$چه وقت$A$این یک خط مثبت متقابل است.$n$تکرار (در حساب دقیق) ، اما معمولاً بسیار سریعتر به هم می پیوندد اگر ارزش های خود$A$گروه بندی شده اند.
 
 ```
 Algorithm sketch:
@@ -362,29 +369,29 @@ CG در موارد زیر استفاده می شود:
 
 | Method | Requirements | Cost | Use case |
 |--------|-------------|------|----------|
-| Gaussian elimination | Square, nonsingular A | O(n^3) | One-off solve of a square system |
-| LU decomposition | Square, nonsingular A | O(n^3) factor + O(n^2) solve | Multiple solves with the same A |
-| QR decomposition | Any A (m >= n) | O(mn^2) | Least squares, numerically stable |
-| Cholesky | Symmetric positive definite A | O(n^3/3) | Covariance matrices, Gaussian processes, ridge regression |
-| Normal equations | Overdetermined (m > n) | O(mn^2 + n^3) | Linear regression (small n) |
-| SVD / pseudoinverse | Any A | O(mn^2) | Rank-deficient systems, minimum-norm solutions |
-| Conjugate gradient | Symmetric positive definite, sparse A | O(n * k * nnz) | Large sparse systems, k = iterations |
+| Gaussian elimination | Square, nonsingular $A$ | $O(n^3)$ | One-off solve of a square system |
+| LU decomposition | Square, nonsingular $A$ | $O(n^3)$ factor + $O(n^2)$ solve | Multiple solves with the same $A$ |
+| QR decomposition | Any $A$ ($m \ge n$) | $O(mn^2)$ | Least squares, numerically stable |
+| Cholesky | Symmetric positive definite $A$ | $O(n^3/3)$ | Covariance matrices, Gaussian processes, ridge regression |
+| Normal equations | Overdetermined ($m > n$) | $O(mn^2 + n^3)$ | Linear regression (small $n$) |
+| SVD / pseudoinverse | Any $A$ | $O(mn^2)$ | Rank-deficient systems, minimum-norm solutions |
+| Conjugate gradient | Symmetric positive definite, sparse $A$ | $O(n \cdot k \cdot \text{nnz})$ | Large sparse systems, $k$ = iterations |
 
 ### ارتباط با ML
 
 هر روش در این درس در ML تولید آمده است:
 
-**Linear regression.**راه حل شکل بسته معادلات طبیعی X^T X w = X^T y را حل می کند. این کار از طریق Cholesky (اگر n کوچک باشد) یا QR (اگر ثبات عددی مهم باشد) یا SVD (اگر ماتریس ممکن است درجه کم باشد) انجام می شود.
+**Linear regression.**راه حل بسته شکل معادلات عادی را حل می کند $X^T X w = X^T y$اين از طريق چولسکي انجام مي شه$n$کوچک است) یا QR (اگر ثبات عددی مهم باشد) یا SVD (اگر ماتریس ممکن است کم رتبه باشد).
 
-**Ridge regression.**سیستم تنظیم شده (X^T X + lambda * I) w = X^T y همیشه از طریق Cholesky حل می شود زیرا X^T X + lambda * I برای lambda > 0 مثبت متقابل است.
+**Ridge regression.**اضافه می کند$\lambda I$به$X^T X$. سیستم منظم$(X^T X + \lambda I) w = X^T y$هميشه از طريق چولسکي حل ميشه چون$X^T X + \lambda I$مثبت متقابل تعریف شده برای $\lambda > 0$. .
 
-**Gaussian processes.**متوسط پیش بینی نیاز به حل K alpha = y دارد که K ماتریس هسته است. فاکتورسازی چولسکی از K رویکرد استاندارد است. احتمال حاشیه ی لاگ از log det(K) = 2 جمع می شود.
+**Gaussian processes.**متوسط پیش بینی کننده نیاز به حل دارد$K \alpha = y$کجا$K$این ماتریس هسته ای است.$K$روش استاندارد است.$\log \det(K) = 2 \sum \log(\mathop{\mathrm{diag}}(L))$. .
 
 **Neural network initialization.**ابتدایی Orthogonal از تجزیه QR برای ایجاد ماتریس های وزن که ستون های آنها orthonormal هستند استفاده می کند. این از سقوط سیگنال در شبکه های عمیق جلوگیری می کند.
 
 **Preconditioning.**بهینه سازی های مقیاس بزرگ از چولسکی نامکمل یا LU نامکمل به عنوان پیش شرط برای حل کننده های گرادینت مخلوط استفاده می کنند.
 
-**Feature engineering.**شماره شرط X^T X به شما می گوید که آیا ویژگی های شما هم خطی هستند. اگر kappa بزرگ است، ویژگی ها را رها کنید یا تنظیمات را اضافه کنید.
+**Feature engineering.**شماره شرط$X^T X$به شما میگه که آیا ویژگی های شما هم خطی هستند.$\kappa$این مقدار بزرگ است، ویژگی های کاهش یا اضافه کردن تنظیمات.
 
 ```figure
 linear-system-conditioning
@@ -545,37 +552,49 @@ print(f"Ridge weights (sklearn): {ridge_sk.coef_}")
 
 1. سیستم رو حل کن`[[1,2,3],[4,5,6],[7,8,10]] x = [6, 15, 27]`با استفاده از حذف گاس، حل کننده LU و`np.linalg.solve`.بصديق کنين که هر سه تا جوابي در عرض تحمل نقطه شناور برابر داشته باشند
 
-2. یک ماتریس تصادفی 50x5 X و هدف y = X @ w_true + noise را تولید کنید. برای w با استفاده از معادلات عادی، QR (به وسیله `np.linalg.qr`), SVD (به وسیله `np.linalg.svd`) و`np.linalg.lstsq`. تمام چهار راه حل را مقایسه کنید. شماره شرط X^T X را اندازه گیری کنید و توضیح دهید که چگونه بر کدام روش اعتماد می کنید.
+2. یک ماتریس تصادفی 50x5 X و هدف y = X @ w_true + noise را تولید کنید. برای w با استفاده از معادلات عادی، QR (به وسیله `np.linalg.qr`), SVD (به وسیله `np.linalg.svd`) و`np.linalg.lstsq`. تمام چهار راه حل را مقایسه کنید . تعداد شرط را اندازه گیری کنید$X^T X$و توضیح دهید که چگونه بر روش مورد اعتماد شما تاثیر می گذارد.
 
-3. یک ماتریس تقریبا تک تک با ایجاد دو ستون تقریبا یکسان (به عنوان مثال، ستون 2 = ستون 1 + 1e-10 * صدا) ایجاد کنید. شماره شرایط آن را محاسبه کنید. Ax = b را با و بدون تنظیم (به 0.01 * I اضافه کنید) حل کنید. محلول ها و باقیمانده ها را مقایسه کنید. توضیح دهید که چرا تنظیم کمک می کند.
+3. یک ماتریس تقریبا تک تک با ایجاد دو ستون تقریبا یکسان (به عنوان مثال، ستون 2 = ستون 1 + 1e-10 * صدا) ایجاد کنید. شماره حالت آن را محاسبه کنید. حل کنید $Ax = b$با و بدون تنظیم (اضافه)$0.01 I$) محلول ها و بقایای را مقایسه کنید و توضیح دهید که چرا تنظیمات مفید است.
 
-4. الگوریتم گرادینت کنجوجت را برای یک ماتریس 100 × 100 تصادفی همتایی مثبت مشخص پیاده سازی کنید. شمارش اینکه برای تبدیل به تحمل 1e-8 چه تعداد تکرار لازم است. با حداکثر نظری n تکرار مقایسه کنید.
+4. الگوریتم گرادینت کنجوجت را برای ماتریس 100 × 100 تصادفی همتایی مثبت مشخص اجرا کنید. شمارش اینکه برای تبدیل به تحمل 1e-8 چه تعداد تکرار لازم است. با حداکثر نظری از $n$تکرار
 
 5. زمان حل کننده Cholesky رو با حل کننده LU رو با`np.linalg.solve`در ماتریس های مثبت متقابل با اندازه 10، 50، 200، 500، نتایج را نشان دهید.
+
+### اشاره ها
+
+**Exercise 1.**تماس بگیرید`gaussian_elimination(A, b)`، پس`lu_decompose(A)`بعدش`lu_solve(P, L, U, b)`، پس`np.linalg.solve(A, b)`هر جواب رو با`np.allclose(A @ x, b)`و سه تا جواب رو با `np.allclose`. .
+
+**Exercise 2.**استفاده کنید`least_squares_normal`برای معادلات طبیعی و سه تابع NumPy برای روش های دیگر.`w_true`. مقایسه کنید`condition_number(X.T @ X)`با`condition_number(X)`: اول مربع دوم است، بنابراین معادلات عادی بیشترین دقت را از دست می دهند.
+
+**Exercise 3.**انتظار شماره شرط بالا رو داشته باش$10^{9}$. با حلش`np.linalg.solve`و با`ridge_regression(A, b, 0.01)`، بعد مقایسه کنید`np.linalg.norm(x)`هر دو باقی مانده می توانند کوچک باشند، اما محلول بدون تنظیم معمولاً ورودی های بسیار بزرگ دارد.
+
+**Exercise 4.**با استفاده از  یک ماتریس مثبت مشخص همتقارن بسازید`B @ B.T + n * np.eye(n)`، تا هر ارزش خونی مثبت باشد. به حلقه در نسخه ی `conjugate_gradient`، پس از آن بررسی کنید که حداقل نورم باقی مانده کمتر از 1e-8 است و تعداد حداکثر 100 است.
+
+**Exercise 5.**از همون استفاده کن`B @ B.T + n * np.eye(n)`ماتریس ها برای هر سه حل کننده و زمان هر حل کننده با `time.perf_counter`چولسکی به نصف حساب LU نیاز دارد، بنابراین نسبت در اندازه های بزرگتر واضح تر است.
 
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear system | "Solve for x" | A set of linear equations Ax = b. Finding x means finding the input that produces output b under transformation A. |
-| Gaussian elimination | "Row reduce" | Systematically zero out entries below the diagonal using row operations, producing an upper triangular system solvable by back substitution. O(n^3). |
-| Partial pivoting | "Swap rows for stability" | Before eliminating in column k, swap the row with the largest absolute value in that column to the pivot position. Prevents division by small numbers. |
-| LU decomposition | "Factor into triangles" | Write A = LU where L is lower triangular (stores multipliers) and U is upper triangular (the eliminated matrix). Amortizes the O(n^3) cost over multiple solves. |
-| QR decomposition | "Orthogonal factorization" | Write A = QR where Q has orthonormal columns and R is upper triangular. More stable than LU for least squares. |
-| Cholesky decomposition | "Square root of a matrix" | For symmetric positive definite A, write A = LL^T. Half the cost of LU. Used for covariance matrices, kernel matrices, and ridge regression. |
-| Least squares | "Best fit when exact is impossible" | Minimize the sum of squared residuals ||Ax - b||^2 when the system is overdetermined (more equations than unknowns). |
-| Normal equations | "The calculus shortcut" | A^T A x = A^T b. Setting the gradient of ||Ax - b||^2 to zero. This IS the closed-form solution to linear regression. |
-| Pseudoinverse | "Inversion for non-square matrices" | A+ = V Sigma+ U^T via SVD. Gives the minimum-norm least-squares solution for any matrix, square or rectangular, singular or not. |
-| Condition number | "How trustworthy is this answer" | kappa = sigma_max / sigma_min. Measures sensitivity to input perturbations. Lose about log10(kappa) digits of precision. |
-| Ridge regression | "Regularized least squares" | Solve (X^T X + lambda I) w = X^T y. Adding lambda I improves conditioning and shrinks weights toward zero. Prevents overfitting. |
-| Conjugate gradient | "Iterative Ax=b for big matrices" | An iterative solver for symmetric positive definite systems. Converges in at most n steps. Practical for large sparse systems where factorization is too expensive. |
-| Overdetermined system | "More data than parameters" | m > n in an m-by-n system. No exact solution exists. Least squares finds the best approximation. This is every regression problem. |
-| Back substitution | "Solve from the bottom up" | Given an upper triangular system, solve the last equation first, then substitute backward. O(n^2). |
-| Forward substitution | "Solve from the top down" | Given a lower triangular system, solve the first equation first, then substitute forward. O(n^2). Used in the L step of LU solves. |
+| Linear system | "Solve for x" | A set of linear equations $Ax = b$. Finding $x$ means finding the input that produces output $b$ under transformation $A$. |
+| Gaussian elimination | "Row reduce" | Systematically zero out entries below the diagonal using row operations, producing an upper triangular system solvable by back substitution. $O(n^3)$. |
+| Partial pivoting | "Swap rows for stability" | Before eliminating in column $k$, swap the row with the largest absolute value in that column to the pivot position. Prevents division by small numbers. |
+| LU decomposition | "Factor into triangles" | Write $A = LU$ where $L$ is lower triangular (stores multipliers) and $U$ is upper triangular (the eliminated matrix). Amortizes the $O(n^3)$ cost over multiple solves. |
+| QR decomposition | "Orthogonal factorization" | Write $A = QR$ where $Q$ has orthonormal columns and $R$ is upper triangular. More stable than LU for least squares. |
+| Cholesky decomposition | "Square root of a matrix" | For symmetric positive definite $A$, write $A = LL^T$. Half the cost of LU. Used for covariance matrices, kernel matrices, and ridge regression. |
+| Least squares | "Best fit when exact is impossible" | Minimize the sum of squared residuals $\lVert Ax - b \rVert^2$ when the system is overdetermined (more equations than unknowns). |
+| Normal equations | "The calculus shortcut" | $A^T A x = A^T b$. Setting the gradient of $\lVert Ax - b \rVert^2$ to zero. This IS the closed-form solution to linear regression. |
+| Pseudoinverse | "Inversion for non-square matrices" | $A^+ = V \Sigma^+ U^T$ via SVD. Gives the minimum-norm least-squares solution for any matrix, square or rectangular, singular or not. |
+| Condition number | "How trustworthy is this answer" | $\kappa = \sigma_{\max} / \sigma_{\min}$. Measures sensitivity to input perturbations. Lose about $\log_{10}(\kappa)$ digits of precision. |
+| Ridge regression | "Regularized least squares" | Solve $(X^T X + \lambda I) w = X^T y$. Adding $\lambda I$ improves conditioning and shrinks weights toward zero. Prevents overfitting. |
+| Conjugate gradient | "Iterative Ax=b for big matrices" | An iterative solver for symmetric positive definite systems. Converges in at most $n$ steps. Practical for large sparse systems where factorization is too expensive. |
+| Overdetermined system | "More data than parameters" | $m > n$ in an $m\text{-by-}n$ system. No exact solution exists. Least squares finds the best approximation. This is every regression problem. |
+| Back substitution | "Solve from the bottom up" | Given an upper triangular system, solve the last equation first, then substitute backward. $O(n^2)$. |
+| Forward substitution | "Solve from the top down" | Given a lower triangular system, solve the first equation first, then substitute forward. $O(n^2)$. Used in the L step of LU solves. |
 
 ## خواندن بیشتر
 
 - [MIT 18.06: Linear Algebra](https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/)(گلبر استرانگ) -- دوره قطعی در مورد سیستم های خطی و فاکتورهای ماتریکس
 - [Numerical Linear Algebra](https://people.maths.ox.ac.uk/trefethen/text.html)(ترفتن و باو) - مرجع استاندارد برای درک ثبات عددی، شرایط و اینکه چرا الگوریتم ها شکست می خورند
 - [Matrix Computations](https://www.press.jhu.edu/books/title/10678/matrix-computations)(گولب و وان قرض) -- مرجع انسیکلوپدی برای هر الگوریتم ماتریکس
-- [3Blue1Brown: Inverse Matrices](https://www.3blue1brown.com/lessons/inverse-matrices)-- حس بصری برای آنچه حل Ax = b به طور هندسی معنی دارد
+- [3Blue1Brown: Inverse Matrices](https://www.3blue1brown.com/lessons/inverse-matrices)-- حس بصری برای حل مسئله$Ax = b$معنی هندسی

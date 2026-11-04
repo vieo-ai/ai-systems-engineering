@@ -96,7 +96,7 @@ Relative error: 19.2%
 
 این یک خطا نسبت به ۱۹٪ از یک معاینه ی واحد است. در ML، این اتفاق می افتد هر زمان که شما:
 
-- تفاوت داده ها را با میانگین بزرگی محاسبه کنید: `E[x^2] - E[x]^2`وقتی E[x] بزرگ است
+- تفاوت داده ها را با میانگین بزرگی محاسبه کنید: $\mathbb{E}[x^2] - \mathbb{E}[x]^2$چه وقت$\mathbb{E}[x]$بزرگ است
 - از احتمالات تقریبا برابر ثبت تخفیف
 - ترازۀ تفاوت های محدود را با یک اپسایلون بسیار کوچک محاسبه کنید
 
@@ -141,20 +141,22 @@ log(1e-46) = -inf        (input underflowed to 0, then log(0) = -inf)
 
 ترفند: قبل از نمادگذاری، حداکثر ارزش را از دست بدهید.
 
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
+```math
+\log\left(\sum_i \exp(x_i)\right) = \max(x) + \log\left(\sum_i \exp(x_i - \max(x))\right)
 ```
 
 چرا این کار می کند: پس از معاینه`max(x)`، بزرگترین نمادش`exp(0) = 1`. هیچ تخلیه ای امکان پذیر نیست. حداقل یک اصطلاح در مجموع 1 است، بنابراین مجموع حداقل 1 است و`log(1) = 0`. هيچ آبي به سمت`-inf`ممکنه
 
 اثبات:
 
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
+```math
+\begin{aligned}
+& \log\left(\sum_i \exp(x_i)\right) \\
+&= \log\left(\sum_i \exp(x_i - c + c)\right) && \text{(add and subtract } c\text{)} \\
+&= \log\left(\sum_i \exp(x_i - c) \cdot \exp(c)\right) && (\exp(a+b) = \exp(a) \cdot \exp(b)) \\
+&= \log\left(\exp(c) \cdot \sum_i \exp(x_i - c)\right) && \text{(factor out } \exp(c)\text{)} \\
+&= c + \log\left(\sum_i \exp(x_i - c)\right) && (\log(a \cdot b) = \log(a) + \log(b))
+\end{aligned}
 ```
 
 تنظیم شده`c = max(x)`و از آن پس از آن، آب فراز از بین می رود.
@@ -170,8 +172,8 @@ log(sum(exp(x_i)))
 
 نرم ماکس Logits رو به احتمالات تبدیل می کنه:
 
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
+```math
+\mathop{\mathrm{softmax}}(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 ```
 
 بدون این ترفند، لوجت های [100، 101, 102] باعث فراز می شوند:
@@ -182,7 +184,7 @@ exp(101) = 7.31e43
 exp(102) = 1.99e44
 sum      = 2.99e44
 
-These overflow float32 (max ~3.4e38)? No, 2.69e43 < 3.4e38? Actually:
+2.69e43 > 3.4e38, the float32 maximum, so every term overflows.
 exp(88.7) is already at the float32 limit.
 exp(100) = inf in float32.
 ```
@@ -242,18 +244,18 @@ math.isfinite(x)    # True if x is neither nan nor inf
 
 فرمول تفاوت متمرکز:
 
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
+```math
+\frac{df}{dx} \approx \frac{f(x + h) - f(x - h)}{2h}
 ```
 
-این O ((h^2) دقیق است، خیلی بهتر از تفاوت پیش رو`(f(x+h) - f(x)) / h`که فقط O(h است.
+اینم$O(h^2)$درست تر از تفاوت جلو$(f(x+h) - f(x)) / h$که فقط$O(h)$. .
 
-انتخاب h: خیلی بزرگ و تخمین اشتباه است.`h = 1e-5`به`1e-7`نماديه
+انتخاب کردن$h$: خیلی بزرگ و تخمین اشتباه است.`h = 1e-5`به`1e-7`نماديه
 
 چک: تفاوت نسبی بین گرادینت های تحلیلی و عددی را محاسبه کنید.
 
-```
-relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{relative\_error} = \frac{\lvert \text{grad}_{\text{analytical}} - \text{grad}_{\text{numerical}} \rvert}{\max(\lvert \text{grad}_{\text{analytical}} \rvert, \lvert \text{grad}_{\text{numerical}} \rvert, 10^{-8})}
 ```
 
 قوانین عمومي:
@@ -289,7 +291,7 @@ GPU های مدرن دارای سخت افزار تخصصی (Tensor Cores) هس�
 5. Net effect: same update, but no underflow
 ```
 
-مقیاس گذاری پویا از دست دادن به طور خودکار فاکتور مقیاس را تنظیم می کند. با یک مقدار بزرگ (65536) شروع کنید. اگر گرادینت ها به `inf`اگه N قدم بدون پر شدن عبور کنه دو برابرش کن
+مقیاس گذاری پویا از دست دادن به طور خودکار فاکتور مقیاس را تنظیم می کند. با یک مقدار بزرگ (65536) شروع کنید. اگر گرادینت ها به `inf`، نصفش کن اگه$N$قدم ها بدون پر شدن عبور ميکنن، دو برابرش کن
 
 ### بفلوت16 در مقابل بفلوت16: چرا بفلوت16 برنده شدن در تمرینات
 
@@ -350,8 +352,8 @@ Layer 50: values in [0, inf]
 
 عادی سازی جدیدگرها و بازمستقیم فعال سازی در هر لایه:
 
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
+```math
+\mathop{\mathrm{LayerNorm}}(x) = \frac{x - \mathop{\mathrm{mean}}(x)}{\mathop{\mathrm{std}}(x) + \epsilon} \cdot \gamma + \beta
 ```
 
 .`epsilon`(معمولا 1e-5) مانع تقسیم صفر می شود وقتی تمام فعال سازی ها یکسان هستند.`gamma`و`beta`اجازه بده شبکه هر اندازه ای که نیاز داره رو برگردونه
@@ -568,7 +570,7 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 
 ## تمرینات
 
-1. **Catastrophic cancellation.**با استفاده از فرمول ساده، تفاوت [1000000.0, 1000001.0, 1000002.0] را محاسبه کنید `E[x^2] - E[x]^2`سپس با استفاده از الگوریتم آنلاین ولفورد آن را محاسبه کنید. اشتباهات را با تفاوت واقعی (0.6667) مقایسه کنید.
+1. **Catastrophic cancellation.**با استفاده از فرمول ساده، تفاوت [1000000.0, 1000001.0, 1000002.0] را محاسبه کنید $\mathbb{E}[x^2] - \mathbb{E}[x]^2$سپس با استفاده از الگوریتم آنلاین ولفورد آن را محاسبه کنید. اشتباهات را با تفاوت واقعی (0.6667) مقایسه کنید.
 
 2. **Precision hunt.**کوچکترین ارزش مثبت float32 را پیدا کنید `x`مثل اين`1.0 + x == 1.0`این ماشین ایپسیلون است. مطمئن شوید که با آن مطابقت دارد.`numpy.finfo(numpy.float32).eps`. .
 
@@ -578,17 +580,29 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 
 5. **Loss scaling experiment.**تمرین را با float16 شبیه سازی کنید: gradients تصادفی را در محدوده [1e-9, 1e-3] ایجاد کنید، به float16 تبدیل کنید و اندازه گیری کنید که کدام کسری صفر می شود. سپس مقیاس خسارت را اعمال کنید (برابر 1024) ، به float16 تبدیل کنید، مقیاس را دوباره اندازه گیری کنید.
 
+### اشاره ها
+
+**Exercise 1.**3 تا را با `np.float32`قبل از اينکه اونا رو مساوي کني، بعد زنگ بزن`variance_naive`و`welford_variance`. ارزش نزدیک$10^{12}$در float32 فاصله خیلی بزرگتر از 1 است، بنابراین انتظار داشته باشید که نتیجه ساده ای از 0.6667 دور باشد و نتیجه Welford نزدیک باشد.
+
+**Exercise 2.**از شروع به`x = np.float32(1.0)`و نصفش کنم تا`np.float32(1.0) + x != np.float32(1.0)`. هر ارزش را در float32 نگه دارید، سپس آخرین مقدار را که هنوز هم مقدار را تغییر داده است با `numpy.finfo(numpy.float32).eps`، که$2^{-23}$. .
+
+**Exercise 3.**اول هر جواب رو پيش بيني$n$ارزش های برابر$c$، نتیجه اش اینه$c + \ln n$برای یک مقدار بزرگ، نتیجه نزدیک به آن مقدار است. برای ارزش های نزدیک به -1000، نتیجه نزدیک است.$-1000 + \ln n$، در حالیکه`logsumexp_naive`بازپرداخت`-inf`چون هر نمادین زیر 0 می رود.
+
+**Exercise 4.**برای$y = Wx + b$با خسارت$L$، تراشه برای $W$محصول بیرونی گرادینت بالا و $x$. خسارت رو به عنوان تابع مسطحات بسته$W$، تماس بگیرید`numerical_gradient`، و هر دو نتیجه رو به `check_gradient`. .
+
+**Exercise 5.**اندازه ها را در مقیاس یازده ای با `10 ** np.random.uniform(-9, -3, n)`و با آن تبدیل شدن`np.float16`. Float16 نمیتونه ارزش ها رو زیر حدود نگه داره$6 \times 10^{-8}$، پس انتظار داشته باشید که حدود یک چهارم از ارزش ها قبل از مقیاس بندی صفر شوند و تقریبا هیچ بعد از ضرب 1024
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | IEEE 754 | "The float standard" | International standard defining binary floating point formats, rounding rules, and special values (inf, nan). Every modern CPU and GPU implements it. |
-| Machine epsilon | "The precision limit" | The smallest value e such that 1.0 + e != 1.0 in a given float format. For float32, it is about 1.19e-7. |
+| Machine epsilon | "The precision limit" | The smallest value $e$ such that $1.0 + e \ne 1.0$ in a given float format. For float32, it is about 1.19e-7. |
 | Catastrophic cancellation | "Precision loss from subtraction" | When subtracting nearly equal floating point numbers, significant digits cancel and rounding noise dominates the result. |
 | Overflow | "Number too big" | A result exceeds the maximum representable value and becomes inf. exp(89) overflows float32. |
 | Underflow | "Number too small" | A result is closer to zero than the smallest representable positive number and becomes 0.0. exp(-104) underflows float32. |
-| Log-sum-exp trick | "Subtract the max first" | Computing log(sum(exp(x))) by factoring out exp(max(x)) to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
-| Stable softmax | "Softmax that does not explode" | Subtracting max(logits) before exponentiating. Numerically identical result, no overflow possible. |
+| Log-sum-exp trick | "Subtract the max first" | Computing $\log(\sum \exp(x))$ by factoring out $\exp(\max(x))$ to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
+| Stable softmax | "Softmax that does not explode" | Subtracting $\max(\text{logits})$ before exponentiating. Numerically identical result, no overflow possible. |
 | Gradient checking | "Verify your backprop" | Comparing analytical gradients from backpropagation against numerical gradients from finite differences to catch implementation bugs. |
 | Mixed precision | "Float16 forward, float32 backward" | Using lower-precision floats for speed-critical operations and higher-precision floats for numerically sensitive operations. Typical speedup is 2-3x. |
 | Loss scaling | "Prevent gradient underflow" | Multiplying the loss by a large constant before backprop so gradients stay in float16's representable range, then dividing by the same constant before weight updates. |
@@ -596,7 +610,7 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 | Gradient clipping | "Cap the gradient norm" | Scaling the gradient vector so its norm does not exceed a threshold. Prevents exploding gradients from ruining weights. |
 | NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, sqrt(-1)). Propagates through all subsequent arithmetic. |
 | Inf | "Infinity" | Special float value from overflow or division by zero. Can combine to produce NaN (inf - inf, inf * 0). |
-| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating f(x+h) and f(x-h) and dividing by 2h. Slow but reliable for verification. |
+| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating $f(x+h)$ and $f(x-h)$ and dividing by $2h$. Slow but reliable for verification. |
 
 ## خواندن بیشتر
 

@@ -32,7 +32,7 @@
 |---|---|-------|
 | 3 | 2 | The vector points from origin (0,0) to (3, 2) on the plane |
 
-متری دارای بزرگی مربع است ((3^2 + 2^2) = مربع است ((13) و به سمت بالا و راست اشاره دارد.
+متری دارای بزرگی است$\sqrt{3^2 + 2^2} = \sqrt{13}$و به راست و بالا اشاره کند.
 
 در هوش مصنوعی، متری ها همه چیز را نشان می دهند:
 - یک کلمه → یک ویکتور 768 عدد (معنای آن در فضای گنجانده)
@@ -71,19 +71,20 @@ graph LR
 
 ضرب نقطه دو متری به شما می گوید که چقدر شبیه هستند.
 
-```
-a · b = a₁×b₁ + a₂×b₂ + ... + aₙ×bₙ
-
-Same direction:      a · b > 0  (similar)
-Perpendicular:       a · b = 0  (unrelated)
-Opposite direction:  a · b < 0  (dissimilar)
+```math
+\begin{aligned}
+a \cdot b &= a_1 \times b_1 + a_2 \times b_2 + \cdots + a_n \times b_n \\[4pt]
+\text{Same direction:} \quad a \cdot b &> 0 \quad \text{(similar)} \\
+\text{Perpendicular:} \quad a \cdot b &= 0 \quad \text{(unrelated)} \\
+\text{Opposite direction:} \quad a \cdot b &< 0 \quad \text{(dissimilar)}
+\end{aligned}
 ```
 
 این دقیقاً نحوه کار موتورهای جستجو، سیستم های توصیه و RAG است -- پیدا کردن ویکتورهای با محصولات نقطه بالا.
 
 ### استقلال خطی
 
-ویکتورها به صورت خطی مستقل هستند اگر هیچ ویکتور در مجموعه ای نمی تواند به عنوان ترکیبی از دیگران نوشته شود. اگر v1، v2، v3 مستقل باشند، آنها یک فضای 3D را پوشش می دهند. اگر یکی از آنها ترکیبی از دیگران باشد، آنها فقط یک خط را پوشش می دهند.
+متری ها به صورت خطی مستقل هستند اگر هیچ متری در مجموعه را نمی توان به عنوان ترکیبی از بقیه نوشت. اگر $v_1, v_2, v_3$اگر یکی از آنها ترکیبی از بقیه باشد، فقط یک هواپیما را پوشش می دهد.
 
 چرا برای هوش مصنوعی مهم است: ماتریس ویژگی های شما باید ستون های مستقل خطی داشته باشد. اگر دو ویژگی کاملاً مرتبط باشند (توقف خطی) ، مدل نمی تواند اثرات آنها را تشخیص دهد. این باعث می شود که متریکس وزن نامستقیم شود و تغییرات کوچک ورودی باعث نوسانات خروجی وحشی شود.
 
@@ -95,7 +96,7 @@ v2 = [0, 1, 0]
 v3 = [2, 1, 0]   # v3 = 2*v1 + v2
 ```
 
-v1 و v2 مستقل هستند - نه یک ضرب مقیاس یا ترکیبی از دیگری است. اما v3 = 2*v1 + v2 است، بنابراین {v1, v2, v3} یک مجموعه وابسته است. این سه متری همه در سطح xy قرار دارند. مهم نیست که چگونه آنها را ترکیب کنید، شما نمی توانید به [0, 0, 1] برسید. شما سه متری دارید اما فقط دو ابعاد آزادی دارید.
+$v_1$و$v_2$مستقل هستند - نه یک ضرب اسکالر و نه ترکیبی از دیگری است.$v_3 = 2 v_1 + v_2$، پس$\lbrace v_1, v_2, v_3 \rbrace$این سه متری در سطح xy قرار دارند. مهم نیست که چگونه آنها را ترکیب کنید، نمی توانید به [0, 0, 1] برسید. شما سه متری دارید اما فقط دو ابعاد آزادی دارید.
 
 در مجموعه داده ها: اگر feature_3 = 2*feature_1 + feature_2، اضافه کردن feature_3 به مدل اطلاعات جدیدی را صفر می دهد. بدتر از این، معادلات معمولی را تک تک می کند - هیچ راه حل منحصر به فرد برای وزنه ها وجود ندارد.
 
@@ -105,15 +106,15 @@ v1 و v2 مستقل هستند - نه یک ضرب مقیاس یا ترکیبی �
 
 پایه استاندارد برای فضای 3D {1,0,0], [0,1,0], [0,0,1] است. اما هر سه متری مستقل در 3D یک پایه معتبر را تشکیل می دهند. انتخاب پایه انتخاب سیستم هماهنگی است.
 
-رتبه یک ماتریس = تعداد ستون های مستقل خطی = تعداد ردیف های مستقل خطی. اگر رتبه < min( ردیف ها، cols) ، ماتریس دارای رتبه کم است. این بدان معنی است:
+رتبه یک ماتریکس = تعداد ستون های مستقل خطی = تعداد ردیف های مستقل خطی. اگر$\text{rank} < \min(\text{rows}, \text{cols})$، ماتریکس کم درجه است . این بدان معنی است:
 - سیستم دارای بی نهایت بسیاری از راه حل ها (یا هیچ) است
 - اطلاعات در تحول از دست می روند
 - ماتریکس نمی تواند برگردانده شود
 
 | Situation | Rank | What it means for ML |
 |-----------|------|---------------------|
-| Full rank (rank = min(m, n)) | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
-| Rank deficient (rank < min(m, n)) | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
+| Full rank $(\text{rank} = \min(m, n))$ | Maximum possible | With at least as many rows as columns (full column rank), the least-squares solution is unique. With fewer rows than columns, infinitely many solutions fit exactly. |
+| Rank deficient $(\text{rank} < \min(m, n))$ | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
 | Rank 1 | 1 | Every column is a scaled copy of one vector. All data lies on a line. |
 | Near rank-deficient (small singular values) | Numerically low | Matrix is ill-conditioned. Tiny input noise causes large output changes. Use SVD truncation or ridge regression. |
 
@@ -121,11 +122,11 @@ v1 و v2 مستقل هستند - نه یک ضرب مقیاس یا ترکیبی �
 
 ویکتور پیش بینی**a**به سمت بردار**b**بخش **a**به سمت**b**:
 
-```
-proj_b(a) = (a dot b / b dot b) * b
+```math
+\mathop{\mathrm{proj}}_b(a) = \frac{a \cdot b}{b \cdot b} \, b
 ```
 
-باقی مانده (a - proj_b(a)) به سمت b عمودی است. این تجزیه ارتگونال پایه ی مناسبات کمترین مربع است.
+بقای$(a - \mathop{\mathrm{proj}}_b(a))$عمودی به $b$این تجزیه ارتگونال پایه ی کمترین مربع ها است.
 
 پروژکتور در همه جا در ML وجود دارد:
 - بازپسین خطی فاصله از مشاهدات به فضای ستون را به حداقل می رساند -- راه حل یک پروژکتور است
@@ -143,9 +144,9 @@ graph LR
     end
 ```
 
-**Example:**a = [3, 4]، b = [1, 0]
+**Example:** $a = [3, 4]$،$b = [1, 0]$
 
-proj_b(a) = (3*1 + 4*0) / (1*1 + 0*0) * [1, 0] = 3 * [1, 0] = [3, 0]
+$\mathop{\mathrm{proj}}_b(a) = (3 \cdot 1 + 4 \cdot 0) / (1 \cdot 1 + 0 \cdot 0) \cdot [1, 0] = 3 \cdot [1, 0] = [3, 0]$
 
 این طرحی عنصر y را کاهش می دهد. این کاهش ابعاد در ساده ترین شکل آن است -- سمت هایی را که شما به آنها اهمیت نمی دهید، دور می اندازید.
 
@@ -448,6 +449,20 @@ print(f"d(dot)/dx = {x.grad}")
 5. یک ماتریس 3x3 با رتبه 2 ایجاد کنید. با استفاده از `rank()`سپس توضیح دهید که ستون ها چه شی هندسی را پوشش می دهند.
 6. ویکتور [۱، ۲، ۳] را به [۱، ۱، ۱] پیش بینی کنید. نتیجه از نظر هندسی چه چیزی است؟
 
+### اشاره ها
+
+**Exercise 1.**از`cosine_similarity`، ارزش را بین -1 و 1 نگه دارید، سپس قوسینوس را بگیرید و رادیان ها را به درجه تبدیل کنید.`Vector([1, 0])`و`Vector([0, 1])`90 را بدهیم و این یک متری که خودش 0 را بدهیم
+
+**Exercise 2.**دو عامل مقیاس را روی دیگاکال یک ماتریس 2x2 قرار دهید و 0 را در دو سلول دیگر قرار دهید. نتیجه برای [1, 1] باید [2, 3] باشد.
+
+**Exercise 3.**برای هر جفت از 5 متری (10 جفت) شباهت کوسین را محاسبه کنید و بزرگترین مقدار را حفظ کنید. ابتدا لوله خود را با یک متری در مقابل خود بررسی کنید که باید 1 را بدهد.
+
+**Exercise 4.**استفاده کنید`gram_schmidt`در سه متری مستقل، سپس محاسبه کنید`dot`برای هر جفت و`magnitude`برای هر متری مقایسه کنید با تحمل مانند`1e-9`، چون نقطه شناور صفر های دقیق را نمی دهد.
+
+**Exercise 5.**3- خط یا ستون را به مجموع دو اول تبدیل کنید، بنابراین یک جهت تکرار می شود.`rank()`باید 2 را برگرداند و ستون ها سپس یک خط را از طریق اصل پوشش می دهند.
+
+**Exercise 6.**مقیاس رو محاسبه کن$\frac{a \cdot b}{b \cdot b}$و چند برابرش کنم$b$یا تماس بگیرید`project_onto`.باقي رو چک کن$a$- پیش بینی دارای یک عدد نقطه ای از 0 با [1, 1, 1] است.
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
@@ -461,3 +476,17 @@ print(f"d(dot)/dx = {x.grad}")
 | Projection | "The shadow" | The component of one vector in the direction of another |
 | Basis | "The coordinate axes" | A minimal set of independent vectors that span the space |
 | Orthonormal | "Perpendicular unit vectors" | Vectors that are mutually perpendicular and each have length 1 |
+
+## خلاصه
+
+| Formula | Meaning |
+|---------|---------|
+| $a \cdot b = \sum_i a_i b_i$ | Dot product. It measures alignment and is the core of attention scores and cosine similarity |
+| $\cos\theta = \frac{a \cdot b}{\lvert a\rvert \lvert b\rvert}$ | Angle between vectors. 1 is the same direction, 0 is orthogonal |
+| $\lvert a\rvert = \sqrt{a \cdot a}$ | Vector magnitude (length) |
+| $y = Ax, y_i = \sum_j A_{ij} x_j$ | Matrix-vector product. A neural-network layer applies it to every input |
+| $\text{proj}_b a = \frac{a \cdot b}{b \cdot b} b$ | Projection of $a$ onto $b$, the part of $a$ along $b$ |
+| $b^\perp = a - \text{proj}_b a$ | Component of $a$ perpendicular to $b$, used in Gram-Schmidt |
+| $\text{rank}(A) \leq \min(m,n)$ | Rank, the number of independent columns. It decides if $Ax = b$ has a solution |
+| $\Delta W = BA$, $B$ is 4096×16, $A$ is 16×4096 | Low-rank update. LoRA replaces a 4096×4096 update (16M parameters) with two rank-16 factors (131K parameters) |
+| Orthonormal basis: $\lvert v_i\rvert = 1, v_i \cdot v_j = 0$ | Stable, reversible transformations such as whitening and QR decomposition |

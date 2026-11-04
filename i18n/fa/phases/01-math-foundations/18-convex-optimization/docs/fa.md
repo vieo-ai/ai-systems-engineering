@@ -18,7 +18,7 @@
 
 درس ۸ به شما کاهش گرادینت، حرکت و آدم یاد داد. این بهینه سازی ها در هر سطح به پایین می روند. اما بدون هیچ تضمینی می آیند. کاهش گرادینت در یک منظره غیر خمیده ممکن است در حداقل محلی ضعیف فرود بیاید، در یک نقطه سعد گیر شود یا برای همیشه نوسان کند. شما به هر حال از آن استفاده کردید زیرا شبکه های عصبی خمیده نیستند و هیچ جایگزین ای وجود ندارد.
 
-اما بسیاری از مشکلات یادگیری ماشین مخلوط هستند. بازپسین خطی، بازپسین لجستیک، SVMs، LASSO، بازپسین خروجی. برای این موارد، چیزی قوی تر وجود دارد: بهینه سازی با تضمین های ریاضی. یک مشکل مخلوط دقیقا یک دره دارد. هر الگوریتم که به پایین می رود به حداقل جهانی خواهد رسید. نیازی به شروع مجدد نیست. هیچ برنامه ی نرخ یادگیری نیست. هیچ دعا نیست.
+اما بسیاری از مشکلات یادگیری ماشین مخلوط هستند. بازپسین خطی، بازپسین لجستیک، SVM، LASSO، بازپسین خطی. برای این ها، چیزی قوی تر وجود دارد: بهینه سازی با تضمین های ریاضی. یک مشکل مخلوط هیچ دره ی دروغین ندارد: هر حداقل محلی حداقل جهانی است. برای یک تابع مخروط صاف که حداقل باشد، نزول گرادینت با اندازه پله مناسب به آن نزدیک می شود. نیازی به بازشویی نیست. هیچ برنامه ای برای یادگیری نیست دعا نکن
 
 درک کنوکسیت سه چیز را انجام می دهد. اول، آن به شما می گوید که مشکل شما آسان (کونیکس) در مقابل سخت (غیر کنوکس) است. دوم، آن به شما ابزار سریع تر مانند روش نیوتن برای مشکلات کنوکس می دهد. سوم، آن مفاهیم را که در سراسر ML ظاهر می شود توضیح می دهد: تنظیم به عنوان یک محدودیت، دوگانه در SVMs، و چرا یادگیری عمیق با نقض هر ویژگی خوب کنوکسیت به شما می دهد کار می کند.
 
@@ -26,7 +26,7 @@
 
 ### مجموعه های مخلوط
 
-مجموعه S مخلوط است اگر برای هر دو نقطه در S، بخش خط بین آنها نیز به طور کامل در S قرار دارد.
+يه مجموعه$S$اگر برای هر دو نقطه در $S$، بخش خط بین آنها هم به طور کامل در $S$. .
 
 | Convex sets | Not convex |
 |---|---|
@@ -34,12 +34,12 @@
 | **Triangle**: same property holds for all interior points | **Donut/annulus**: the hole means some line segments leave the set |
 | The line segment between any two points stays within the set | The line segment between some pairs of points exits the set |
 
-آزمون رسمی: برای هر نقطه x، y در S و هر نقطه t در [0, 1]، نقطه tx + (1-t) y نیز در S است.
+آزمون رسمی: برای هر نقطه ای$x, y$در$S$و هر کدام$t \in [0, 1]$، نکته$tx + (1-t)y$هم در$S$. .
 
 نمونه های مجموعه های مخروط:
-- یک خط، یک هواپیما، همه R^n
+- خط، هواپيما، همه چيز$\mathbb{R}^n$
 - یک توپ (دوگ، توپ، هیپر اسپیر)
-- یک نیمه فضا: {x: a^T x <= b}
+- نصف فضا:$\lbrace x : a^T x \le b \rbrace$
 - متقاطع هر عدد مجموعه های مخروط
 
 نمونه های مجموعه های غیر خمیده:
@@ -49,10 +49,10 @@
 
 ### عملکردهای مخروط
 
-یک تابع f خم است اگر دامنه آن مجموعه خم است و برای هر دو نقطه x، y در دامنه آن و هر t در [0, 1]:
+یک تابع$f$اگر دامنه آن مجموعه ای مخلوط باشد و برای هر دو نقطه باشد مخلوط است$x, y$در حوزه ی خود و هر$t \in [0, 1]$:
 
-```
-f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
+```math
+f(tx + (1-t)y) \le t f(x) + (1-t) f(y)
 ```
 
 از لحاظ هندسی: قطعه خط بین هر دو نقطه در نمودار در بالای یا در نمودار قرار دارد.
@@ -64,26 +64,26 @@ f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
 | **Local minima** | Every local minimum is the global minimum | Multiple local minima may exist at different heights |
 
 عملکردهای مخروط مشترک:
-- f(x) = x^2 (پارابولا)
-- f(x) = ٬ x (قيمة مطلق)
-- f(x) = e^x (عکسونی)
-- f(x) = max(0, x) (ReLU، اگرچه قطعه ای خطی است)
-- f(x) = -log(x) برای x > 0 (log منفی)
-- هر تابع خطی f ((x) = a^T x + b (هر دو مخلوط و مخلوط)
+- $f(x) = x^2$(مثل)
+- $f(x) = \lvert x \rvert$(قیمت مطلق)
+- $f(x) = e^x$(معدل)
+- $f(x) = \max(0, x)$(ReLU، هر چند قطعه خطی)
+- $f(x) = -\log(x)$برای$x > 0$(سوابق منفی)
+- هر تابع خطی $f(x) = a^T x + b$(هم مخلوط و هم مخلوط)
 
 ### آزمایش تراکم
 
 سه آزمون عملي از ساده ترين تا سخت ترين
 
-**Test 1: Second derivative test (1D).**اگر f'(x) >= 0 برای همه x، پس f مخلوط است.
+**Test 1: Second derivative test (1D).**اگه$f''(x) \ge 0$برای همه$x$، پس$f$مخروط است.
 
-- f(x) = x^2: f'(x) = 2 >= 0. مخلوط.
-- f(x) = x^3: f''(x) = 6x. منفی برای x < 0.
-- f(x) = e^x: f'(x) = e^x > 0. مخلوط.
+- $f(x) = x^2$.$f''(x) = 2 \ge 0$. مخلوط
+- $f(x) = x^3$.$f''(x) = 6x$. منفی برای$x < 0$نه مخروط
+- $f(x) = e^x$.$f''(x) = e^x > 0$. مخلوط
 
-**Test 2: Hessian test (multivariate).**اگر ماتریس هسیانی H(x) برای تمام x نیمه تعریف شده مثبت باشد، پس f مخلوط است. ماتریس هسیانی ماتریس مشتق های جزئی دوم است.
+**Test 2: Hessian test (multivariate).**اگر ماتریکس هسی$H(x)$مثبت است و برای همه نصف مشخصه$x$، پس$f$مخلوط است. Hessian ماتریس مشتق های جزئی دوم است.
 
-**Test 3: Definition test.**عدم مساوات f(tx + (1-t) y) <= t*f(x) + (1-t) *f(y) را مستقیماً بررسی کنید. برای عملکردهایی که مشتقات سخت محاسبه می شوند مفید است.
+**Test 3: Definition test.**نابرابری رو چک کن$f(tx + (1-t)y) \le t f(x) + (1-t) f(y)$به طور مستقیم. برای عملکردهایی که مشتقات سخت محاسبه می شوند مفید است.
 
 ### چرا تعقيب مهم است
 
@@ -91,13 +91,13 @@ f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
 
 **For a convex function, every local minimum is a global minimum.**
 
-این بدان معنی است که نزول گرادینت نمی تواند گیر شود. هر مسیر پایین تپه به همان پاسخ منجر می شود. الگوریتم تضمین شده به راه حل مطلوب تبدیل می شود.
+این بدان معنی است که نشت gradient نمی تواند در یک حداقل محلی بد گیر شود. هر حداقل می تواند به آن برسد از دست دادن یکسان دارد. برای یک عملکرد مخروط صاف که دارای حداقل است، نشت gradient با اندازه پله مناسب تضمین شده است که به ارزش مطلوب نزدیک شود.
 
 ```mermaid
 graph LR
     subgraph "Convex: ONE answer"
         direction TB
-        C1["Loss surface has a single valley"] --> C2["Gradient descent ALWAYS finds the global minimum"]
+        C1["Loss surface has no false valleys"] --> C2["Gradient descent with a suitable step converges to the global minimum"]
     end
     subgraph "Non-convex: MANY traps"
         direction TB
@@ -129,20 +129,22 @@ graph LR
 
 ### ماتریکس هسی
 
-H Hessian یک تابع f: R^n -> R ماتریس n x n مشتق های جزئی دوم است.
+هسیان$H$یک تابع$f: \mathbb{R}^n \to \mathbb{R}$.$n \times n$ماتریک مشتق های جزئی دوم
 
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
-H[i][j] = d^2 f / (dx_i dx_j)
-```
 
-برای f ((x, y) = x^2 + 3xy + y^2:
+برای$f(x, y) = x^2 + 3xy + y^2$:
 
-```
-df/dx = 2x + 3y       d^2f/dx^2 = 2      d^2f/dxdy = 3
-df/dy = 3x + 2y       d^2f/dydx = 3      d^2f/dy^2 = 2
-
-H = [ 2  3 ]
-    [ 3  2 ]
+```math
+\begin{gathered}
+\begin{aligned}
+\frac{\partial f}{\partial x} &= 2x + 3y & \frac{\partial^2 f}{\partial x^2} &= 2 & \frac{\partial^2 f}{\partial x \, \partial y} &= 3 \\
+\frac{\partial f}{\partial y} &= 3x + 2y & \frac{\partial^2 f}{\partial y \, \partial x} &= 3 & \frac{\partial^2 f}{\partial y^2} &= 2
+\end{aligned} \\[8pt]
+H = \begin{bmatrix} 2 & 3 \\ 3 & 2 \end{bmatrix}
+\end{gathered}
 ```
 
 " هسی " به شما در مورد منحنیات میگه:
@@ -151,18 +153,17 @@ H = [ 2  3 ]
 - نشانه های مخلوط: نقطه سیله (در برخی جهت ها به بالا و در برخی دیگر به پایین خم می شود)
 - ارزش خاص صفر: مسطح در این جهت (از دست رفته)
 
-برای خم شدن، Hessian باید نیمه مشخص مثبت (همه ارزش های خاص >= 0) در همه جا باشد، نه فقط در یک نقطه.
+برای خم شدن، Hessian باید نیمه مشخص مثبت باشد (همه ارزش های خاص $\ge 0$) همه جا، نه فقط در یک نقطه.
 
 ### روش نیوتن
 
 در حال حاضر، در حال کاهش درجه بندی، اطلاعات درجه اول (در حال گرادینت) استفاده می شود. روش نیوتن از اطلاعات درجه دوم (در حال هسیان) استفاده می کند. این یک مقربات مربع در نقطه فعلی مناسب است و مستقیما به حداقل این مربع می رود.
 
-```
-Update rule:
-  x_new = x - H^(-1) * gradient
-
-Compare to gradient descent:
-  x_new = x - lr * gradient
+```math
+\begin{aligned}
+\text{Update rule:} \quad & x_{\text{new}} = x - H^{-1} \cdot \text{gradient} \\
+\text{Compare to gradient descent:} \quad & x_{\text{new}} = x - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 روش نیوتن سرعت یادگیری مقیاس را با Hessian معکوس جایگزین می کند. این به طور خودکار اندازه و جهت گام را بر اساس منحنیات محلی تنظیم می کند.
@@ -190,14 +191,14 @@ graph TD
 - تغییر مقیاس (به هر حال کار می کند، بدون توجه به اینکه چگونه شما مشکل را پارامتر می کنید)
 
 معایب:
-- محاسبه Hessian هزینه O  n ^ 2) حافظه و O  n ^ 3) برای برگشت
-- برای یک شبکه عصبی با 1 میلیون وزن، یعنی 10^12 ورودی و 10^18 عملیات
+- محاسبه هزینه های هسیانی $O(n^2)$حافظه و$O(n^3)$برای برگشت
+- برای یک شبکه عصبی با یک میلیون وزن، این است$10^{12}$نوشته ها و$10^{18}$عملیات
 - برای یادگیری عمیق عملی نیست
 
 ### بهینه سازی محدود
 
-بهینه سازی بدون محدودیت: حداقل f ((x) در تمام x.
-بهینه سازی محدود: حداقل f ((x) تحت محدودیت ها.
+بهینه سازی بدون محدودیت: به حداقل رساندن$f(x)$همه چیز رو$x$. .
+بهینه سازی محدود: به حداقل رساندن$f(x)$با محدودیت ها
 
 مشکلات واقعی محدودیت هایی دارند. شما می خواهید هزینه ها را به حداقل برسانید اما بودجه شما محدود است. شما می خواهید خطا ها را به حداقل برسانید اما پیچیدگی مدل شما محدود است.
 
@@ -216,22 +217,24 @@ graph LR
 
 روش ضربگرهای لاگرنج یک مشکل محدود را به یک مشکل بدون محدودیت تبدیل می کند.
 
-مشکل: حداقل کردن f  x) تحت g  x = 0.
+مشکل: حداقلش$f(x)$تابع$g(x) = 0$. .
 
-راه حل: یک متغیر جدید (لامبدا ضربگر لاگارنج) را معرفی کنید و مشکل بدون محدودیت را حل کنید:
+راه حل: معرفی یک متغیر جدید (گوهرگر لاگارنج)$\lambda$) و حل مشکل بدون محدودیت:
 
-```
-L(x, lambda) = f(x) + lambda * g(x)
-```
-
-در محلول، گرادینت L صفر است:
-
-```
-dL/dx = df/dx + lambda * dg/dx = 0
-dL/dlambda = g(x) = 0
+```math
+L(x, \lambda) = f(x) + \lambda g(x)
 ```
 
-حس هندسی: در حداقل محدود، گرادینت f باید موازی با گرادینت محدودیت g باشد. اگر آنها موازی نبودند، می توان در امتداد سطح محدودیت حرکت کرد و f را بیشتر کاهش داد.
+در محلول، گرادینت $L$صفر است:
+
+```math
+\begin{aligned}
+\frac{\partial L}{\partial x} &= \frac{\partial f}{\partial x} + \lambda \frac{\partial g}{\partial x} = 0 \\
+\frac{\partial L}{\partial \lambda} &= g(x) = 0
+\end{aligned}
+```
+
+حس هندسی: در حداقل محدود، گرادینت $f$باید موازی با گرادینت محدودیت باشد$g$اگه موازی نبودن میتونی در طول سطح محدودیت حرکت کنی و کاهش$f$بیشتر
 
 ```mermaid
 graph LR
@@ -240,39 +243,41 @@ graph LR
     S --- C["At the solution, gradient of f is parallel to gradient of g"]
 ```
 
-مثال: حداقل کردن f ((x,y) = x^2 + y^2 تحت x + y = 1.
+مثال: حداقلش کنید$f(x,y) = x^2 + y^2$تابع$x + y = 1$. .
 
+```math
+\begin{aligned}
+L &= x^2 + y^2 + \lambda(x + y - 1) \\[4pt]
+\frac{\partial L}{\partial x} &= 2x + \lambda = 0 \implies x = -\lambda/2 \\
+\frac{\partial L}{\partial y} &= 2y + \lambda = 0 \implies y = -\lambda/2 \\
+\frac{\partial L}{\partial \lambda} &= x + y - 1 = 0 \\[4pt]
+&\text{From first two: } x = y \\
+&\text{Substituting: } 2x = 1, \text{ so } x = y = 0.5, \ \lambda = -1
+\end{aligned}
 ```
-L = x^2 + y^2 + lambda(x + y - 1)
 
-dL/dx = 2x + lambda = 0  =>  x = -lambda/2
-dL/dy = 2y + lambda = 0  =>  y = -lambda/2
-dL/dlambda = x + y - 1 = 0
-
-From first two: x = y
-Substituting: 2x = 1, so x = y = 0.5, lambda = -1
-```
-
-نزدیک ترین نقطه خط x + y = 1 به اصل (0.5, 0.5) است.
+نزدیک ترین نقطه خط$x + y = 1$به اصلش$(0.5, 0.5)$. .
 
 ### شرایط KKT
 
 شرایط کاروش-کوهن-تکر ضربات لاگرنج را به محدودیت های نابرابری گسترش می دهد.
 
-مشکل: حداقل f  x) تحت g  i  x) <= 0 برای i = 1 ، ..., m.
+مشکل: حداقلش$f(x)$تابع$g_i(x) \le 0$برای$i = 1, \ldots, m$. .
 
 شرایط KKT (ضروری برای بهینه سازی):
 
-```
-1. Stationarity:    df/dx + sum(lambda_i * dg_i/dx) = 0
-2. Primal feasibility:  g_i(x) <= 0  for all i
-3. Dual feasibility:    lambda_i >= 0  for all i
-4. Complementary slackness:  lambda_i * g_i(x) = 0  for all i
+```math
+\begin{aligned}
+&\text{1. Stationarity:} && \frac{\partial f}{\partial x} + \sum_i \lambda_i \frac{\partial g_i}{\partial x} = 0 \\
+&\text{2. Primal feasibility:} && g_i(x) \le 0 \quad \text{for all } i \\
+&\text{3. Dual feasibility:} && \lambda_i \ge 0 \quad \text{for all } i \\
+&\text{4. Complementary slackness:} && \lambda_i \, g_i(x) = 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-کمکی اضافی بینش کلیدی است: یا محدودیت فعال است (g_i = 0، محلول در مرز قرار دارد) یا ضربگر صفر است (محدودیت مهم نیست). یک محدودیت که بر محلول تأثیر نمی گذارد lambda = 0 دارد.
+کمکی اضافی بینش اصلی است: یا محدودیت فعال است ($g_i = 0$، محلول روی مرز قرار دارد) یا ضربگر صفر است (محدودیت مهم نیست).$\lambda = 0$. .
 
-شرایط KKT برای SVM ها محور هستند. ویکتورهای پشتیبانی نقاط داده هایی هستند که محدودیت آن فعال است (lambda > 0). همه نقاط داده های دیگر lambda = 0 دارند و بر مرز تصمیم گیری تأثیر نمی گذارند.
+شرایط KKT برای SVM ها محور هستند. ویکتورهای پشتیبانی نقاط داده هایی هستند که در آن محدودیت فعال است ($\lambda > 0$) همه نقاط داده های دیگر دارای$\lambda = 0$و بر مرز تصمیم گیری تاثیر نمی گذارند.
 
 ### تنظیم به عنوان بهینه سازی محدود
 
@@ -280,25 +285,27 @@ Substituting: 2x = 1, so x = y = 0.5, lambda = -1
 
 **L2 regularization (Ridge):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert^2 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert^2
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||^2 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||^2
-```
-
-محدودیت یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم در یازم می است
+محدودیت$\lVert w \rVert^2 \le t$یک توپ را تعریف می کند (دو بعدی دایره، دو بعدی توپ) راه حل این است که خطوط ضایع اول این توپ را لمس می کنند.
 
 **L1 regularization (LASSO):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert_1 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert_1
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||_1 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||_1
-```
-
-محدودیت "ژو" (= t) یک الماس را تعریف می کند ( مربع چرخش در 2D).
+محدودیت$\lVert w \rVert_1 \le t$یک الماس را تعریف می کند ( مربع چرخش در 2D).
 
 | Property | L2 constraint (circle) | L1 constraint (diamond) |
 |---|---|---|
@@ -315,11 +322,13 @@ minimize  Loss(w) + lambda * ||w||_1
 
 تابع دوگانه لاگارنج:
 
-```
-Primal: minimize f(x) subject to g(x) <= 0
-Lagrangian: L(x, lambda) = f(x) + lambda * g(x)
-Dual function: d(lambda) = min_x L(x, lambda)
-Dual problem: maximize d(lambda) subject to lambda >= 0
+```math
+\begin{aligned}
+&\text{Primal:} && \text{minimize } f(x) \text{ subject to } g(x) \le 0 \\
+&\text{Lagrangian:} && L(x, \lambda) = f(x) + \lambda g(x) \\
+&\text{Dual function:} && d(\lambda) = \min_x L(x, \lambda) \\
+&\text{Dual problem:} && \text{maximize } d(\lambda) \text{ subject to } \lambda \ge 0
+\end{aligned}
 ```
 
 چرا دوگانه بودن مهمه:
@@ -346,7 +355,7 @@ Replace x_i^T x_j with K(x_i, x_j) to get the kernel trick.
 
 **Most local minima are good enough.**در فضاهای ابعاد بالا، نقاط انتقادی تصادفی (که در آن گرادینت صفر است) به طور گسترده ای نقاط سیله هستند، نه حداقل های محلی. حداقل های محلی موجود به طور معمول دارای ارزش های از دست دادن نزدیک به حداقل جهانی هستند. گیر در حداقل محلی وحشتناک بسیار بعید است هنگامی که فضای پارامتر دارای میلیون ها ابعاد است.
 
-**Saddle points, not local minima, are the real obstacle.**در یک تابع با پارامترهای n، یک نقطه سیله ترکیبی از جهت های خم مثبت و منفی دارد. برای یک نقطه انتقادی تصادفی در ابعاد بالا، احتمال وجود همه ارزش های خاص n مثبت (حداقل محلی) حدود 2^-n است. تقریباً همه نقاط انتقادی نقاط سیله هستند. صدا SGD به فرار از آنها کمک می کند.
+**Saddle points, not local minima, are the real obstacle.**در یک تابع با $n$در این حالت، یک نقطه سیله ترکیبی از جهت های مثبت و منفی منحنی دارد. برای یک نقطه انتقادی تصادفی در ابعاد بالا، احتمال همه $n$ارزش های خاص مثبت (حداقل محلی) تقریباً $2^{-n}$تقریباً همه نقاط مهم نقطه ی صعد هستند.
 
 **Overparameterization smooths the landscape.**شبکه هایی که پارامترهای بیشتری نسبت به نمونه های آموزشی دارند، سطوح خستگی هموارتر و متصل تر دارند. شبکه های گسترده تر حداقل های محلی منفی کمتری دارند. این برعکس است، اما از نظر تجربی سازگار است.
 
@@ -365,21 +374,21 @@ Replace x_i^T x_j with K(x_i, x_j) to get the kernel trick.
 
 روش نیوتن خالص برای مدل های بزرگ غیر عملی است. چندین محاسبات اطلاعات درجه دوم را قابل استفاده می کند.
 
-**L-BFGS (Limited-memory BFGS):**به منظور استفاده از آخرین تفاوت های گرادینت m، Hessian برعکس را نزدیک می کند. به جای O  n^2 به O  m m) حافظه نیاز دارد. برای مشکلات با حداکثر ~ 10،000 پارامتر خوب کار می کند. در ML کلاسیک (رجریشن لوژیستیک، CRF) استفاده می شود اما یادگیری عمیق نیست.
+**L-BFGS (Limited-memory BFGS):**با استفاده از آخرین $m$تفاوت گرادینت ها$O(mn)$حافظه به جای$O(n^2)$. برای مشکلات با حداکثر 10000 پارامتر کار می کند. در ML کلاسیک (رجع لوژیستی، CRF) استفاده می شود اما یادگیری عمیق نیست.
 
 **Natural gradient:**از ماتریس اطلاعات فیشر (توقع شده هسیان احتمالات تراشه) به جای استاندارد هسیان استفاده می کند. این حساب برای هندسه توزیع احتمالات است. K-FAC (کرونکر-فاکتور شده منحنیات نزدیک) متریس فیشر را به عنوان یک محصول کرونکر نزدیک می کند و آن را برای شبکه های عصبی عملی می کند.
 
-**Hessian-free optimization:**از گرادیانت کنجوجت برای حل Hx = g بدون تشکیل H استفاده می کند. تنها نیاز به محصولات ویکتور هسی دارد که می تواند با استفاده از فرقی خودکار در زمان O (n) محاسبه شود.
+**Hessian-free optimization:**برای حل مشکل استفاده می کند$Hx = g$بدون اینکه هیچ وقت شکل گیری کنه$H$فقط نیاز به محصولات ویکتور هسی دارد که می تواند در $O(n)$زمان از طریق فرقی خودکار
 
 **Diagonal approximations:**لحظه دوم آدم یک تقرب دیگنالی از دیگنالی هسیان است. AdaHessian این را با استفاده از عناصر دیگنالی هسیان واقعی از طریق تخمینگر هچینسون گسترش می دهد.
 
 | Method | Memory | Per-step cost | When to use |
 |--------|--------|--------------|-------------|
-| Gradient descent | O(n) | O(n) | Baseline, large models |
-| Newton's method | O(n^2) | O(n^3) | Small convex problems |
-| L-BFGS | O(mn) | O(mn) | Medium convex problems |
-| Adam | O(n) | O(n) | Deep learning default |
-| K-FAC | O(n) | O(n) per layer | Research, large-batch training |
+| Gradient descent | $O(n)$ | $O(n)$ | Baseline, large models |
+| Newton's method | $O(n^2)$ | $O(n^3)$ | Small convex problems |
+| L-BFGS | $O(mn)$ | $O(mn)$ | Medium convex problems |
+| Adam | $O(n)$ | $O(n)$ | Deep learning default |
+| K-FAC | $O(n)$ | $O(n)$ per layer | Research, large-batch training |
 
 ```figure
 convex-vs-nonconvex
@@ -516,15 +525,27 @@ print(f"Support vectors: {svm.n_support_}")
 
 ## تمرینات
 
-1. **Convexity gallery.**این تابع ها را با استفاده از چکگر برای تراکم آزمایش کنید: f(x) = x^4, f(x) = sin(x), f(x,y) = x^2 + y^2, f(x,y) = x*y, f(x) = max(x, 0). توضیح دهید که چرا هر نتیجه منطقی است.
+1. **Convexity gallery.**این تابع ها را با استفاده از چکگر برای تراکم کنونی تست کنید: $f(x) = x^4$،$f(x) = \sin(x)$،$f(x,y) = x^2 + y^2$،$f(x,y) = xy$،$f(x) = \max(x, 0)$توضیح بده که چرا هر نتیجه منطقی است
 
-2. **Newton vs gradient descent race.**هر دو روش را با f ((x,y) = 50*x^2 + y^2 از نقطه شروع (10,10) اجرا کنید. هر کدام از مراحل برای رسیدن به ضرر < 1e-10 چه تعداد مرحله ای نیاز دارد؟
+2. **Newton vs gradient descent race.**هر دو روش رو اجرا کن$f(x,y) = 50x^2 + y^2$از نقطه شروع$(10, 10)$. هر مرحله برای رسیدن به ضرر < 1e-10 چه تعداد مرحله ای نیاز دارد؟ وقتی تعداد شرایط (تعداد بزرگ ترین تا کوچکترین ارزش خاص هسیان) افزایش یابد، به کاهش گرادینت چه اتفاقی می افتد؟
 
-3. **Lagrange multiplier geometry.**حداقل f ((x,y) = (x-3)^2 + (y-3)^2 با تابع x + 2y = 4. با بررسی اینکه گرادیئنت f موازی با گرادیئنت g در محلول است، محلول را تأیید کنید.
+3. **Lagrange multiplier geometry.**حداقلش کن$f(x,y) = (x-3)^2 + (y-3)^2$تابع$x + 2y = 4$. با بررسی اینکه گرادینت $f$متوازد به گرادینت $g$در راه حل
 
-4. **Regularization constraint.**پیاده سازی بهینه سازی محدود L1: حداقل (x-3)^2 + (y-2)^2 تابع به ٬x ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬ ٬                                                   
+4. **Regularization constraint.**پیاده سازی بهینه سازی محدود L1: حداقل کردن $(x-3)^2 + (y-2)^2$تابع$\lvert x \rvert + \lvert y \rvert \le 1$نشان دهید که محلول دارای یک هماهنگی برابر با صفر است (تناقض از محدودیت الماس).
 
 5. **Hessian eigenvalue analysis.**Hessian را از تابع Rosenbrock در (1,1) و در (-1,1) محاسبه کنید. ارزش های خاص را در هر دو نقطه محاسبه کنید. ارزش های خاص به شما در مورد منحنی در حداقل در مقابل دور از آن چه می گویند؟
+
+### اشاره ها
+
+**Exercise 1.**قبل از اينکه فرار کني هر نتيجه رو پيش بيني`check_convexity`: در یک ابعاد، به علامت نگاه کنید$f''(x)$در دو ابعاد، به ارزش های خیس نگاه کنید.$f(x,y) = xy$، Hessian دارای ارزش های خونی 1 و -1 است، بنابراین چکگر باید گزارش دهد که مخلوط نیست.
+
+**Exercise 2.**تماس بگیرید`optimize_gd`و`newtons_method`با گرادین و هسیان$f$روش نیوتن یک مربع را در یک مرحله حل می کند. برای کاهش گرادینت، سرعت یادگیری باید کمتر از $2/100$به خاطر$50x^2$اصطلاح، پس از $y$جهت به آرامی حرکت می کند.$100x^2$و قدم ها رو دوباره بشمار
+
+**Exercise 3.**استفاده کنید`lagrange_solve`با$g(x,y) = x + 2y - 4$. در جواب، اينو چک کن$x + 2y = 4$و این$\nabla f = (2(x-3), 2(y-3))$چند برابر از$\nabla g = (1, 2)$. .
+
+**Exercise 4.**حداقل بدون محدودیت (3, 2) خارج از الماس است، بنابراین پاسخ در مرز آن است. از کاهش گرادینت پیش بینی شده استفاده کنید: یک گام گرادینت را بردارید، سپس به سمت $\lvert x \rvert + \lvert y \rvert \le 1$بررسی کنید که نتیجه با مساوات محدودیت را برآورده می کند و آن را با `demo_regularization_geometry`. .
+
+**Exercise 5.**تماس بگیرید`rosenbrock_hessian`در هر نقطه و نتیجه رو به `hessian_eigenvalues_2d`در (1, 1) هر دو ارزش خاص مثبت هستند و نسبت آنها بسیار بزرگ است، بنابراین دره در یک جهت باریک و در سمت دیگر صاف است. این نسبت را با نسبت (-1, 1) مقایسه کنید.
 
 ## اصطلاحات کلیدی
 
@@ -543,7 +564,7 @@ print(f"Support vectors: {svm.n_support_}")
 | Complementary slackness | At the solution, either a constraint is active or its multiplier is zero. Never both nonzero |
 | Duality | Every constrained problem has a companion dual problem. For convex problems, both have the same optimal value |
 | Strong duality | Primal and dual optimal values are equal. Holds for convex problems satisfying Slater's condition |
-| L-BFGS | Approximate second-order method that stores the last m gradient differences instead of the full Hessian |
+| L-BFGS | Approximate second-order method that stores the last $m$ gradient differences instead of the full Hessian |
 | Saddle point | A point where the gradient is zero but it is a minimum in some directions and a maximum in others |
 | Overparameterization | Using more parameters than training examples. Smooths the loss landscape and reduces bad local minima |
 

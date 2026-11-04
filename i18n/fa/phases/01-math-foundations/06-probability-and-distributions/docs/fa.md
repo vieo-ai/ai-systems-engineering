@@ -24,7 +24,7 @@
 
 ### رویدادها، فضاهای نمونه و احتمال
 
-فضای نمونه S مجموعه تمام نتایج احتمالی است. یک رویداد زیر مجموعه فضای نمونه است. احتمال نمایش رویدادها به اعداد بین 0 و 1 است.
+فضای نمونه$S$مجموعه تمام نتایج ممکن است. یک رویداد زیر مجموعه ی فضای نمونه است. احتمال نمایش رویدادها به اعداد بین 0 و 1 است.
 
 ```
 Coin flip:
@@ -37,15 +37,15 @@ Single die roll:
 ```
 
 سه محور احتمال را تعریف می کند:
-1. P(A) >= 0 برای هر رویداد A
-2. P (S) = 1 (همیشه اتفاق می افتد)
-3. P(A یا B) = P(A) + P(B) زمانی که A و B نمی توانند هر دو اتفاق بیفتند
+1. $P(A) \ge 0$برای هر رویداد$A$
+2. $P(S) = 1$(همیشه اتفاق می افتد)
+3. $P(A \text{ or } B) = P(A) + P(B)$چه وقت$A$و$B$نمیتونه هر دو اتفاق بیفتد
 
 همه چیز دیگر (نظریه بایز، انتظارات، توزیع) از این سه قانون پیروی می کند.
 
 ### احتمال مشروط و استقلال
 
-P ((A) B) احتمال A است که B اتفاق افتاده است.
+$P(A \mid B)$احتمالي است$A$با توجه به این$B$اتفاقي افتاد
 
 ```
 P(A|B) = P(A and B) / P(B)
@@ -58,9 +58,11 @@ Example: deck of cards
 
 دو اتفاق مستقل هستند وقتی که می دونید یکی از آنها چیزی درباره ی دیگری نمیگه:
 
-```
-Independent:   P(A|B) = P(A)
-Equivalent to: P(A and B) = P(A) * P(B)
+```math
+\begin{aligned}
+\text{Independent:} \quad & P(A \mid B) = P(A) \\
+\text{Equivalent to:} \quad & P(A \text{ and } B) = P(A) \cdot P(B)
+\end{aligned}
 ```
 
 فلپ کردن سکه مستقل است.
@@ -98,27 +100,33 @@ integral from -inf to +inf of f(x) dx = 1
 
 **Bernoulli:**یک آزمایش، دو نتیجه مدل طبقه بندی دوگانه
 
-```
-P(X = 1) = p
-P(X = 0) = 1 - p
-Mean = p,  Variance = p(1-p)
+```math
+\begin{aligned}
+P(X = 1) &= p \\
+P(X = 0) &= 1 - p \\
+\text{Mean} = p, &\quad \text{Variance} = p(1-p)
+\end{aligned}
 ```
 
-**Categorical:**یک آزمایش، k نتایج. مدل های طبقه بندی چند طبقه (خروج نرم حداکثر).
+**Categorical:**یه محاکمه$k$نتایج: مدل های طبقه بندی چند طبقه (خروج نرم حداکثر).
 
-```
-P(X = i) = p_i,  where sum of p_i = 1
-Example: P(cat) = 0.7,  P(dog) = 0.2,  P(bird) = 0.1
+```math
+\begin{aligned}
+& P(X = i) = p_i, \quad \text{where } \textstyle\sum_i p_i = 1 \\
+& \text{Example: } P(\text{cat}) = 0.7, \quad P(\text{dog}) = 0.2, \quad P(\text{bird}) = 0.1
+\end{aligned}
 ```
 
 **Uniform:**تمام نتایج به طور مساوی احتمال دارد. برای ابتدایی تصادفی استفاده می شود.
 
-```
-Discrete: P(X = k) = 1/n for k in {1, ..., n}
-Continuous: f(x) = 1/(b-a) for x in [a, b]
+```math
+\begin{aligned}
+\text{Discrete:} \quad & P(X = k) = 1/n \text{ for } k \in \lbrace 1, \ldots, n \rbrace \\
+\text{Continuous:} \quad & f(x) = 1/(b-a) \text{ for } x \in [a, b]
+\end{aligned}
 ```
 
-**Normal (Gaussian):**منحنی زنگ. به وسیله متوسط (mu) و انحراف (sigma^2) پارامتر شده است.
+**Normal (Gaussian):**منحنی زنگ. به اندازه متوسط ($\mu$) و تفاوت ($\sigma^2$)
 
 ```
 f(x) = (1 / sqrt(2*pi*sigma^2)) * exp(-(x - mu)^2 / (2*sigma^2))
@@ -131,59 +139,65 @@ Standard normal: mu = 0, sigma = 1
 
 **Poisson:**تعداد رویدادهای نادر در یک فاصله ثابت.
 
-```
-P(X = k) = (lambda^k * e^(-lambda)) / k!
-Mean = lambda,  Variance = lambda
+```math
+\begin{aligned}
+P(X = k) &= \frac{\lambda^k e^{-\lambda}}{k!} \\
+\text{Mean} = \lambda, &\quad \text{Variance} = \lambda
+\end{aligned}
 ```
 
 ### ارزش و تنوع انتظار می رود
 
 ارزش انتظار می رود، نتیجه متوسط وزن شده است.
 
-```
-Discrete:   E[X] = sum of x_i * P(X = x_i)
-Continuous: E[X] = integral of x * f(x) dx
+```math
+\begin{aligned}
+\text{Discrete:} \quad & \mathbb{E}[X] = \sum_i x_i \, P(X = x_i) \\
+\text{Continuous:} \quad & \mathbb{E}[X] = \int x \, f(x) \, dx
+\end{aligned}
 ```
 
 اندازه گیری های متغیر در اطراف متوسط پخش می شوند.
 
-```
-Var(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2
-Standard deviation = sqrt(Var(X))
+```math
+\begin{aligned}
+\mathrm{Var}(X) &= \mathbb{E}[(X - \mathbb{E}[X])^2] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2 \\
+\text{Standard deviation} &= \sqrt{\mathrm{Var}(X)}
+\end{aligned}
 ```
 
 در ML، ارزش انتظار می رود به عنوان تابع از دست دادن (توسط از دست دادن در توزیع داده ها) ظاهر شود. تغیر به شما در مورد ثبات مدل می گوید. تغیرات بالا در گرادیانت ها به معنای آموزش های سر و صدا است.
 
 ### توزیع مشترک و مرزی
 
-توزیع مشترک P ((X، Y) دو متغیر تصادفی را با هم توصیف می کند.
+توزیع مشترک$P(X, Y)$دو متغیر تصادفی را با هم توصیف می کند.
 
-نمونه ی PMF مشترک (X = آب و هوا، Y = چتر):
+نمونه ی PMF مشترک ($X$= آب و هوا$Y$= چتر:
 
-| | Y=0 (no umbrella) | Y=1 (umbrella) | Marginal P(X) |
+| | $Y=0$ (no umbrella) | $Y=1$ (umbrella) | Marginal $P(X)$ |
 |---|---|---|---|
-| X=0 (sun) | 0.40 | 0.10 | P(X=0) = 0.50 |
-| X=1 (rain) | 0.05 | 0.45 | P(X=1) = 0.50 |
-| **Marginal P(Y)** | P(Y=0) = 0.45 | P(Y=1) = 0.55 | 1.00 |
+| $X=0$ (sun) | 0.40 | 0.10 | $P(X=0) = 0.50$ |
+| $X=1$ (rain) | 0.05 | 0.45 | $P(X=1) = 0.50$ |
+| **Marginal $P(Y)$** | $P(Y=0) = 0.45$ | $P(Y=1) = 0.55$ | 1.00 |
 
 توزیع حاشیه ای متغیر دیگر را جمع می کند:
 
-```
-P(X = x) = sum over all y of P(X = x, Y = y)
+```math
+P(X = x) = \sum_{y} P(X = x, Y = y)
 ```
 
 مجموع خط و ستون در جدول بالا، حاشیه ها هستند.
 
 ### چرا توزیع عادی در همه جا ظاهر می شود
 
-نظریه محدودیتی مرکزی: مجموع (یا متوسط) بسیاری از متغیرهای تصادفی مستقل به توزیع عادی متقابل می شود، بدون توجه به توزیع اصلی.
+نظریه محدودیتی مرکزی: متوسط بسیاری از متغیرهای تصادفی مستقل از یک توزیع، یک بار متمرکز و مقیاس بندی شده توسط $\sqrt{n}$، به توزیع طبیعی نزدیک می شود، هر شکل توزیع اصلی باشد، تا زمانی که تفاوت آن محدود باشد.
 
 ```
 Roll 1 die:  uniform distribution (flat)
 Average of 2 dice:  triangular (peaked)
 Average of 30 dice: nearly perfect bell curve
 
-This works for ANY starting distribution.
+This works for ANY starting distribution with finite variance.
 ```
 
 به همین دلیل:
@@ -196,23 +210,27 @@ This works for ANY starting distribution.
 
 احتمالات خام باعث مشکلات عددی می شوند. ضرب بسیاری از احتمالات کوچک به سرعت به صفر می رسد.
 
-```
-P(sentence) = P(word1) * P(word2) * ... * P(word_n)
-            = 0.01 * 0.003 * 0.02 * ...
-            -> 0.0 (underflow after ~30 terms)
+```math
+\begin{aligned}
+P(\text{sentence}) &= P(\text{word}_1) \cdot P(\text{word}_2) \cdot \ldots \cdot P(\text{word}_n) \\
+&= 0.01 \cdot 0.003 \cdot 0.02 \cdot \ldots \\
+&\to 0.0 \quad \text{(underflow after } \sim 30 \text{ terms)}
+\end{aligned}
 ```
 
 احتمالات ثبت این مسئله را حل می کنند. ضربات به اضافه شدن تبدیل می شوند.
 
-```
-log P(sentence) = log P(word1) + log P(word2) + ... + log P(word_n)
-                = -4.6 + -5.8 + -3.9 + ...
-                -> finite number (no underflow)
+```math
+\begin{aligned}
+\log P(\text{sentence}) &= \log P(\text{word}_1) + \log P(\text{word}_2) + \ldots + \log P(\text{word}_n) \\
+&= -4.6 + -5.8 + -3.9 + \ldots \\
+&\to \text{finite number (no underflow)}
+\end{aligned}
 ```
 
 قوانین:
-- log(a * b) = log(a) + log(b)
-- احتمالات log همیشه <= 0 هستند (از آنجا که 0 < P <= 1)
+- $\log(a \cdot b) = \log(a) + \log(b)$
+- احتمالات ثبت همیشه$\le 0$(از زمان$0 < P \le 1$)
 - منفی تر = احتمال کمتری
 - از دست دادن کراس انتروپی احتمال منفی ثبت کلاس درست است
 
@@ -430,24 +448,34 @@ print(f"Log-softmax: {log_probs}")
 
 4. یک تابع بنویسید که یک لیست از احتمالات ثبت نام را بگیرد و احتمال احتمالی ترین ردیف، احتمال کل ثبت نام و احتمال خام معادل را بازگرداند. آن را با جمله 50 کلمه ای که هر کلمه احتمال 0.01 دارد، آزمایش کنید.
 
+### اشاره ها
+
+**Exercise 1.**رسم کن`u`از یک توزیع و بازپرداخت یکسانی$-\ln(1 - u) / \lambda$. چک کن که متوسط نمونه نزدیک به$1/\lambda$و که کاشی های هیستوگرافی دنبالش می کنند$\lambda e^{-\lambda x}$. .
+
+**Exercise 2.**یک جدول 6×6 را پر کنید که هر سلول یک احتمال است و مجموع تمام سلول ها 1 است، سپس تماس بگیرید`joint_to_marginals`استفاده کن`check_independence`: این اعداد تنها اگر هر سلول برابر به ضرب دو حاشیه اش باشد مستقل هستند.
+
+**Exercise 3.**درخواست کنید`softmax`به دستگاه ها و برن$-\ln$در این حالت، احتمال در شاخص 3، نتیجه باید نزدیک به 0.421 باشد، که مقدار `nn.CrossEntropyLoss`به خاطر همین هدف و هدف می دهد.
+
+**Exercise 4.**احتمالات ثبت را اضافه کنید، احتمالات خام را ضرب نکنید. برای 50 کلمه با احتمال 0.01، کل باید باشد $50 \ln(0.01) \approx -230.26$، و احتمال خامش$10^{-100}$. .
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Sample space | "All the possibilities" | The set S of every possible outcome of an experiment |
+| Sample space | "All the possibilities" | The set $S$ of every possible outcome of an experiment |
 | PMF | "The probability function" | A function that gives the exact probability of each discrete outcome, summing to 1 |
 | PDF | "The probability curve" | A density function for continuous variables. Integrate it over an interval to get probability |
-| Conditional probability | "Probability given something" | P(A\|B) = P(A and B) / P(B). The foundation of Bayesian thinking and Bayes' theorem |
-| Independence | "They don't affect each other" | P(A and B) = P(A) * P(B). Knowing one event tells you nothing about the other |
+| Conditional probability | "Probability given something" | $P(A \mid B) = P(A \text{ and } B) / P(B)$. The foundation of Bayesian thinking and Bayes' theorem |
+| Independence | "They don't affect each other" | $P(A \text{ and } B) = P(A) \cdot P(B)$. Knowing one event tells you nothing about the other |
 | Expected value | "The average" | The probability-weighted sum of all outcomes. The loss function is an expected value |
 | Variance | "How spread out" | The expected squared deviation from the mean. High variance = noisy, unstable estimates |
-| Normal distribution | "The bell curve" | f(x) = (1/sqrt(2*pi*sigma^2)) * exp(-(x-mu)^2/(2*sigma^2)). Appears everywhere due to the CLT |
-| Central Limit Theorem | "Averages become normal" | The mean of many independent samples converges to a normal distribution regardless of the source |
-| Joint distribution | "Two variables together" | P(X, Y) describes the probability of every combination of X and Y outcomes |
-| Marginal distribution | "Sum out the other variable" | P(X) = sum_y P(X, Y). Recovers one variable's distribution from the joint |
-| Log probability | "Log of the probability" | log P(x). Turns products into sums, preventing numerical underflow in long sequences |
-| Softmax | "Turn scores into probabilities" | softmax(z_i) = exp(z_i) / sum(exp(z_j)). Maps real-valued logits to a valid probability distribution |
-| Cross-entropy | "The loss function" | -sum(p_true * log(p_predicted)). Measures how different two distributions are. Lower is better |
+| Normal distribution | "The bell curve" | $f(x) = (1/\sqrt{2\pi\sigma^2}) \cdot \exp(-(x-\mu)^2/(2\sigma^2))$. Appears everywhere due to the CLT |
+| Central Limit Theorem | "Averages become normal" | The centered, scaled mean of many independent samples converges to a normal distribution for any source with finite variance |
+| Joint distribution | "Two variables together" | $P(X, Y)$ describes the probability of every combination of $X$ and $Y$ outcomes |
+| Marginal distribution | "Sum out the other variable" | $P(X) = \sum_y P(X, Y)$. Recovers one variable's distribution from the joint |
+| Log probability | "Log of the probability" | $\log P(x)$. Turns products into sums, preventing numerical underflow in long sequences |
+| Softmax | "Turn scores into probabilities" | $\text{softmax}(z_i) = \exp(z_i) / \sum_j \exp(z_j)$. Maps real-valued logits to a valid probability distribution |
+| Cross-entropy | "The loss function" | $-\sum p_{\text{true}} \cdot \log(p_{\text{predicted}})$. Measures how different two distributions are. Lower is better |
 | Logits | "Raw model outputs" | Unnormalized scores before softmax. Named after the logistic function |
 | Sampling | "Drawing random values" | Generating values according to a probability distribution. How models generate output |
 

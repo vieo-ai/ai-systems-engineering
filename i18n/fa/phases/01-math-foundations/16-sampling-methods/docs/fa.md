@@ -42,7 +42,7 @@
 
 ### نمونه گیری تصادفی یکسانی
 
-هر روش نمونه گیری از اینجا شروع می شود. یک ژنراتور اعداد تصادفی یکسانی مقادیر را در [0, 1) تولید می کند که هر فرعی طول برابر احتمال برابر دارد.
+هر روش نمونه گیری از اینجا شروع می شود. یک ژنراتور اعداد تصادفی یکپارچه مقادیر را در$[0, 1)$جایی که هر فرعی با طول برابر احتمال برابر دارد.
 
 ```
 U ~ Uniform(0, 1)
@@ -54,7 +54,7 @@ Properties:
   Var(U) = 1/12
 ```
 
-برای نمونه گیری یکسانی از مجموعه ای از عناصر متمایز، U را تولید کنید و طبقه برگشت کنید. برای نمونه گیری از یک محدوده مداوم [a، b]، a + (b - a) * U را محاسبه کنید.
+برای نمونه گیری یکنواخت از مجموعه ای متمایز از$n$موارد تولید$U$و برگردم$\lfloor n U \rfloor$. برای نمونه گیری از محدوده مداوم$[a, b]$، حساب کردن$a + (b - a) U$. .
 
 نکته کلیدی: یک عدد تصادفی یکسانی حاوی مقدار تصادفی درست برای تولید یک نمونه از هر توزیع است.
 
@@ -72,7 +72,7 @@ Properties:
   F maps the real line to [0, 1]
 ```
 
-CDF معکوس احتمالات را به مقادیر باز می کند. اگر U ~ یونیفورم ((0, 1) ، پس X = F_inverse ((U) به دنبال توزیع هدف است.
+CDF معکوس احتمالات را به مقادیر باز می کند. اگر$U \sim \text{Uniform}(0, 1)$، پس$X = F^{-1}(U)$توزیع هدف را دنبال می کند.
 
 ```
 Algorithm:
@@ -98,9 +98,9 @@ Since (1 - U) and U have the same distribution:
   x = -ln(u) / lambda
 ```
 
-این کار به خوبی زمانی که شما می توانید F_inverse را در شکل بسته بنویسید. برای توزیع عادی، CDF برعکس شکل بسته وجود ندارد، بنابراین ما از روش های دیگر (Box-Muller، یا مقربات عددی) استفاده می کنیم.
+اين کار خيلي خوب ميشه وقتي ميتوني نويس کني$F^{-1}$برای توزیع عادی، CDF برعکس شکل بسته وجود ندارد، بنابراین ما از روش های دیگر (Box-Muller، یا مقربات عددی) استفاده می کنیم.
 
-**Discrete version:**برای توزیع های متمایز، CDF را به عنوان یک مبلغ تجمعی بسازید، U را تولید کنید و اولین شاخص را پیدا کنید که مبلغ تجمعی U را فراتر می گذارد. این نحوه است `sample_categorical`در درس 6 کار می کند.
+**Discrete version:**برای توزیع های متمایز، CDF را به عنوان یک مبلغ تجمعی بسازید، تولید کنید $U$، و اولین شاخص را پیدا کنید که مقدار تجمعی آن بیشتر از $U$اينطوره`sample_categorical`در درس 6 کار می کند.
 
 ### نمونه گیری رد
 
@@ -117,18 +117,19 @@ Algorithm:
   3. If u < p(x) / (M * q(x)), accept x
   4. Otherwise, reject and go to step 1
 
-Acceptance rate = 1/M
+Acceptance rate = Z/M, where Z is the integral of p(x)
+                (Z = 1, so the rate is 1/M, when p is normalized)
 ```
 
-در طول طول M، میزان پذیرش بیشتر می شود. در ابعاد پایین (1-3) نمونه گیری رد خوب کار می کند. در ابعاد بالا، میزان پذیرش به طور نمایی کاهش می یابد زیرا بیشتر حجم پیشنهاد رد می شود. این لعنت ابعاد برای نمونه گیری رد است.
+هرچه تنگ تر باشه$M$در ابعاد پایین (1-3) ، نمونه گیری رد خوب کار می کند. در ابعاد بالا، نرخ پذیرش به طور نمایی کاهش می یابد زیرا بیشتر حجم پیشنهاد رد می شود. این لعنتی از ابعاد برای نمونه گیری رد است.
 
-**Example: sampling from a truncated normal.**از یک پیشنهاد یکسانی در محدوده کوتاه استفاده کنید. پاکت M حداکثر PDF معمولی در این محدوده است.
+**Example: sampling from a truncated normal.**از یک پیشنهاد یکسانی در محدوده کوتاه استفاده کنید.$M$حداکثر PDF معمولی در این محدوده است.
 
-**Example: sampling from a semicircle.**در مستطیل مرزی به طور یکسانی پیشنهاد کنید. اگر نقطه در داخل نیمه دایره قرار گیرد، قبول کنید. اینگونه مونت کارلو پی را محاسبه می کند: نرخ پذیرش برابر نسبت مساحت پی / 4 است.
+**Example: sampling from a semicircle.**در طول مستطیل خط خط به طور یکسانی پیشنهاد کنید. قبول کنید اگر نقطه در داخل نیمه دایره قرار گیرد. اینگونه مونت کارلو محاسبه می کند.$\pi$: نرخ پذیرش برابر نسبت مساحت است $\pi/4$. .
 
 ### نمونه گیری اهمیت
 
-گاهی اوقات شما به نمونه هایی از توزیع هدف p(x نیاز ندارید. شما باید انتظارات را تحت p(x تخمین بزنید و نمونه هایی از توزیع مختلف q(x دارید.
+گاهی اوقات به نمونه های توزیع هدف نیاز ندارید$p(x)$بايد انتظارات رو از دست بده$p(x)$، و شما نمونه هایی از توزیع متفاوتی دارید$q(x)$. .
 
 ```
 Goal: estimate E_p[f(x)] = integral of f(x) * p(x) dx
@@ -143,12 +144,12 @@ Estimator:
   E_p[f(x)] ~ (1/N) * sum(f(x_i) * w(x_i))    where x_i ~ q(x)
 ```
 
-این در یادگیری تقویت بسیار مهم است. در PPO (Prosimal Policy Optimization) ، شما مسیرهای تحت یک سیاست قدیمی را جمع آوری می کنید اما می خواهید یک سیاست جدید را بهینه سازی کنید. وزن اهمیت این است که p_new a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a  a   a                      
+این در یادگیری تقویت بسیار مهم است. در PPO (Prosimal Policy Optimization) ، شما مسیرهای تحت یک سیاست قدیمی را جمع آوری می کنید.$\pi_{\text{old}}$اما ميخوايم يک سياسه جديد را بهینه سازيم$\pi_{\text{new}}$. وزن مهم$\pi_{\text{new}}(a \mid s) / \pi_{\text{old}}(a \mid s)$.پپرويسيوني در مورد اين وزنه ها به نظر مي رسه تا از اين که سيستم جديد از سيستم قديمي جدا بشه، جلوگیری کنه
 
-تفاوت تخمینگر نمونه گیری اهمیت بستگی به این دارد که q چقدر شبیه به p است. اگر q بسیار متفاوت از p باشد، چند نمونه وزن زیادی به دست می آورند و بر تخمین ها تسلط دارند. نمونه گیری اهمیت خود عادی شده با مجموع وزن تقسیم می شود تا این مشکل را کاهش دهد:
+تفاوت تخمینگر نمونه گیری اهمیت بستگی به میزان مشابهی دارد$q$باید$p$اگه$q$خیلی متفاوت از$p$نمونه های کمی وزن زیادی را دریافت می کنند و بر برآورد غالب می شوند.
 
-```
-E_p[f(x)] ~ sum(w_i * f(x_i)) / sum(w_i)
+```math
+\mathbb{E}_p[f(x)] \approx \frac{\sum_i w_i \, f(x_i)}{\sum_i w_i}
 ```
 
 ### تخمین مونت کارلو
@@ -186,7 +187,7 @@ Variance of the estimator = Var(f(X)) / N
 
 ### زنجیره مارکوف مونت کارلو (MCMC): متروپولیس-هستینگز
 
-MCMC یک زنجیره مارکوف را ایجاد می کند که توزیع ثابت آن توزیع هدف p ((x) است. پس از مراحل کافی، نمونه های زنجیره (تقریباً) نمونه های p ((x) هستند.
+MCMC زنجیره مارکوف رو ساخت که توزیع ثابتش توزیع هدفش باشه$p(x)$پس از مراحل کافی، نمونه های زنجیره (تقریباً) نمونه هایی از$p(x)$. .
 
 ```
 Target: p(x)  (known up to a normalizing constant)
@@ -205,13 +206,13 @@ Metropolis-Hastings algorithm:
   4. Return remaining samples
 ```
 
-برای پیشنهادات متقابل (q(x' (x) = q(x) ، نسبت به p(x') / p(x ساده می شود. این الگوریتم اصلی Metropolis است.
+برای پیشنهادات متقابل$(q(x' \mid x) = q(x \mid x'))$، نسبت ساده می شود تا $p(x')/p(x)$اين الگورتم اصلي متروپوليسه
 
-**Why it works.**قانون پذیرش تعادل مفصل را تضمین می کند: احتمال بودن در x و حرکت به x' برابر با احتمال بودن در x' و حرکت به x است. تعادل مفصل به این معنی است که p ((x) توزیع ثابت زنجیره است.
+**Why it works.**قانون پذیرش تضمین تعادل دقیق: احتمال بودن در $x$و به سمت$x'$برابر با احتمالي بودن در $x'$و به سمت$x$تعادل مفصل به این معنی است که$p(x)$توزیع ثابت زنجیره است.
 
 **Practical considerations:**
 - سوختن: نمونه های اولیه را قبل از رسیدن به تعادل زنجیره ای از بین ببرید
-- کاهش وزن: نگه داشتن هر نمونه k-th برای کاهش خود ارتباط
+- رقیق کردن: هر کدام را نگه دارید$k$- نمونه ی دوم برای کاهش خود ارتباط
 - مقیاس پیشنهادی: بسیار کوچک و زنجیره به آرامی حرکت می کند (قبول بالا، اکتشاف کند) ؛ بسیار بزرگ و اکثر پیشنهادها رد می شوند (قبول پایین، در محل خود گیر کرده است)
 - نرخ مطلوب پذیرش برای یک پیشنهاد گاس در ابعاد بالا حدود 0.234 است
 
@@ -230,7 +231,7 @@ Algorithm:
     Sample x_d^{t+1} ~ p(x_d | x_1^{t+1}, x_2^{t+1}, ..., x_{d-1}^{t+1})
 ```
 
-نمونه گیری گیبز نیاز دارد که شما می توانید از هر توزیع مشروط نمونه گیری p ((x_i √ x_{-i}) است. این برای بسیاری از مدل ها ساده است:
+نمونه گیری گیبز نیاز به اینکه شما می توانید نمونه از هر توزیع مشروط $p(x_i \mid x_{-i})$این برای بسیاری از مدل ها ساده است:
 - شبکه های بیزی: مشروطات از ساختار نمودار پیروی می کنند
 - مخلوط های گاوسی: شرایط گاوسی هستند
 - مدل های ایزینگ: شرایط هر اسپین تنها به همسایه های آن بستگی دارد
@@ -241,7 +242,7 @@ Algorithm:
 
 ### نمونه گیری دمای (در LLM استفاده می شود)
 
-مدل های زبان logits z_1، ..., z_V را برای هر توکن در لغت تولید می کنند. Softmax این ها را به احتمالات تبدیل می کند. دمای دوباره logits را قبل از softmax تغییر می دهد:
+مدل های زبان، logs output $z_1, \ldots, z_V$نرم ماکس این ها را به احتمالات تبدیل می کند. دمای دوباره به اندازه ی قبل از نرم ماکس تغییر می کند:
 
 ```
 p_i = exp(z_i / T) / sum(exp(z_j / T))
@@ -253,20 +254,20 @@ T < 1.0: sharpens the distribution (more confident, less diverse)
 T > 1.0: flattens the distribution (less confident, more diverse)
 ```
 
-**Why it works.**تقسیم لوگیت با T < 1 تفاوت بین لوگیت ها را تقویت می کند. اگر z_1 = 2 و z_2 = 1 ، تقسیم با T = 0.5 به z_1/T = 4 و z_2/T = 2 منجر می شود ، که شکاف بزرگتر می شود. پس از softmax ، توکن بالاترین لوگیت سهم بسیار بیشتری می گیرد.
+**Why it works.**تقسیم بندی logits توسط $T < 1$تفاوت بین لوگیت ها را تقویت می کند.$z_1 = 2$و$z_2 = 1$، تقسیم شده توسط $T = 0.5$می دهد$z_1/T = 4$و$z_2/T = 2$بعد از نرم ترین، بالاترین توکن به سهم بسیار بزرگتر می رسد.
 
 **In practice:**
-- T = 0.0: رمزگذاری طمع آمیز، بهترین برای پرسش و پاسخ واقعی
-- T = 0.3-0.7: کمی خلاقانه، برای تولید کد خوب
-- T = 0.7-1.0: متعادل، برای مکالمه عمومی خوب است
-- T = 1.0-1.5: نوشتن خلاقانه، طوفان مغزی
-- T > 1.5: به طور فزاینده ای تصادفی، به ندرت مفید است
+- $T = 0.0$: رمزنگاري طمع، بهترين براي سوال و پاسخ واقعي
+- $T = 0.3\text{-}0.7$: کمی خلاقانه، برای تولید کد خوب
+- $T = 0.7\text{-}1.0$: متوازن، برای مکالمه عمومی خوب
+- $T = 1.0\text{-}1.5$: نوشتن خلاقانه، طوفان مغزی
+- $T > 1.5$: به طور فزاینده ای تصادفی، به ندرت مفید است
 
 دمای تغییر نمی کند که کدام توکن ها ممکن هستند بلکه مقدار احتمالی را که به هر توکن اختصاص داده شده تغییر می دهد.
 
 ### نمونه گیری از بالای ک
 
-نمونه گیری top-k مجموعه کاندیدایی را به توکن های k با بیشترین احتمال محدود می کند، سپس نمونه ها را از آن مجموعه محدود دوباره عادی می کند.
+نمونه گیری از بالا به بالا محدود می کند که کاندیدای تعیین شده به $k$توکن هایی که بیشترین احتمال را دارند، سپس دوباره عادی سازی می شوند و نمونه هایی از مجموعه محدود می شوند.
 
 ```
 Algorithm:
@@ -281,11 +282,11 @@ k = V:  no filtering (standard sampling)
 k = 40: typical setting, removes long tail of unlikely tokens
 ```
 
-Top-k مانع از انتخاب نماد از توکن های بسیار غیرممکن (تایپو، بی معنی) است که در دم طولانی توزیع لغت وجود دارد. مشکل: k بدون توجه به زمینه ثابت است. هنگامی که مدل مطمئن است (یک توکن دارای احتمال 95٪ است) ، k = 40 هنوز هم 39 گزینه را اجازه می دهد. هنگامی که مدل نامطمئن است (احتمال در 1000 توکن پخش می شود) ، k = 40 گزینه های قابل قبول را قطع می کند.
+Top-k مانع از انتخاب نماد بسیار غیرممکن است (تایپ ها، بی معنی) که در دم طولانی توزیع لغت وجود دارد. مشکل: $k$وقتی مدل مطمئن است (یک توکن دارای احتمال 95٪) ،$k = 40$هنوز 39 گزینه جایگزین را اجازه می دهد. وقتی مدل نامشخص است (احتمال در 1000 توکن پخش می شود) ، $k = 40$گزینه های قابل قبول رو قطع می کنه
 
 ### نمونه برداری از بالای (نوکلیوس)
 
-نمونه گیری top-p به طور پویا اندازه مجموعه کاندید را تنظیم می کند. به جای نگه داشتن تعداد ثابت توکن ها، کوچکترین مجموعه توکن هایی را نگه می دارد که احتمال تجمعی آن بیش از p است.
+نمونه گیری top-p به طور پویا اندازه مجموعه کاندید را تنظیم می کند. به جای نگه داشتن تعداد ثابت توکن ها، کوچکترین مجموعه توکن هایی را نگه می دارد که احتمال تجمعی آن بیش از $p$. .
 
 ```
 Algorithm:
@@ -335,13 +336,13 @@ Reparameterized sampling:
   Gradients flow through mu and sigma.
 ```
 
-این کار به این دلیل است که N  mu, sigma^2) دارای توزیع مشابه mu + sigma * N  0, 1 است. نکته کلیدی: تصادف را به یک منبع بدون پارامتر (epsilon) منتقل کنید، سپس نمونه را به عنوان یک تحول قابل تفاوتی از پارامتر ها بیان کنید.
+این کار می کنه چون$\mathcal{N}(\mu, \sigma^2)$با هم مثل $\mu + \sigma \cdot \mathcal{N}(0, 1)$. نکته کلیدی: تصادف را به یک منبع بدون پارامتر منتقل کنید ($\epsilon$), سپس نمونه را به عنوان یک تغییر قابل تفاوت پارامتر بیان کنید.
 
 **In the VAE training loop:**
-1. خروجی های کدگر mu و log ((sigma^2) برای هر ورودی
-2. نمونه ایپسیلون ~ N(0, 1)
-3. محاسبه z = mu + sigma * epsilon
-4. کد z برای بازسازی ورودی
+1. خروجی های کدگذاری$\mu$و$\log(\sigma^2)$برای هر ورودی
+2. نمونه$\epsilon \sim \mathcal{N}(0, 1)$
+3. حساب کردن$z = \mu + \sigma \epsilon$
+4. رمزگشایی$z$برای بازسازی ورودی
 5. از طریق مراحل ۴، ۳، ۲، ۱ به عقب گسترش دهید (ممکن است زیرا مرحله ۳ قابل جدایی است)
 
 بدون ترفند بازسازی، VAEs نمی توانند با گسترش پس از استاندارد آموزش داده شوند. این بینش تنها VAEs را عملی کرد.
@@ -413,7 +414,7 @@ For piecewise-constant functions, stratified sampling is exact.
 
 ### ارتباط با مدل های انتشار
 
-مدل های انتشار از طریق یک فرآیند نمونه گیری تصاویر تولید می کنند. فرآیند پیشروی صداهای گاوسی را به یک تصویر در طول مراحل T اضافه می کند تا آن را به صداهای خالص تبدیل کند. فرآیند معکوس یاد می گیرد که از تصویر اصلی قدم به قدم بازیابی کند.
+مدل های انتشار از طریق یک فرآیند نمونه گیری تصاویر تولید می کنند. فرآیند پیشروی صداهای گاسیان را به یک تصویر اضافه می کند.$T$این فرآیند معکوس به دست آوردن تصویر اصلی را به صورت یک قدم به مرحله بازمی گرداند.
 
 ```
 Forward process (known):
@@ -431,7 +432,7 @@ Reverse process (learned):
 
 ارتباط با روش های این درس:
 - هر مرحله از دست دادن از ترفند بازتعدی استفاده می کند (صوت نمونه، تغییر تعیین کننده را اعمال کنید)
-- برنامه شور {alpha_t} کنترل یک نوع از دمای حرکت
+- برنامه شور$\lbrace \alpha_t \rbrace$کنترل یک نوع از دمای خروجی
 - آموزش با استفاده از تخمین مونت کارلو برای نزدیک شدن به ELBO (دليل در پایین)
 - نمونه گیری اجداد در مدل های انتشار یک زنجیره مارکوف است (هر مرحله فقط به وضعیت فعلی بستگی دارد)
 
@@ -457,7 +458,7 @@ def sample_exponential_inverse_cdf(lam):
     return -math.log(u) / lam
 ```
 
-10 هزار نمونه نمایی را تولید کنید و متوسط را 1/lambda تأیید کنید.
+10 هزار نمونه نمایی را تولید کنید و متوسط را بررسی کنید$1/\lambda$. .
 
 ### مرحله دوم: نمونه گیری رد
 
@@ -484,7 +485,7 @@ def importance_sampling_estimate(f, target_pdf, proposal_pdf, proposal_sample, n
     return total / n
 ```
 
-تخمین E[X^2] را با استفاده از یک پیشنهاد یکسانی در یک توزیع طبیعی تخمین بزنید. با پاسخ شناخته شده (mu^2 + sigma^2) مقایسه کنید.
+تخمین زده$\mathbb{E}[X^2]$در یک توزیع عادی با استفاده از یک پیشنهاد یکسان.$\mu^2 + \sigma^2$)
 
 ### مرحله 4: تخمین مونت کارلو از pi
 
@@ -642,37 +643,49 @@ print(f"Sampled token index: {token}")
 
 ## تمرینات
 
-1. نمونه گیری CDF معکوس را برای توزیع Cauchy اجرا کنید. CDF F(x) = 0.5 + arctan(x) /pi است. 10,000 نمونه تولید کنید و هیستوگراف را با PDF واقعی نشان دهید. ذرات سنگین را مشاهده کنید (قیمت های شدید دور از مرکز).
+1. نمونه گیری CDF برعکس را برای توزیع Cauchy اجرا کنید.$F(x) = 0.5 + \arctan(x)/\pi$. 10،000 نمونه تولید کنید و هیستوگراف را با PDF واقعی نشان دهید. ذرات سنگین را مشاهده کنید (قیمت های شدید دور از مرکز).
 
 2. از نمونه گیری رد برای تولید نمونه از توزیع Beta ((2, 5) با استفاده از یک پیشنهاد یونیفورم ((0, 1) استفاده کنید. نمونه های پذیرفته شده را با PDF واقعی Beta نقشه بزنید. نرخ پذیرش نظری چیست؟
 
-3. یک عدد کامل از sin ((x) را از 0 تا pi با استفاده از مونت کارلو با نمونه های 1000، 10000 و 100،000 تخمین بزنید. خطای هر سطح را مقایسه کنید. بررسی کنید که مقیاس خطای O(1/sqrt(N)).
+3. برآورد کل$\sin(x)$از 0 تا $\pi$با استفاده از مونت کارلو با 1000، 10000 و 100000 نمونه مقایسه کنید خطا در هر سطح$O(1/\sqrt{N})$. .
 
-4. پیاده سازی Metropolis-Hastings برای نمونه گیری از توزیع 2D p ((x, y) متناسب با exp ((-(x^2 * y^2 + x^2 + y^2 - 8*x - 8*y) / 2). نمونه ها و مسیر زنجیره را نقشه برداری کنید. با انحرافات استاندارد پیشنهادی مختلف آزمایش کنید.
+4. پیاده سازی Metropolis-Hastings برای نمونه گیری از توزیع 2D $p(x, y)$متناسب با $\exp(-(x^2 y^2 + x^2 + y^2 - 8x - 8y) / 2)$نقشه نمونه ها و مسیر زنجیره را نقشه برداری کنید. آزمایش با انحرافات استاندارد پیشنهادی مختلف.
 
 5. ساخت یک نمایش کامل تولید متن: با توجه به یک لغت 10 کلمه با logits، تولید تسلسل 20 توکن با استفاده از (a) طمع، (b) دمای=0.7، (c) top-k=3, (d) top-p=0.9. مقایسه تنوع خروجی در 5 اجرا.
+
+### اشاره ها
+
+**Exercise 1.**حلش کن$u = F(x)$برای$x$، که به ما میگه$x = \tan(\pi(u - 0.5))$بررسی کنید که میانگین نمونه نزدیک به 0 باشد و حدود 6 درصد از نمونه ها دارای$\lvert x \rvert > 10$، که$1 - (2/\pi)\arctan(10)$. .
+
+**Exercise 2.**ضخامت بتا ((2, 5)$30x(1-x)^4$. بزرگترين ارزشش رو در حالت پيدا کن$x = 1/5$و از این مقدار استفاده کنید$M$در`rejection_sample`. نرخ پذیرش نظری$1/M$، پس آن را با بخش پیشنهادی که قبول می کنید مقایسه کنید.
+
+**Exercise 3.**مقدار دقیقش 2 ـه`monte_carlo_integral(math.sin, 0, math.pi, n)`برای هر یک$n$و هر دو بار رو با چند دانه تکرار کن$n$در این مورد، اشتباه متوسط باید به طور متوسط کاهش یابد.$\sqrt{10} \approx 3.2$. .
+
+**Exercise 4.**دفترچه هدف رو بنویس که$-(x^2 y^2 + x^2 + y^2 - 8x - 8y)/2$، و آن را به `metropolis_hastings_2d`. نرخ پذیرش برای هر پیشنهاد انحراف استاندارد را ثبت کنید: یک مقدار بسیار کوچک تقریباً هر مرحله را پذیرفته اما به آرامی حرکت می کند و یک مقدار بسیار بزرگ تقریباً هر مرحله را رد می کند.
+
+**Exercise 5.**کدگذاری طمع آمیز در هر مرحله شاخص بزرگترین logit را می گیرد.`temperature_sample`،`top_k_sample`و`top_p_sample`برای سه روش دیگر، طمع باید در تمام 5 راه همان تسلسل را بدهد، بنابراین برای اندازه گیری تنوع، تسلسل های مختلف برای هر روش را بشمارید.
 
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Sampling | "Drawing random values" | Generating values according to a probability distribution. The mechanism behind all generative AI |
-| Uniform distribution | "All equally likely" | Every value in [a, b] has equal probability density 1/(b-a). The starting point for all sampling methods |
-| Inverse CDF | "Probability transform" | F_inverse(U) converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
+| Uniform distribution | "All equally likely" | Every value in $[a, b]$ has equal probability density $1/(b-a)$. The starting point for all sampling methods |
+| Inverse CDF | "Probability transform" | $F^{-1}(U)$ converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
 | Rejection sampling | "Propose and accept/reject" | Generate from a simple proposal, accept with probability proportional to target/proposal ratio. Exact but wastes samples |
-| Importance sampling | "Reweight samples" | Estimate expectations under p(x) using samples from q(x) by weighting each sample by p(x)/q(x). Core to PPO in RL |
-| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error O(1/sqrt(N)) regardless of dimension |
+| Importance sampling | "Reweight samples" | Estimate expectations under $p(x)$ using samples from $q(x)$ by weighting each sample by $p(x)/q(x)$. Core to PPO in RL |
+| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error $O(1/\sqrt{N})$ regardless of dimension |
 | MCMC | "Random walk that converges" | Construct a Markov chain whose stationary distribution is the target. Metropolis-Hastings is the foundational algorithm |
 | Metropolis-Hastings | "Accept uphill, sometimes downhill" | Propose moves, accept based on density ratio. Detailed balance ensures convergence to target distribution |
 | Gibbs sampling | "One variable at a time" | Update each variable from its conditional distribution holding others fixed. 100% acceptance rate |
-| Temperature | "Confidence knob" | Divides logits by T before softmax. T<1 sharpens (more confident), T>1 flattens (more diverse) |
-| Top-k sampling | "Keep the k best" | Zero out all but the k highest-probability tokens, renormalize, sample. Fixed candidate set size |
-| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds p. Adaptive candidate set size |
-| Reparameterization trick | "Move randomness outside" | Write z = mu + sigma * epsilon where epsilon ~ N(0,1). Makes sampling differentiable. Essential for VAE training |
+| Temperature | "Confidence knob" | Divides logits by $T$ before softmax. $T<1$ sharpens (more confident), $T>1$ flattens (more diverse) |
+| Top-k sampling | "Keep the k best" | Zero out all but the $k$ highest-probability tokens, renormalize, sample. Fixed candidate set size |
+| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds $p$. Adaptive candidate set size |
+| Reparameterization trick | "Move randomness outside" | Write $z = \mu + \sigma \epsilon$ where $\epsilon \sim \mathcal{N}(0,1)$. Makes sampling differentiable. Essential for VAE training |
 | Gumbel-Softmax | "Soft categorical sampling" | Differentiable approximation to categorical sampling using Gumbel noise + softmax with temperature |
 | Stratified sampling | "Forced coverage" | Divide sample space into strata, sample from each. Always lower variance than naive Monte Carlo |
 | Burn-in | "Warm-up period" | Initial MCMC samples discarded before the chain reaches its stationary distribution |
-| Detailed balance | "Reversibility condition" | p(x) * T(x->y) = p(y) * T(y->x). Sufficient condition for p to be the stationary distribution of a Markov chain |
+| Detailed balance | "Reversibility condition" | $p(x) T(x \to y) = p(y) T(y \to x)$. Sufficient condition for $p$ to be the stationary distribution of a Markov chain |
 | Diffusion sampling | "Iterative denoising" | Generate data by starting from noise and applying learned denoising steps. Each step is a conditional sampling operation |
 
 ## خواندن بیشتر

@@ -30,24 +30,24 @@
 
 شما از درس 06 می دانید که احتمال مشروط:
 
-```
-P(A|B) = P(A and B) / P(B)
+```math
+P(A \mid B) = \frac{P(A \text{ and } B)}{P(B)}
 ```
 
 و همتقالي:
 
+```math
+P(B \mid A) = \frac{P(A \text{ and } B)}{P(A)}
 ```
-P(B|A) = P(A and B) / P(A)
-```
 
-هر دو عبارت با یک عدد مشترک هستند: P ((A و B) آنها را برابر کنید و تنظیم مجدد کنید:
+هر دو عبارت یک عدد مشترک دارند: $P(A \text{ and } B)$. آنها را برابر کنید و تنظیم مجدد:
 
-```
-P(A and B) = P(A|B) * P(B) = P(B|A) * P(A)
-
-Therefore:
-
-P(A|B) = P(B|A) * P(A) / P(B)
+```math
+\begin{aligned}
+P(A \text{ and } B) &= P(A \mid B) \cdot P(B) = P(B \mid A) \cdot P(A) \\[4pt]
+&\text{Therefore:} \\[4pt]
+P(A \mid B) &= \frac{P(B \mid A) \cdot P(A)}{P(B)}
+\end{aligned}
 ```
 
 اين نظریه بايز است. چهار مقدار، يک معادله
@@ -56,35 +56,35 @@ P(A|B) = P(B|A) * P(A) / P(B)
 
 | Part | Name | What it means |
 |------|------|---------------|
-| P(A\|B) | Posterior | Your updated belief about A after seeing evidence B |
-| P(B\|A) | Likelihood | How probable the evidence B is if A is true |
-| P(A) | Prior | Your belief about A before seeing any evidence |
-| P(B) | Evidence | Total probability of seeing B under all possibilities |
+| $P(A \mid B)$ | Posterior | Your updated belief about $A$ after seeing evidence $B$ |
+| $P(B \mid A)$ | Likelihood | How probable the evidence $B$ is if $A$ is true |
+| $P(A)$ | Prior | Your belief about $A$ before seeing any evidence |
+| $P(B)$ | Evidence | Total probability of seeing $B$ under all possibilities |
 
-اصطلاح شواهد P ((B) به عنوان یک نرمال کننده عمل می کند. شما می توانید آن را با استفاده از قانون احتمال کامل گسترش دهید:
+مدت اثبات$P(B)$شما می توانید با استفاده از قانون احتمال کامل آن را گسترش دهید:
 
-```
-P(B) = P(B|A) * P(A) + P(B|not A) * P(not A)
+```math
+P(B) = P(B \mid A) \cdot P(A) + P(B \mid \text{not } A) \cdot P(\text{not } A)
 ```
 
 ### نمونه آزمایش پزشکی
 
 یک بیماری در هر ۱۰ هزار نفر را تحت تاثیر قرار می دهد. تست ۹۹٪ دقیق است (۹۹٪ از بیماران را می گیرد، ۱٪ از زمان مثبت دروغین می دهد).
 
-```
-P(sick)          = 0.0001     (prior: disease is rare)
-P(positive|sick) = 0.99       (likelihood: test catches it)
-P(positive|healthy) = 0.01    (false positive rate)
-
-P(positive) = P(positive|sick) * P(sick) + P(positive|healthy) * P(healthy)
-            = 0.99 * 0.0001 + 0.01 * 0.9999
-            = 0.000099 + 0.009999
-            = 0.010098
-
-P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
-                 = 0.99 * 0.0001 / 0.010098
-                 = 0.0098
-                 = 0.98%
+```math
+\begin{aligned}
+P(\text{sick}) &= 0.0001 \quad \text{(prior: disease is rare)} \\
+P(\text{positive} \mid \text{sick}) &= 0.99 \quad \text{(likelihood: test catches it)} \\
+P(\text{positive} \mid \text{healthy}) &= 0.01 \quad \text{(false positive rate)} \\[6pt]
+P(\text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) + P(\text{positive} \mid \text{healthy}) \cdot P(\text{healthy}) \\
+&= 0.99 \cdot 0.0001 + 0.01 \cdot 0.9999 \\
+&= 0.000099 + 0.009999 \\
+&= 0.010098 \\[6pt]
+P(\text{sick} \mid \text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) / P(\text{positive}) \\
+&= 0.99 \cdot 0.0001 / 0.010098 \\
+&= 0.0098 \\
+&= 0.98\%
+\end{aligned}
 ```
 
 کمتر از ۱ درصد. پیش رو غالب است. وقتی یک بیماری نادر است، حتی آزمایش های دقیق هم اغلب مثبت دروغین را تولید می کنند. به همین دلیل است که پزشکان آزمایش های تأیید را دستور می دهند.
@@ -93,18 +93,18 @@ P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
 
 شما يه ایمیلي که شامل کلمه "لوتر" هستي دریافت مي كنيد.
 
-```
-P(spam)                = 0.3      (30% of email is spam)
-P("lottery"|spam)      = 0.05     (5% of spam emails contain "lottery")
-P("lottery"|not spam)  = 0.001    (0.1% of legitimate emails contain "lottery")
-
-P("lottery") = 0.05 * 0.3 + 0.001 * 0.7
-             = 0.015 + 0.0007
-             = 0.0157
-
-P(spam|"lottery") = 0.05 * 0.3 / 0.0157
-                  = 0.955
-                  = 95.5%
+```math
+\begin{aligned}
+P(\text{spam}) &= 0.3 \quad \text{(30\% of email is spam)} \\
+P(\text{"lottery"} \mid \text{spam}) &= 0.05 \quad \text{(5\% of spam emails contain "lottery")} \\
+P(\text{"lottery"} \mid \text{not spam}) &= 0.001 \quad \text{(0.1\% of legitimate emails contain "lottery")} \\[6pt]
+P(\text{"lottery"}) &= 0.05 \cdot 0.3 + 0.001 \cdot 0.7 \\
+&= 0.015 + 0.0007 \\
+&= 0.0157 \\[6pt]
+P(\text{spam} \mid \text{"lottery"}) &= 0.05 \cdot 0.3 / 0.0157 \\
+&= 0.955 \\
+&= 95.5\%
+\end{aligned}
 ```
 
 یک کلمه احتمال را از 30 درصد به 95 درصد تغییر می دهد. یک فیلتر اسپام واقعی باایز را در صدها کلمه همزمان اعمال می کند.
@@ -113,58 +113,56 @@ P(spam|"lottery") = 0.05 * 0.3 / 0.0157
 
 بیز ساده این را به ویژگی های متعدد گسترش می دهد با فرض اینکه همه ویژگی ها به صورت مشروط مستقل به دلیل کلاس هستند:
 
-```
-P(class | feature_1, feature_2, ..., feature_n)
-  = P(class) * P(feature_1|class) * P(feature_2|class) * ... * P(feature_n|class)
-    / P(feature_1, feature_2, ..., feature_n)
+```math
+P(\text{class} \mid \text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n) = \frac{P(\text{class}) \cdot P(\text{feature}_1 \mid \text{class}) \cdot P(\text{feature}_2 \mid \text{class}) \cdots P(\text{feature}_n \mid \text{class})}{P(\text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n)}
 ```
 
 بخش "سخن" فرض استقلال است. در متن، رخ دادن کلمات مستقل نیستند ("نوی" و "یارک" مرتبط هستند). اما فرضیه به طرز شگفت انگیزی در عمل کار می کند زیرا طبقه بندی کننده فقط نیاز به رتبه بندی کلاس ها دارد، نه تولید احتمالات کالیبر شده.
 
 از آنجا که نامگذاری برای همه کلاس ها یکسان است، می توانید آن را رد کنید و فقط شمارنده ها را مقایسه کنید:
 
-```
-score(class) = P(class) * product of P(feature_i | class)
+```math
+\text{score}(\text{class}) = P(\text{class}) \cdot \prod_i P(\text{feature}_i \mid \text{class})
 ```
 
 کلاس با بالاترين نمره رو انتخاب کن
 
 ### تخمین احتمال حداکثر (MLE)
 
-از اطلاعات آموزش چطور می توان از P ((صفحه ویژگی) استفاده کرد؟
+چطوري اينو ميگي؟$P(\text{feature} \mid \text{class})$از اطلاعات آموزش؟
 
-```
-P("free"|spam) = (number of spam emails containing "free") / (total spam emails)
+```math
+P(\text{"free"} \mid \text{spam}) = \frac{\text{number of spam emails containing "free"}}{\text{total spam emails}}
 ```
 
 این MLE است: ارزش های پارامتر را انتخاب کنید که داده های مشاهده شده را بیشتر احتمال می دهند. شما عملکرد احتمال را حداکثر می کنید، که برای شمارش های متمایز به فرکانس نسبی کاهش می یابد.
 
 مشکل: اگر یک کلمه در هنگام آموزش هرگز در اسپم ظاهر نشود، MLE احتمال صفر را به آن می دهد. یک کلمه ناشناخته کل محصول را می کشد. این را با نرم کردن Laplace حل کنید:
 
-```
-P(word|class) = (count(word, class) + 1) / (total_words_in_class + vocabulary_size)
+```math
+P(\text{word} \mid \text{class}) = \frac{\text{count}(\text{word}, \text{class}) + 1}{\text{total\_words\_in\_class} + \text{vocabulary\_size}}
 ```
 
 اضافه کردن 1 به هر شمارش تضمین می کند که هیچ احتمالی هرگز صفر نیست.
 
 ### حداکثر یک پس از (MAP)
 
-MLE می پرسد: کدام پارامترها حداکثر P ((دست های پارامتر داده ها) را می کنند؟
+MLE پرسید: چه پارامتر هایی را حداکثر می کند $P(\text{data} \mid \text{parameters})$؟
 
-MAP پرسید: کدام پارامترها حداکثر P  پارامترهای داده را دارند؟
+نقشه می پرسد: چه پارامتر هایی حداکثر می شوند $P(\text{parameters} \mid \text{data})$؟
 
 با نظاره بازي:
 
-```
-P(parameters|data) proportional to P(data|parameters) * P(parameters)
+```math
+P(\text{parameters} \mid \text{data}) \propto P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})
 ```
 
 MAP یک پیش فرض را بر روی پارامترهای خود اضافه می کند. اگر شما معتقدید پارامترها باید کوچک باشند، شما آن را به عنوان پیش فرض که مقادیر بزرگ را مجازات می کند، کدگذاری می کنید. این مشابه تنظیم L2 در ML است. مجازات "خرز" در بازگشت ریج به معنای واقعی کلمه یک پیش فرض گاوسی در وزنه ها است.
 
 | Estimation | Optimizes | ML equivalent |
 |------------|-----------|---------------|
-| MLE | P(data\|params) | Unregularized training |
-| MAP | P(data\|params) * P(params) | L2 / L1 regularization |
+| MLE | $P(\text{data} \mid \text{params})$ | Unregularized training |
+| MAP | $P(\text{data} \mid \text{params}) \cdot P(\text{params})$ | L2 / L1 regularization |
 
 ### بیزیان و فرکانست: تفاوت عملی
 
@@ -189,7 +187,7 @@ MAP یک پیش فرض را بر روی پارامترهای خود اضافه �
 
 **Priors are regularization.**یک پیش از گاوسی در وزن L2 تنظیم است. یک پیش از Laplace L1 است. هر بار که یک اصطلاح تنظیم را اضافه می کنید، شما یک بیانیه بیزیایی در مورد آنچه که انتظار دارید از مقادیر پارامتر دارید، می کنید.
 
-**Posteriors are uncertainty.**یک احتمال پیش بینی شده به شما چیزی در مورد اینکه مدل در این تخمین چقدر مطمئن است نمی گوید. روش های بیزیان به شما توزیع می دهند: "من فکر می کنم P(spam) بین 0.8 تا 0.95 است".
+**Posteriors are uncertainty.**یک احتمال پیش بینی شده به شما چیزی در مورد اینکه مدل در این تخمین چقدر مطمئن است نمی گوید. روش های بیزیان به شما توزیع می دهند: "من فکر می کنم$P(\text{spam})$بین 0.8 تا 0.95 است".
 
 **Bayes updates are online learning.**پس از امروز به قبل فردا می شود. وقتی مدل شما داده های جدید را می بیند، به جای آموزش مجدد از ابتدا، باورهای خود را به طور تدریجی به روز می کند.
 
@@ -345,26 +343,28 @@ for msg, pred in zip(test_messages, predictions):
 
 | Likelihood | Conjugate Prior | Posterior | Example |
 |-----------|----------------|-----------|---------|
-| Bernoulli | Beta(a, b) | Beta(a + successes, b + failures) | Coin flip bias estimation |
-| Normal (known variance) | Normal(mu_0, sigma_0) | Normal(weighted mean, smaller variance) | Sensor calibration |
-| Poisson | Gamma(a, b) | Gamma(a + sum of counts, b + n) | Modeling arrival rates |
-| Multinomial | Dirichlet(alpha) | Dirichlet(alpha + counts) | Topic modeling, language models |
+| Bernoulli | $\text{Beta}(a, b)$ | $\text{Beta}(a + \text{successes}, b + \text{failures})$ | Coin flip bias estimation |
+| Normal (known variance) | $\text{Normal}(\mu_0, \sigma_0)$ | Normal(weighted mean, smaller variance) | Sensor calibration |
+| Poisson | $\text{Gamma}(a, b)$ | $\text{Gamma}(a + \text{sum of counts}, b + n)$ | Modeling arrival rates |
+| Multinomial | $\text{Dirichlet}(\alpha)$ | $\text{Dirichlet}(\alpha + \text{counts})$ | Topic modeling, language models |
 
 چرا این مهم است: بدون پیشینه های همبستگی، شما نیاز به نمونه گیری مونت کارلو یا نتیجه گیری متغیر برای نزدیک شدن به پسینه دارید. با پیشینه های همبستگی، شما فقط دو عدد را به روز می کنید.
 
-توزیع بتا رایج ترین مخلوط قبلی در عمل است. بتا ((a، b) اعتقاد شما را در مورد یک پارامتر احتمال نشان می دهد. متوسط a/(a+b است. هرچه a+b بزرگتر باشد، توزیع متمرکز تر (ثبات) می شود.
+توزیع بتا رایج ترین مخلوط قبلی در عمل است. $\text{Beta}(a, b)$این نشان دهنده اعتقاد شما در مورد یک پارامتر احتمال است.$a/(a+b)$بزرگترين$a+b$، توزیع بیشتر متمرکز (امیدوار) است.
 
 موارد ویژه ای از قبل:
-- بيتا ((1,1) = یونیفورم. شما درباره پارامتر نظر نداري.
-- بيتا ((10,10) = 0.5 بالا. شما به شدت معتقدید که پارامتر نزدیک به 0.5 است.
-- بتا ((1, 10) = منحرف به سمت 0 شما فکر می کنید پارامتر کوچک است.
+- $\text{Beta}(1, 1)$شما درباره پارامتر نظر نداري
+- $\text{Beta}(10, 10)$شما به شدت معتقدید که پارامتر نزدیک به 0.5 است.
+- $\text{Beta}(1, 10)$= به سمت 0 منحرف شده. شما فکر می کنید پارامتر کوچک است.
 
 قانون تازه اي خيلي ساده است:
 
-```
-Prior:     Beta(a, b)
-Data:      s successes, f failures
-Posterior: Beta(a + s, b + f)
+```math
+\begin{aligned}
+\text{Prior:} \quad & \text{Beta}(a, b) \\
+\text{Data:} \quad & s \text{ successes}, f \text{ failures} \\
+\text{Posterior:} \quad & \text{Beta}(a + s, b + f)
+\end{aligned}
 ```
 
 نه تکامل، نه نمونه برداری، فقط اضافه کردن
@@ -376,19 +376,19 @@ Posterior: Beta(a + s, b + f)
 مثال مشخصی: تخمین اینکه آیا یک سکه عادلانه است.
 
 **Day 1: No data yet.**
-با "بيتا" شروع کنيد، يک پيشواي يونيفورم.
+از شروع به$\text{Beta}(1, 1)$-از يه پيشواي يونيفورم
 - متوسط قبلی: 0.5
 - پیشینه در عرض [0, 1]
 
 **Day 2: Observe 7 heads, 3 tails.**
-پسین = بتا ((1 + 7 ، 1 + 3) = بتا ((8, 4)
-- متوسط بعد: 8/12 = 0.667
+$\text{Posterior} = \text{Beta}(1 + 7, 1 + 3) = \text{Beta}(8, 4)$
+- متوسط بعد: $8/12 = 0.667$
 - شواهد نشان می دهد که سکه به سمت سر ها منحرف شده است
 
 **Day 3: Observe 5 more heads, 5 more tails.**
 از پسر ديروز به عنوان پيشر امروز استفاده کن
-پسین = بتا ((8 + 5 ، 4 + 5) = بتا ((13, 9)
-- متوسط بعد: 13/22 = 0.591
+$\text{Posterior} = \text{Beta}(8 + 5, 4 + 5) = \text{Beta}(13, 9)$
+- متوسط بعد: $13/22 = 0.591$
 - داده های جدید متعادل تخمین را به سمت 0.5
 
 ```mermaid
@@ -398,7 +398,7 @@ graph LR
     C -->|"5H, 5T"| D["Posterior 2<br/>Beta(13,9)<br/>mean = 0.59"]
 ```
 
-ترتیب مشاهدات مهم نیست. Beta(1,1) با تمام 12 سر و 8 دم به یکباره به روز می شود Beta(13, 9) - نتیجه مشابه. به روز رسانی تسلسل و به روز رسانی دسته از ریاضیات معادل است. اما به روز رسانی تسلسل به شما اجازه می دهد در هر مرحله بدون ذخیره داده های خام تصمیم گیری کنید.
+ترتیب مشاهدات مهم نیست.$\text{Beta}(1,1)$با تمام 12 سر و 8 دم به یکباره به روز رسانی شده$\text{Beta}(13, 9)$-- همان نتیجه. به روز رسانی تسلسل و به روز رسانی دسته به طور ریاضی معادل است. اما به روز رسانی تسلسل به شما اجازه می دهد در هر مرحله تصمیم گیری بدون ذخیره سازی داده های خام.
 
 این پایه ی یادگیری آنلاین در سیستم های تولید ML است. نمونه گیری تامپسون برای غلو، سیستم های توصیه افزایشی و آشکارسازان نارسایی جریان همه از این الگوی استفاده می کنند.
 
@@ -410,14 +410,14 @@ graph LR
 
 آزمایش بیزیانی A/B:
 
-1. **Prior.**با Beta ((1,1) برای هر دو نوع شروع کنید.
+1. **Prior.**از شروع به$\text{Beta}(1, 1)$برای هر دو نوع، هیچ تفضل قبلی وجود ندارد.
 2. **Data.**گزینه A: 50 کلیک از 1000 بازدید، گزینه B: 65 کلیک از 1000 بازدید
 3. **Posteriors.**
-   - A: بتا ((1 + 50 ، 1 + 950) = بتا ((51, 951) ، متوسط = 0.051
-   - ب: بتا ((1 + 65، 1 + 935) = بتا ((66, 936). متوسط = 0,066
-4. **Decision.**محاسبه P ((B > A) -- احتمال اینکه نرخ تبدیل واقعی B بالاتر از A است.
+   - A: $\text{Beta}(1 + 50, 1 + 950) = \text{Beta}(51, 951)$. متوسط = 0.051
+   - ب: $\text{Beta}(1 + 65, 1 + 935) = \text{Beta}(66, 936)$. متوسط = 0.066
+4. **Decision.**حساب کردن$P(B > A)$-- احتمال اینکه نرخ تبدیل واقعی B بالاتر از A باشد.
 
-محاسبه P ((B > A) از نظر تحلیلی سخته اما مونت کارلو باعث می شه که ساده باشه
+محاسبات$P(B > A)$اما مونت کارلو باعث می شه که ساده باشه
 
 ```
 1. Draw 100,000 samples from Beta(51, 951)  -> samples_A
@@ -425,7 +425,7 @@ graph LR
 3. P(B > A) = fraction of samples where B > A
 ```
 
-اگر P(B > A) > 0.95، شما نوع B را ارسال می کنید. اگر بین 0.05 و 0.95 باشد، شما اطلاعات را جمع آوری می کنید. اگر P(B > A) < 0.05، شما نوع A را ارسال می کنید.
+اگه$P(B > A) > 0.95$، شما نوع B را ارسال می کنید. اگر بین 0.05 تا 0.95 باشد، شما اطلاعات را جمع آوری می کنید. اگر$P(B > A) < 0.05$، شما نوع " آ " رو کشتي ميکنيد
 
 مزایای تست A/B فرکانس:
 - شما یک بیانیه احتمال مستقیم دریافت می کنید: "فرصت ۹۷٪ وجود دارد که B بهتر باشد"
@@ -435,35 +435,45 @@ graph LR
 
 | Aspect | Frequentist A/B | Bayesian A/B |
 |--------|----------------|--------------|
-| Output | p-value | P(B > A) |
+| Output | p-value | $P(B > A)$ |
 | Interpretation | "How surprising is this data if A=B?" | "How likely is B better than A?" |
 | Early stopping | Inflates false positives | Safe at any point (given a well-chosen prior and correctly specified model) |
 | Prior knowledge | Not used | Encoded as Beta prior |
-| Decision rule | p < 0.05 | P(B > A) > threshold |
+| Decision rule | $p < 0.05$ | $P(B > A) > \text{threshold}$ |
 
 ## تمرینات
 
-1. **Multiple tests.**یک بیمار دو بار در آزمایش های مستقل مثبت است (هر دو 99٪ دقیق هستند، شیوع بیماری 1 در 10،000 است). پس از هر دو آزمایش چه بیماری است؟ از پسین آزمایش اول به عنوان پیشین برای دوم استفاده کنید.
+1. **Multiple tests.**یک بیمار دو بار در آزمایش های مستقل مثبت (هر دو 99٪ دقیق، شیوع بیماری 1 در 10،000) است.$P(\text{sick})$بعد از هر دو تست از پسین تست اول به عنوان پیشین تست دوم استفاده کنید
 
 2. **Smoothing impact.**دسته بندی اسپام را با ارزش های صاف کردن 0.01، 0.1، 1.0 و 10.0 اجرا کنید. احتمالات کلمات بالا چگونه تغییر می کند؟ با صاف کردن=0 و کلمه ای که فقط در ژامون ظاهر می شود چه اتفاقی می افتد؟
 
-3. **Add features.**کلاس NaiveBayes را گسترش دهید تا از طول پیام (قصر/طول) به عنوان یک ویژگی در کنار شمارش کلمات استفاده کنید. P(short dizerspam) و P(short dizerham) را از داده های آموزش تخمین بزنید و آن را به نمره پیش بینی بکشید.
+3. **Add features.**کلاس NaiveBayes را گسترش دهید تا از طول پیام (قصر/طول) به عنوان یک ویژگی در کنار شمارش کلمات استفاده شود. تخمین $P(\text{short} \mid \text{spam})$و$P(\text{short} \mid \text{ham})$از داده های آموزش و آن را به نمره پیش بینی بکشید.
 
-4. **MAP by hand.**با توجه به داده های مشاهده شده (7 سر در 10 فلپ سکه) تخمین MAP از تعصب با استفاده از یک Beta ((2,2) پیش از آن را محاسبه کنید. آن را با تخمین MLE (7/10) مقایسه کنید.
+4. **MAP by hand.**با توجه به داده های مشاهده شده (۷ سر در ۱۰ فلپ سکه) تخمین MAP از تعصب را با استفاده از یک$\text{Beta}(2,2)$قبل از این، آن را با تخمین MLE مقایسه کنید ($7/10$)
+
+### اشاره ها
+
+**Exercise 1.**تماس بگیرید`bayes`بعد از تست 1، یک بار پس از تست 1، پس از آن دوباره با پس از آن به عنوان پیش رو تماس بگیرید.`sequential_bayes(prior, likelihood, false_positive_rate, 2)`باید مقدار مشابهی داشته باشد، نزدیک به 0.5
+
+**Exercise 2.**یکی بساز`NaiveBayes(smoothing=s)`برای هر مقدار، آن را بر اساس همان داده ها آموزش دهید و چاپ کنید`top_words`با صاف کردن 0، کلمه ای که هرگز در اسپام ظاهر نمی شود احتمال 0 را می گیرد، بنابراین تاریخش تعریف نشده است.
+
+**Exercise 3.**شمارش کنید که چه تعداد پیام های اسپم و خمیر کوتاه هستند، با تعداد پیام ها در هر کلاس تقسیم کنید و به نمره در `predict`. چک کنید که دو احتمال برای هر کلاس به 1 اضافه می شود
+
+**Exercise 4.**با یک$\text{Beta}(\alpha, \beta)$قبل از این، تخمین MAP $\frac{h + \alpha - 1}{n + \alpha + \beta - 2}$. بذارش$h = 7$،$n = 10$; نتیجه باید بین MLE (0.7) و حالت قبلی (0.5) باشد.
 
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Prior | "My initial guess" | P(hypothesis) before observing evidence. In ML: the regularization term. |
-| Likelihood | "How well the data fits" | P(evidence\|hypothesis). How probable the observed data is under a specific hypothesis. |
-| Posterior | "My updated belief" | P(hypothesis\|evidence). The prior multiplied by the likelihood, then normalized. |
-| Evidence | "The normalizing constant" | P(data) across all hypotheses. Ensures the posterior sums to 1. |
+| Prior | "My initial guess" | $P(\text{hypothesis})$ before observing evidence. In ML: the regularization term. |
+| Likelihood | "How well the data fits" | $P(\text{evidence} \mid \text{hypothesis})$. How probable the observed data is under a specific hypothesis. |
+| Posterior | "My updated belief" | $P(\text{hypothesis} \mid \text{evidence})$. The prior multiplied by the likelihood, then normalized. |
+| Evidence | "The normalizing constant" | $P(\text{data})$ across all hypotheses. Ensures the posterior sums to 1. |
 | Naive Bayes | "That simple text classifier" | A classifier that assumes features are independent given the class. Works well despite the false assumption. |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from unseen data. |
-| MLE | "Just use the frequencies" | Choose parameters that maximize P(data\|parameters). No prior. Can overfit with small data. |
-| MAP | "MLE with a prior" | Choose parameters that maximize P(data\|parameters) * P(parameters). Equivalent to regularized MLE. |
-| Log-probability | "Work in log space" | Using log(P) instead of P to avoid floating-point underflow when multiplying many small numbers. |
+| MLE | "Just use the frequencies" | Choose parameters that maximize $P(\text{data} \mid \text{parameters})$. No prior. Can overfit with small data. |
+| MAP | "MLE with a prior" | Choose parameters that maximize $P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})$. Equivalent to regularized MLE. |
+| Log-probability | "Work in log space" | Using $\log(P)$ instead of $P$ to avoid floating-point underflow when multiplying many small numbers. |
 | False positive | "A wrong alarm" | The test says positive, but the true state is negative. Drives the base rate fallacy. |
 
 ## خواندن بیشتر

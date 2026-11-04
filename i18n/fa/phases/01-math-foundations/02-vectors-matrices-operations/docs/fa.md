@@ -43,11 +43,10 @@ w = [1, 0, -2]    -- a 3D vector
 
 ### ماتریس: شبکه های اعداد
 
-یک ماتریکس یک شبکه دو بعدی است. ردیفها و ستون ها. یک ماتریکس m x n دارای m ردیفها و n ستون است.
+یک ماتریکس یک شبکه دو بعدی است. ردیفها و ستون ها.$m \times n$ماتریکس داره$m$صف ها و$n$ستون ها
 
-```
-A = | 1  2  3 |     -- 2x3 matrix (2 rows, 3 columns)
-    | 4  5  6 |
+```math
+A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \quad \text{2x3 matrix (2 rows, 3 columns)}
 ```
 
 در شبکه های عصبی، ماتریس های وزن متریزه های ورودی را به متریزهای خروجی تبدیل می کنند. یک لایه با 784 ورودی و 128 خروجی از ماتریس وزن 128x784 استفاده می کند.
@@ -83,16 +82,14 @@ Inner dimensions: 784 = 784  -- valid
 
 از نظر عنصر: موقعیت های مشابه را چند برابر کنید. هر دو ماتریس باید شکل مشابهی داشته باشند.
 
-```
-| 1  2 |   | 5  6 |   | 5  12 |
-| 3  4 | * | 7  8 | = | 21 32 |
+```math
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} * \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} = \begin{bmatrix} 5 & 12 \\ 21 & 32 \end{bmatrix}
 ```
 
 ضرب ماتریکس: محصولات نقطه ای از ردیف ها و ستون ها. ابعاد داخلی باید مطابق باشد.
 
-```
-| 1  2 |   | 5  6 |   | 1*5+2*7  1*6+2*8 |   | 19  22 |
-| 3  4 | @ | 7  8 | = | 3*5+4*7  3*6+4*8 | = | 43  50 |
+```math
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} @ \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} = \begin{bmatrix} 1 \cdot 5 + 2 \cdot 7 & 1 \cdot 6 + 2 \cdot 8 \\ 3 \cdot 5 + 4 \cdot 7 & 3 \cdot 6 + 4 \cdot 8 \end{bmatrix} = \begin{bmatrix} 19 & 22 \\ 43 & 50 \end{bmatrix}
 ```
 
 عملیات های مختلف، نتایج مختلف، قوانین مختلف.
@@ -325,6 +322,14 @@ NumPy به طور خودکار تعصب یک بعدی را در هر دو ردی
 
 3. **Build a two-layer network.**با استفاده از فقط کلاس ماتریکس خود (هیچ NumPy) ، یک شبکه عصبی دو لایه ایجاد کنید: ورودی (3) -> پنهان (4) -> خروجی (2). وزنه های تصادفی را آغاز کنید، یک گذرگاه پیش رو اجرا کنید و تمام اشکال را درست کنید.
 
+### اشاره ها
+
+**Exercise 1.**چندانش`A @ A.inverse_2x2()`برای سه ماتریس و مقایسه هر سلول با هویت در `1e-9`. برای ماتریس با تعیین کننده 0 مانند [[1, 2], [2, 4]], `inverse_2x2`یک`ValueError`، و این نتیجه انتظار می رود.
+
+**Exercise 2.**ماتریس 3x3 کوفاکتور را محاسبه کنید، آن را برای دریافت adjugate منتقل کنید، سپس هر سلول را با  تقسیم کنید`determinant()`- اینو چک کن`A @ A_inv`بهشون ميگه که هر سلول همديگه`np.linalg.inv(A)`در داخل`1e-9`. .
+
+**Exercise 3.**قبل از چندان شکل هر ماتریکس را بنویسید: `W1`4x3 و `W2`2x4 است، مثل `demo_neural_network_layer`. یک ورودی 3×1 باید یک ویکتور 4×1 پنهان و یک ورودی 2×1 را بدهد.
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
@@ -332,7 +337,7 @@ NumPy به طور خودکار تعصب یک بعدی را در هر دو ردی
 | Vector | "An arrow" | An ordered list of numbers. In AI: a point in high-dimensional space. |
 | Matrix | "A table of numbers" | A linear transformation. It maps vectors from one space to another. |
 | Matrix multiply | "Just multiply the numbers" | Dot products between every row of the first matrix and every column of the second. Order matters. |
-| Transpose | "Flip it" | Swap rows and columns. Turns an m x n matrix into n x m. Critical in backpropagation. |
+| Transpose | "Flip it" | Swap rows and columns. Turns an $m \times n$ matrix into $n \times m$. Critical in backpropagation. |
 | Determinant | "Some number from the matrix" | Measures how much the matrix scales area (2D) or volume (3D). Zero means the transformation crushes a dimension. |
 | Inverse | "Undo the matrix" | The matrix that reverses the transformation. Only exists when the determinant is not zero. |
 | Identity matrix | "The boring matrix" | The matrix equivalent of multiplying by 1. Used in residual connections (ResNets). |

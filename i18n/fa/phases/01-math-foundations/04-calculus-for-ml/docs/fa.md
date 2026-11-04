@@ -9,7 +9,7 @@
 
 ## اهداف یادگیری
 
-- مشتق های عددی و تحلیلی برای عملکردهای ML مشترک محاسبه کنید (x^2, sigmoid, cross-entropy)
+- مشتق های عددی و تحلیلی را برای عملکردهای ML مشترک محاسبه کنید ($x^2$، سیگمائید، انترپای کراس)
 - پیاده سازی کاهش گرادینت از ابتدا برای حداقل رساندن عملکرد از دست دادن در 1D و 2D
 - منحنی یک مدل بازپسین خطی را بازگردانید و آن را با استفاده از بروز رسانی وزن دستی تمرین کنید
 - ماتریس هسیان، مقربات سری تیلور و ارتباط آنها با روش های بهینه سازی را توضیح دهید
@@ -24,59 +24,58 @@
 
 ### مشتق چیست؟
 
-یک مشتق سرعت تغییر را اندازه گیری می کند. برای یک تابع y = f(x، مشتق f'(x) به شما می گوید: اگر x را با مقدار کمی فشار دهید، y چقدر تغییر می کند؟
+یک مشتق نرخ تغییر را اندازه گیری می کند. برای یک تابع $y = f(x)$، مشتق$f'(x)$بهتون میگه: اگه تکون بدید$x$با مقدار کوچکی، چقدر می کنه$y$تغییر؟
 
 از نظر هندسی، مشتق، انحلال خط دستک در یک نقطه است.
 
-**f(x) = x^2:**
+**$f(x) = x^2$:**
 
-| x | f(x) | f'(x) (slope) |
+| $x$ | $f(x)$ | $f'(x)$ (slope) |
 |---|------|---------------|
 | 0 | 0    | 0 (flat, at the bottom) |
 | 1 | 1    | 2 |
 | 2 | 4    | 4 (tangent line slope at this point) |
 | 3 | 9    | 6 |
 
-در x=2، منحنی 4 است. اگر x را کمی به سمت راست حرکت دهید، y حدود 4 برابر این مقدار افزایش می یابد. در x=0، منحنی 0 است. شما در پایین کاسه هستید.
+در$x=2$، منحنی 4 است اگر حرکت کنید$x$يه کم به سمت راست$y$در حدود 4 برابر این مقدار افزایش می یابد.$x=0$، منحنی 0 است شما در پایین کاسه هستید
 
 تعریف رسمی:
 
-```
-f'(x) = lim   f(x + h) - f(x)
-        h->0  -----------------
-                     h
+```math
+f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 ```
 
-در کد، شما از حد عبور می کنید و فقط یک h بسیار کوچک را استفاده می کنید. این مشتق عددی است.
+در کد، شما حد را رد می کنید و فقط از یک مقدار بسیار کوچک استفاده می کنید$h$اين مشتق عدديه
 
 ### مشتق های جزئی: یک متغیر در یک زمان
 
 عملکردهای واقعی ورودی های زیادی دارند. یک از دست دادن شبکه عصبی به هزاران وزن بستگی دارد. یک مشتق جزئی تمام متغیرها را به جز یک ثابت نگه می دارد، سپس مشتق را در رابطه با آن یک می گیرد.
 
-```
-f(x, y) = x^2 + 3xy + y^2
-
-df/dx = 2x + 3y     (treat y as a constant)
-df/dy = 3x + 2y     (treat x as a constant)
+```math
+\begin{aligned}
+f(x, y) &= x^2 + 3xy + y^2 \\[4pt]
+\frac{\partial f}{\partial x} &= 2x + 3y \quad \text{(treat } y \text{ as a constant)} \\
+\frac{\partial f}{\partial y} &= 3x + 2y \quad \text{(treat } x \text{ as a constant)}
+\end{aligned}
 ```
 
 هر مشتق جزئی پاسخ می دهد: اگر فقط این وزن را فشار دهم، چگونه کاهش تغییر می کند؟
 
 ### گرادینت: ویکتور تمام مشتق های جزئی
 
-گرادینت هر مشتق جزئی را به یک ویکتور جمع می کند. برای یک تابع f ((x، y، z) ، گرادینت:
+گرادینت هر مشتق جزئی را به یک ویکتور جمع می کند.$f(x, y, z)$, گرادینت اینه:
 
-```
-grad f = [ df/dx, df/dy, df/dz ]
+```math
+\nabla f = \left[ \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z} \right]
 ```
 
 گرادینت به سمت بلندترین صعود اشاره دارد. برای حداقل کردن یک تابع، به سمت مخالف حرکت کنید.
 
-**Contour plot of f(x,y) = x^2 + y^2:**
+**Contour plot of $f(x,y) = x^2 + y^2$:**
 
 این تابع شکل کاسه ای با دایره های متمرکز به عنوان خطوط کنتور تشکیل می دهد. حداقل در (0, 0) است.
 
-| Point | grad f | -grad f (descent direction) |
+| Point | $\nabla f$ | $-\nabla f$ (descent direction) |
 |-------|--------|----------------------------|
 | (1, 1) | [2, 2] (points uphill, away from minimum) | [-2, -2] (points downhill, toward minimum) |
 | (0, 0) | [0, 0] (flat, at the minimum) | [0, 0] |
@@ -85,7 +84,7 @@ grad f = [ df/dx, df/dy, df/dz ]
 
 ### ارتباط با بهینه سازی
 
-آموزش شبکه عصبی بهینه سازی است. شما یک تابع از دست دادن L ((w1، w2، ..., wn) دارید که اندازه گیری می کند که مدل چقدر اشتباه است. شما می خواهید آن را به حداقل برساند.
+آموزش شبکه عصبی، بهینه سازی است. شما یک عملکرد از دست دادن دارید.$L(w_1, w_2, \ldots, w_n)$که اندازه گیری می کند که مدل چقدر اشتباه است. شما می خواهید آن را به حداقل برساند.
 
 ```
 Gradient descent update rule:
@@ -102,7 +101,7 @@ For every weight:
 
 **Loss landscape (1D slice):**
 
-تابع ضایع L ((w) به عنوان وزن w متفاوت، منحنی با قله ها و دره ها تشکیل می دهد.
+عملکرد خسارت$L(w)$یک منحنی با قله ها و دره ها به عنوان وزن تشکیل می دهد$w$متفاوت است.
 
 | Feature | Description |
 |---------|-------------|
@@ -116,9 +115,9 @@ For every weight:
 
 دو راه برای محاسبه یک مشتق وجود دارد.
 
-تحلیل: قوانین حساب را به دست اعمال کنید. برای f  x = x^2 ، مشتق f  x = 2x است. دقیق. سریع.
+تحلیلی: قوانین حساب را دستانه اعمال کنید.$f(x) = x^2$، مشتقش$f'(x) = 2x$درست، سریع
 
-عددی: با استفاده از تعریف تخمین بزنید. f ((x+h) و f ((x-h) را برای یک h کوچک محاسبه کنید، سپس تفاوت را استفاده کنید.
+عددی: با استفاده از تعریف تقرب. محاسبه $f(x+h)$و$f(x-h)$برای یه بچه کوچک$h$، پس از تفاوت استفاده کن
 
 ```
 Numerical (central difference):
@@ -148,7 +147,7 @@ f(x) = ln(x)   f'(x) = 1/x     Cross-entropy loss
 f(x) = 1/(1+e^-x)  f'(x) = f(x)(1-f(x))   Sigmoid activation
 ```
 
-برای f ((x) = x^2:
+برای$f(x) = x^2$:
 
 ```
 f(x) = x^2    f'(x) = 2x
@@ -161,7 +160,7 @@ f(x) = x^2    f'(x) = 2x
    2    4       4      slope tilts right (increasing)
 ```
 
-برای f(w) = wx + b با x=3, b=1:
+برای$f(w) = wx + b$با$x=3$،$b=1$:
 
 ```
 f(w) = 3w + 1    f'(w) = 3
@@ -189,17 +188,16 @@ Example: y = (3x + 1)^2
 
 گرادینت به شما مهره میگه هسیان به شما منحنی میگه
 
-Hessian ماتریس مشتق های جزئی درجه دوم است. برای یک تابع f ((x1، x2، ..., xn) ، ورودی (i، j) از Hessian عبارت است از:
+Hessian ماتریس مشتق های جزئی درجه دوم است. برای یک تابع$f(x_1, x_2, \ldots, x_n)$, وارد شدن$(i, j)$از هسیان عبارت است از:
 
-```
-H[i][j] = d^2f / (dx_i * dx_j)
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
 
-برای یک تابع دو متغیر f ((x, y):
+برای یک تابع دو متغیر $f(x, y)$:
 
-```
-H = | d^2f/dx^2    d^2f/dxdy |
-    | d^2f/dydx    d^2f/dy^2 |
+```math
+H = \begin{bmatrix} \dfrac{\partial^2 f}{\partial x^2} & \dfrac{\partial^2 f}{\partial x \, \partial y} \\[8pt] \dfrac{\partial^2 f}{\partial y \, \partial x} & \dfrac{\partial^2 f}{\partial y^2} \end{bmatrix}
 ```
 
 **What the Hessian tells you at a critical point (where gradient = 0):**
@@ -210,7 +208,7 @@ H = | d^2f/dx^2    d^2f/dxdy |
 | Negative definite (all eigenvalues < 0) | Local maximum | Bowl pointing down |
 | Indefinite (mixed eigenvalues) | Saddle point | Horse saddle shape |
 
-**Example:**f(x, y) = x^2 - y^2 (یک تابع سیله)
+**Example:** $f(x, y) = x^2 - y^2$(کار عملکرد سیله)
 
 ```
 df/dx = 2x       df/dy = -2y
@@ -223,7 +221,7 @@ Eigenvalues: 2 and -2 (one positive, one negative)
 --> Saddle point at (0, 0)
 ```
 
-با f ((x, y) = x^2 + y^2 (یک کاسه) مقایسه کنید:
+با $f(x, y) = x^2 + y^2$(یک کاسه):
 
 ```
 H = | 2  0 |
@@ -237,22 +235,24 @@ Eigenvalues: 2 and 2 (both positive)
 
 روش نیوتن از روش هسی استفاده می کند تا گام های بهینه سازی بهتری نسبت به کاهش گرادینت انجام دهد. به جای فقط دنبال پاشنه، به منحنیات حساب می دهد:
 
-```
-Newton's update:    w_new = w_old - H^(-1) * gradient
-Gradient descent:   w_new = w_old - lr * gradient
+```math
+\begin{aligned}
+\text{Newton's update:} \quad & w_{\text{new}} = w_{\text{old}} - H^{-1} \cdot \text{gradient} \\
+\text{Gradient descent:} \quad & w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 روش نیوتن سریعتر به هم می رسد چون هسیان گرادینت را "توسع" می کند -- جهت های دوردست قدم های کوچکتر، جهت های صاف قدم های بزرگتر می گیرند.
 
-نکته مهم: برای یک شبکه عصبی با پارامترهای N، Hessian N x N است. یک مدل با 1 میلیون پارامتر نیاز به یک ماتریس 1 تریلیون ورودی دارد. به همین دلیل ما از مقربات استفاده می کنیم.
+گرفتن: برای شبکه عصبی با $N$پارامتر ها، هسیانی ها$N \times N$یک مدل با یک میلیون پارامتر به یک تریلیون ماتریس نیاز دارد. به همین دلیل ما از مقربات استفاده می کنیم.
 
 | Method | What it uses | Cost | Convergence |
 |--------|-------------|------|-------------|
-| Gradient descent | First derivatives only | O(N) per step | Slow (linear) |
-| Newton's method | Full Hessian | O(N^3) per step | Fast (quadratic) |
-| L-BFGS | Approximate Hessian from gradient history | O(N) per step | Medium (superlinear) |
-| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | O(N) per step | Medium |
-| Natural gradient | Fisher information matrix (statistical Hessian) | O(N^2) per step | Fast |
+| Gradient descent | First derivatives only | $O(N)$ per step | Slow (linear) |
+| Newton's method | Full Hessian | $O(N^3)$ per step | Fast (quadratic) |
+| L-BFGS | Approximate Hessian from gradient history | $O(N)$ per step | Medium (superlinear) |
+| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | $O(N)$ per step | Medium |
+| Natural gradient | Fisher information matrix (statistical Hessian) | $O(N^2)$ per step | Fast |
 
 در عمل، آدام بهینه سازی پیش فرض برای یادگیری عمیق است. این اطلاعات درجه دوم را با ردیابی متوسط اجرا و متغیر گرادیانت ها در هر پارامتر به راحتی نزدیک می کند.
 
@@ -260,17 +260,17 @@ Gradient descent:   w_new = w_old - lr * gradient
 
 هر تابع صاف را می توان با یک چندگانه محوری تخمین زد:
 
-```
-f(x + h) = f(x) + f'(x)*h + (1/2)*f''(x)*h^2 + (1/6)*f'''(x)*h^3 + ...
+```math
+f(x + h) = f(x) + f'(x)\,h + \frac{1}{2} f''(x)\,h^2 + \frac{1}{6} f'''(x)\,h^3 + \cdots
 ```
 
-هرچه اصطلاحات بیشتری را در میان بگذارید، نزدیک شدن بهتر می شود، اما فقط نزدیک به نقطه x.
+هرچه اصطلاحات بیشتری را در میان بگذارید، نزدیک شدن بهتر است، اما فقط نزدیک به نقطه$x$. .
 
 **Why Taylor series matter for ML:**
 
-- **First-order Taylor = gradient descent.**وقتی از f(x + h) ~ f(x) + f'(x) *h استفاده می کنید، یک مقربات خطی انجام می دهید. کاهش درجه ای این مدل خطی را به حداقل می رساند تا h = -lr * f'(x را انتخاب کنید.
+- **First-order Taylor = gradient descent.**وقتی استفاده می کنی$f(x + h) \approx f(x) + f'(x) h$در حال انجام یک تقرب خطی است. کاهش درجه ای این مدل خطی را به حداقل می رساند که انتخاب کنید$h = -\text{lr} \cdot f'(x)$. .
 
-- **Second-order Taylor = Newton's method.**با استفاده از f(x + h) ~ f(x) + f'(x) *h + (1/2) *f'(x) *h^2، شما یک مدل مربع را دریافت می کنید. به حداقل رساندن آن h = -f'(x) / f'(x) -- قدم نیوتن.
+- **Second-order Taylor = Newton's method.**استفاده کردن$f(x + h) \approx f(x) + f'(x) h + \frac{1}{2} f''(x) h^2$، شما یک مدل مربع می گیرید. حداقل کردن آن می دهد$h = -f'(x)/f''(x)$-خطای نیوتن
 
 - **Loss function design.**MSE و کراس انترپی هموار هستند، به این معنی که گسترش های تیلور آنها به خوبی رفتار می کنند. این تصادفی نیست. از دست دادن های هموار بهینه سازی قابل پیش بینی می کنند.
 
@@ -291,28 +291,36 @@ Higher orders          Finer structure     Rarely used in ML
 
 در ML، شما به ندرت تکاملی را به دست محاسبه می کنید، اما مفهوم در همه جا است:
 
-**Probability.**برای یک متغیر تصادفی مداوم با تراکم p ((x):
+**Probability.**برای یک متغیر تصادفی مداوم با چگالی $p(x)$:
+
+```math
+P(a < X < b) = \int_a^b p(x) \, dx
 ```
-P(a < X < b) = integral from a to b of p(x) dx
-```
-منطقه زیر منحنی تراکم احتمال بین a و b احتمال فرود در این محدوده است.
+
+منطقه زیر منحنی تراکم احتمال بین $a$و$b$احتمال فرود در این محدوده است.
 
 **Expected value.**نتیجه متوسط با احتمال وزن شده:
+
+```math
+\mathbb{E}[f(X)] = \int f(x) \, p(x) \, dx
 ```
-E[f(X)] = integral of f(x) * p(x) dx
-```
+
 خسارت انتظار می رود بر روی توزیع داده ها یک جزء است. آموزش به حداقل رساندن نزدیک سازی تجربی از این است.
 
 **KL divergence.**اندازه گیری تفاوت دو توزیع:
+
+```math
+\mathrm{KL}(p \,\|\, q) = \int p(x) \log \frac{p(x)}{q(x)} \, dx
 ```
-KL(p || q) = integral of p(x) * log(p(x) / q(x)) dx
-```
+
 در VAEs، تصفیه دانش و نتیجه گیری بیزیایی استفاده می شود.
 
 **Normalization constants.**در نتیجه گیری بیزی:
+
+```math
+p(w \mid \text{data}) = \frac{p(\text{data} \mid w) \, p(w)}{\int p(\text{data} \mid w) \, p(w) \, dw}
 ```
-p(w | data) = p(data | w) * p(w) / integral of p(data | w) * p(w) dw
-```
+
 نامزدی یک جزء تمام ارزش های پارامتر ممکن است. اغلب غیر قابل حل است، به همین دلیل ما از مقرباتی مانند MCMC و نتیجه گیری متغیر استفاده می کنیم.
 
 | Integral concept | Where it appears in ML |
@@ -353,16 +361,16 @@ graph RL
 
 هنگامی که یک تابع یک ویکتور را به یک ویکتور (مانند یک لایه شبکه عصبی) نقشه می زند، مشتق آن یک ماتریس است. جیکوبیان شامل هر مشتق جزئی از هر خروجی در رابطه با هر ورودی است.
 
-برای f: R^n -> R^m، J جکوبین یک ماتریس m x n است:
+برای$f: \mathbb{R}^n \to \mathbb{R}^m$، " جاکوبيان "$J$.$m \times n$ماتریکس:
 
-| | x1 | x2 | ... | xn |
+| | $x_1$ | $x_2$ | ... | $x_n$ |
 |---|---|---|---|---|
-| f1 | df1/dx1 | df1/dx2 | ... | df1/dxn |
-| f2 | df2/dx1 | df2/dx2 | ... | df2/dxn |
+| $f_1$ | $\partial f_1/\partial x_1$ | $\partial f_1/\partial x_2$ | ... | $\partial f_1/\partial x_n$ |
+| $f_2$ | $\partial f_2/\partial x_1$ | $\partial f_2/\partial x_2$ | ... | $\partial f_2/\partial x_n$ |
 | ... | ... | ... | ... | ... |
-| fm | dfm/dx1 | dfm/dx2 | ... | dfm/dxn |
+| $f_m$ | $\partial f_m/\partial x_1$ | $\partial f_m/\partial x_2$ | ... | $\partial f_m/\partial x_n$ |
 
-شما به دست برای شبکه های عصبی جکوبیان را محاسبه نمی کنید. پیتورچ آن را اداره می کند. اما دانستن وجود آن به شما کمک می کند شکل های در پخش عقب را درک کنید: اگر یک لایه R^n را به R^m نقشه می زند، جکوبیان آن m x n است. گرادینت از طریق انتقال این ماتریس به عقب جریان می یابد.
+شما نمی توانید Jacobians را به دست برای شبکه های عصبی محاسبه کنید. PyTorch آن را اداره می کند. اما دانستن وجود آن به شما کمک می کند شکل ها را در گسترش عقب درک کنید: اگر یک لایه نقشه می دهد$\mathbb{R}^n$به$\mathbb{R}^m$، جايکوبيايي اش$m \times n$. گرادینت از طریق انتقال این ماتریکس به عقب جریان می دهد
 
 ### چرا این برای شبکه های عصبی مهم است
 
@@ -445,7 +453,7 @@ for step in range(20):
     print(f"step {step:2d}  x={x:8.4f}  f(x)={x**2:10.6f}")
 ```
 
-از x=5 شروع می شود، هر مرحله به x=0 (حداقل) نزدیک تر می شود.
+از شروع$x=5$، هر قدم به هم نزديک ميشه$x=0$(حداقل)
 
 ### مرحله 4: کاهش درجه ای در یک تابع 2D
 
@@ -531,7 +539,7 @@ for h in [0.1, 0.5, 1.0, 2.0]:
     print(f"h={h:.1f}  sin(h)={true_val:.4f}  order1={t1:.4f}  order2={t2:.4f}")
 ```
 
-نزدیک x0=0, sin(x) ~ x (ترجمه ی اول تیلور). مقربه ی عالی برای h کوچک است اما برای h بزرگ تجزیه می شود. به همین دلیل کاهش گرادینت با نرخ یادگیری کوچک بهترین کار را می کند - هر مرحله فرض می کند که مقربه ی خطی دقیق است.
+نزدیک$x_0=0$،$\sin(x) \approx x$(ترجمهاي اول تايلور) مقربيت براي بچه هاي كوچك فوق العاده است$h$اما برای بزرگ ها خراب می شود$h$به همین دلیل است که کاهش گرادینت با نرخ یادگیری کوچک بهترین کار را انجام می دهد - هر مرحله فرض می کند که مقربات خطی دقیق است.
 
 ### مرحله 8: چرا این برای یک شبکه عصبی مهم است
 
@@ -600,9 +608,17 @@ print(f"Learned: y = {w:.2f}x + {b:.2f}")
 
 ## تمرینات
 
-1. اجرا`numerical_second_derivative(f, x)`استفاده کردن`numerical_derivative`ثابت کنید که مشتق دوم x^3 در x=2 12 است.
-2. از کاهش گرادینت برای پیدا کردن حداقل f ((x, y) = (x - 3) ^ 2 + (y + 1) ^ 2 استفاده کنید. از (0, 0) شروع کنید. پاسخ باید به (3, -1) نزدیک شود.
-3. به حلقه نزول گرادینت حرکت اضافه کنید: یک ویکتور سرعت را حفظ کنید که گرادینت های گذشته را جمع می کند. سرعت تقابل با و بدون حرکت در f ((x) = x^4 - 3x^2 مقایسه کنید.
+1. اجرا`numerical_second_derivative(f, x)`استفاده کردن`numerical_derivative`ثابت کنید که مشتق دوم$x^3$در$x=2$12 تاست
+2. از گرادینت نزول استفاده کنید تا حداقل $f(x, y) = (x - 3)^2 + (y + 1)^2$از شروع$(0, 0)$. پاسخ بايد به$(3, -1)$. .
+3. به حلقه نزول گرادینت حرکت اضافه کنید: یک ویکتور سرعت را حفظ کنید که گرادینت های گذشته را جمع می کند. سرعت تقابل با و بدون حرکت را در $f(x) = x^4 - 3x^2$. .
+
+### اشاره ها
+
+**Exercise 1.**يه يارو بازميگرده رو تعريف کن`numerical_derivative(f, x)`و اون يارو رو به`numerical_derivative`اگر نتیجه اش سر و صدا است، از یک قدم بزرگتر مانند `h=1e-4`برای هر دو تماس، ارزش در $x=2$باید نزدیک به 12 باشه
+
+**Exercise 2.**تراز را بنویسید$(2(x - 3), 2(y + 1))$یا استفاده`numerical_gradient`و زنگ بزن`gradient_descent_nd`از$(0, 0)$هر 10 قدم نقطه رو چاپ کن بايد به سمتش حرکت کنه$(3, -1)$و خسارت باید به نزدیک صفر برسد.
+
+**Exercise 3.**سرعت رو نگه دار`v`، به طور تازه ای به عنوان`v = momentum * v - lr * grad`، بعد اضافه کن`v`به`x`. مراحل مورد نیاز هر روش را برای رسیدن به گرادینت نزدیک به 0 بشمارید. حداقل در $x = \pm\sqrt{1.5} \approx \pm 1.225$. .
 
 ## اصطلاحات کلیدی
 
@@ -613,12 +629,12 @@ print(f"Learned: y = {w:.2f}x + {b:.2f}")
 | Gradient | "Direction of steepest ascent" | A vector of all partial derivatives. Points in the direction that increases the function fastest. |
 | Gradient descent | "Go downhill" | Subtract the gradient (times a learning rate) from the parameters to reduce the loss. The core of neural network training. |
 | Learning rate | "Step size" | A scalar that controls how big each gradient descent step is. Too large: diverge. Too small: converge slowly. |
-| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: df/dx = df/dg * dg/dx. The mathematical basis of backpropagation. |
+| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: $\frac{df}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx}$. The mathematical basis of backpropagation. |
 | Jacobian | "Matrix of derivatives" | When a function maps vectors to vectors, the Jacobian is the matrix of all partial derivatives of outputs with respect to inputs. |
 | Numerical derivative | "Finite differences" | Approximating a derivative by evaluating the function at two nearby points and computing the slope between them. |
 | Backpropagation | "Reverse-mode autodiff" | Computing gradients layer by layer from output to input using the chain rule. How neural networks learn. |
 | Hessian | "Matrix of second derivatives" | The matrix of all second-order partial derivatives. Describes the curvature of a function. Positive definite Hessian at a critical point means local minimum. |
-| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: f(x+h) ~ f(x) + f'(x)h + (1/2)f''(x)h^2 + ... The basis for understanding why gradient descent and Newton's method work. |
+| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: $f(x+h) \approx f(x) + f'(x)h + \frac{1}{2}f''(x)h^2 + \cdots$ The basis for understanding why gradient descent and Newton's method work. |
 | Integral | "Area under the curve" | The accumulation of a quantity over a range. In ML, integrals define probabilities, expected values, and KL divergence. |
 
 ## خواندن بیشتر

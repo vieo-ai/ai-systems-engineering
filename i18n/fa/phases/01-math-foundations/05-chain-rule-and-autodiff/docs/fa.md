@@ -28,29 +28,31 @@
 
 ### قانون زنجیره ای
 
-اگه`y = f(g(x))`، مشتق از `y`در رابطه با`x`این است:
+اگه$y = f(g(x))$، مشتق از $y$در رابطه با$x$این است:
 
-```
-dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
+```math
+\frac{dy}{dx} = \frac{dy}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
 
 مشتقات را در طول زنجیره ضرب کنید. هر پیوند مشتقات محلی خود را به اشتراک می گذارد.
 
-مثال:`y = sin(x^2)`
+مثال:$y = \sin(x^2)$
 
-```
-g(x) = x^2       g'(x) = 2x
-f(g) = sin(g)     f'(g) = cos(g)
-
-dy/dx = cos(x^2) * 2x
+```math
+\begin{aligned}
+g(x) &= x^2 \qquad & g'(x) &= 2x \\
+f(g) &= \sin(g) \qquad & f'(g) &= \cos(g) \\[4pt]
+\frac{dy}{dx} &= \cos(x^2) \cdot 2x
+\end{aligned}
 ```
 
 برای ترکیب های عمیق تر، زنجیره گسترش می یابد:
 
-```
-y = f(g(h(x)))
-
-dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
+```math
+\begin{aligned}
+y &= f(g(h(x))) \\[4pt]
+\frac{dy}{dx} &= f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)
+\end{aligned}
 ```
 
 هر لایه ای در یک شبکه عصبی یک پیوند در این زنجیره است.
@@ -88,7 +90,7 @@ graph TD
 
 دو راه برای اعمال قانون زنجیره از طریق یک نمودار وجود دارد.
 
-**Forward mode**شروع می شود در ورودی ها و مشتقات را به جلو می کشاند.`dx/dx = 1`و در هر عمل پخش می شود. خوب است وقتی که شما ورودی های کمی و ورودی های زیادی دارید.
+**Forward mode**شروع می شود در ورودی ها و مشتقات را به جلو می کشاند.$dx/dx = 1$و در هر عمل پخش می شود. خوب است وقتی که شما ورودی های کمی و ورودی های زیادی دارید.
 
 ```
 Forward mode: seed dx/dx = 1, propagate forward
@@ -98,7 +100,7 @@ Forward mode: seed dx/dx = 1, propagate forward
   y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
 ```
 
-**Reverse mode**در خروجی شروع می شود و گرادینتهای را به عقب می کشد.`dy/dy = 1`و در هر عملیه به عقب پخش می شود. خوب است وقتی که ورودی های زیادی و ورودی های کمی دارید.
+**Reverse mode**در خروجی شروع می شود و گرادینتهای را به عقب می کشد.$dy/dy = 1$و در هر عملیه به عقب پخش می شود. خوب است وقتی که ورودی های زیادی و ورودی های کمی دارید.
 
 ```
 Reverse mode: seed dy/dy = 1, propagate backward
@@ -112,12 +114,12 @@ Reverse mode: seed dy/dy = 1, propagate backward
 
 | Mode | Seed | Direction | Best when |
 |------|------|-----------|-----------|
-| Forward | `dx_i/dx_i = 1` | Input to output | Few inputs, many outputs |
-| Reverse | `dy/dy = 1` | Output to input | Many inputs, few outputs (neural nets) |
+| Forward | $dx_i/dx_i = 1$ | Input to output | Few inputs, many outputs |
+| Reverse | $dy/dy = 1$ | Output to input | Many inputs, few outputs (neural nets) |
 
 ### دو عدد برای حالت پیشروی
 
-حالت پیشروی می تواند با دو عدد به صورت زیبا اجرا شود.`a + b*epsilon`کجا`epsilon^2 = 0`. .
+حالت پیشروی می تواند با دو عدد به صورت زیبا اجرا شود.$a + b\epsilon$کجا$\epsilon^2 = 0$. .
 
 ```
 Dual number: (value, derivative)
@@ -236,7 +238,7 @@ class Value:
             v._backward()
 ```
 
-تپولوژیک مرتب کردن تضمین می کند که گرادینت هر گره قبل از گسترش به فرزندانش به طور کامل محاسبه شود. گرادینت دانه 1.0 (dy / dy = 1) است.
+تپولوژیک طبقه بندی تضمین می کند که گرادینت هر گره قبل از گسترش به فرزندانش به طور کامل محاسبه شود.$dy/dy = 1$)
 
 ### مرحله 4: عملیات بیشتر برای یک موتور کامل
 
@@ -300,11 +302,11 @@ class Value:
 | Operation | Backward rule | Used in |
 |-----------|--------------|---------|
 | `__sub__` | Reuses add + neg | Loss computation (pred - target) |
-| `__pow__` | n * x^(n-1) | Polynomial activations, MSE (error^2) |
+| `__pow__` | $n \cdot x^{n-1}$ | Polynomial activations, MSE ($\text{error}^2$) |
 | `__truediv__` | Reuses mul + pow(-1) | Normalization, learning rate scaling |
-| `exp` | exp(x) * upstream | Softmax, log-likelihood |
-| `log` | (1/x) * upstream | Cross-entropy loss, log probabilities |
-| `tanh` | (1 - tanh^2) * upstream | Classic activation function |
+| `exp` | $\exp(x) \cdot \text{upstream}$ | Softmax, log-likelihood |
+| `log` | $(1/x) \cdot \text{upstream}$ | Cross-entropy loss, log probabilities |
+| `tanh` | $(1 - \tanh^2) \cdot \text{upstream}$ | Classic activation function |
 
 قسمت باهوش:`__sub__`و`__truediv__`آنها gradients درست را به طور رایگان دریافت می کنند زیرا قانون زنجیره از طریق عملیات add/mul/pow زیربنایی ترکیب می شود.
 
@@ -489,13 +491,23 @@ print(f"df/dc = {c.grad}")  #  1.0
 
 ## تمرینات
 
-1. اضافه کردن`__pow__`به کلاس ارزش که می توانید محاسبه کنید`x ** n`- اينو بررسي کن`d/dx(x^3)`در`x=2`برابر است`12.0`. .
+1. اضافه کردن`__pow__`به کلاس ارزش که می توانید محاسبه کنید`x ** n`- اينو بررسي کن$\frac{d}{dx}(x^3)$در$x=2$برابر است`12.0`. .
 
-2. اضافه کردن`tanh`به عنوان یک تابع فعال سازی.`tanh'(0) = 1`و`tanh'(2) = 0.0707`(تقریباً)
+2. اضافه کردن`tanh`به عنوان یک تابع فعال سازی.$\tanh'(0) = 1$و$\tanh'(2) = 0.0707$(تقریباً)
 
 3. برای یک نورون واحد یک نمودار محاسباتی بسازید:`y = relu(w1*x1 + w2*x2 + b)`تمام پنج درجه را محاسبه کن و با PyTorch بررسي کن
 
 4. استفاده از دو عدد از حالت پیش رو خودکار اجرا کنید.`Dual`کلاس و تاییدش کنید که همان مشتقات موتور موثری شما را می دهد.
+
+### اشاره ها
+
+**Exercise 1.** `Value`قبلا تعریف کرده`__pow__`. مطالعه کن`_backward`و تاییدش کنم که قابل اجراه$n x^{n-1}$به سمت گرادينت وارد شده`x = Value(2.0)`،`y = x ** 3`،`y.backward()`.`x.grad`باید 12.0 باشه
+
+**Exercise 2.**استفاده کنید$\tanh'(x) = 1 - \tanh(x)^2$در`_backward`با تفاوت محدود خودتون چک کنيد$\frac{\tanh(x + h) - \tanh(x - h)}{2h}$باید موافق باشه$x = 0$و$x = 2$. .
+
+**Exercise 3.**ساخت`w1*x1 + w2*x2 + b`از`Value`اشیاء، اعمال می شود`relu`و زنگ بزن`backward`قبل از مقایسه با PyTorch، دست به دست بررسی کنید که آیا ورودی برای `relu`مثبت است، گرادین برای `w1`برابر است`x1`اگر منفی باشد، تمام پنج گرادینت 0 هستند.
+
+**Exercise 4.**یک ارزش و یک مشتق در هر یک از آنها ذخیره کنید`Dual`، و از قانون محصول استفاده کنید$(a, a')(b, b') = (ab, a'b + ab')$برای ضرب. ورودی را با مشتق 1 بیابید و نتیجه را با `x.grad`از موتور حالت معکوس برای عملکرد مشابه.
 
 ## اصطلاحات کلیدی
 
@@ -506,13 +518,13 @@ print(f"df/dc = {c.grad}")  #  1.0
 | Forward mode | "Push derivatives forward" | Autodiff that propagates derivatives from inputs to outputs. One pass per input variable. |
 | Reverse mode | "Backpropagation" | Autodiff that propagates gradients from outputs to inputs. One pass per output variable. |
 | Autograd | "Automatic gradients" | A system that records operations on values, builds a graph, and computes exact gradients via the chain rule |
-| Dual numbers | "Value plus derivative" | Numbers of the form a + b*epsilon (epsilon^2 = 0) that carry derivative information through arithmetic |
+| Dual numbers | "Value plus derivative" | Numbers of the form $a + b\epsilon$ ($\epsilon^2 = 0$) that carry derivative information through arithmetic |
 | Topological sort | "Dependency order" | Ordering graph nodes so every node comes after all its dependencies. Required for correct gradient propagation. |
 | Gradient accumulation | "Add, don't replace" | When a value feeds into multiple operations, its gradient is the sum of all incoming gradient contributions |
 | Dynamic graph | "Define by run" | A computation graph rebuilt on every forward pass, allowing Python control flow inside models (PyTorch style) |
 | Gradient checking | "Numerical verification" | Comparing autodiff gradients against numerical finite-difference gradients to verify correctness. Essential for debugging. |
 | MLP | "Multi-layer perceptron" | A neural network with one or more hidden layers of neurons. Each neuron computes a weighted sum plus bias, then applies an activation function. |
-| Neuron | "Weighted sum + activation" | The basic unit: output = activation(w1*x1 + w2*x2 + ... + b). The weights and bias are learnable parameters. |
+| Neuron | "Weighted sum + activation" | The basic unit: $\text{output} = \text{activation}(w_1 x_1 + w_2 x_2 + \cdots + b)$. The weights and bias are learnable parameters. |
 
 ## خواندن بیشتر
 

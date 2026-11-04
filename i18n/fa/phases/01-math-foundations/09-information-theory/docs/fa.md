@@ -28,10 +28,10 @@
 
 وقتی اتفاقی غیرممکن پیش می آید، اطلاعات بیشتری در آن می آید. یک سر پول فرود؟ تعجب آور نیست. یک برنده ی لاتری؟ بسیار شگفت انگیز.
 
-محتوای اطلاعاتی یک رویداد با احتمال p:
+محتوای اطلاعاتی یک رویداد با احتمال$p$این است:
 
-```
-I(x) = -log(p(x))
+```math
+I(x) = -\log(p(x))
 ```
 
 با استفاده از Log Base 2 به شما بت ها می دهد. با استفاده از Log Natural به شما nats می دهد. همان ایده، واحدهای مختلف.
@@ -50,98 +50,104 @@ Certain event      1.0            0.0
 
 انتروپیا، غافلگیری انتظار می رود که در تمام نتایج احتمالی توزیع اتفاق می افتد.
 
-```
-H(P) = -sum( p(x) * log(p(x)) )  for all x
+```math
+H(P) = -\sum_{x} p(x) \log(p(x))
 ```
 
 یک سکه عادلانه حداکثر انترپی یک متغیر دوگانه را دارد: 1 بیت. یک سکه متحيز (99٪ سر) دارای انترپی پایین: 0.08 بیت. شما قبلاً می دانید چه اتفاقی می افتد، بنابراین هر فلپ به شما تقریباً هیچ چیزی نمی گوید.
 
-```
-Fair coin:    H = -(0.5 * log2(0.5) + 0.5 * log2(0.5)) = 1.0 bit
-Biased coin:  H = -(0.99 * log2(0.99) + 0.01 * log2(0.01)) = 0.08 bits
+```math
+\begin{aligned}
+\text{Fair coin:} \quad & H = -(0.5 \log_2(0.5) + 0.5 \log_2(0.5)) = 1.0 \text{ bit} \\
+\text{Biased coin:} \quad & H = -(0.99 \log_2(0.99) + 0.01 \log_2(0.01)) = 0.08 \text{ bits}
+\end{aligned}
 ```
 
 انتروپيا ناپديد ناپديدي غير قابل کاهش در توزیع را اندازه مي گيرد.
 
 ### کراس انترپی (کار ضایعات که هر روز از آن استفاده می کنید)
 
-کراس انترپی، تعجب متوسط را اندازه گیری می کند وقتی از توزیع Q برای کدگذاری رویدادهای واقعی که از توزیع P ناشی می شوند استفاده می کنید.
+کراس انترپی، وقتی از توزیع استفاده می کنید، متوسط شگفتی را اندازه گیری می کند.$Q$برای کدگذاری حوادث که در واقع از توزیع می آیند $P$. .
 
+```math
+H(P, Q) = -\sum_{x} p(x) \log(q(x))
 ```
-H(P, Q) = -sum( p(x) * log(q(x)) )  for all x
-```
 
-P توزیع واقعی (تسمک ها) است. Q پیش بینی های مدل شما است. اگر Q با P به طور کامل مطابقت داشته باشد، انترپی متقاطع برابر انترپی است. هر عدم مطابقت آن را بزرگتر می کند.
+$P$این توزیع واقعی (تسمک ها) است.$Q$پیش بینی های مدل شما است.$Q$دوچاپ$P$به طور کامل، انترپای متقابل برابر با انترپای است. هر عدم مطابقت آن را بزرگتر می کند.
 
-در طبقه بندی، P یک ویکتور یک گرم است (کلاس واقعی احتمال 1 دارد، همه چیز دیگر 0). این به سادگی اینترپی متقابل را به:
+در طبقه بندی$P$یک ویکتور یک گرم است (کلاس واقعی احتمال 1 دارد، همه چیز دیگر 0 است). این به سادگی اینترپی متقابل را به:
 
-```
-H(P, Q) = -log(q(true_class))
+```math
+H(P, Q) = -\log(q(\text{true\_class}))
 ```
 
 این کل فرمول از دست دادن کرس اینترپی برای طبقه بندی است. حداکثر احتمال پیش بینی شده از کلاس درست.
 
 ### KL تفاوت (مسافت بین توزیع ها)
 
-انحراف KL اندازه گیری می کند که چقدر شگفتی اضافی از استفاده از Q به جای P دریافت می کنید.
+انحراف KL اندازه مي گيره که از استفاده از چه مقدار شگفتي بيشتر ميگيري$Q$به جای$P$. .
 
-```
-D_KL(P || Q) = sum( p(x) * log(p(x) / q(x)) )  for all x
-             = H(P, Q) - H(P)
+```math
+\begin{aligned}
+D_{KL}(P \,\|\, Q) &= \sum_{x} p(x) \log(p(x) / q(x)) \\
+&= H(P, Q) - H(P)
+\end{aligned}
 ```
 
 اینترپی کراس اینترپی است که اینترپی به علاوه انحراف KL است. از آنجا که انتروپی توزیع واقعی ثابت است در طول تمرین، کاهش انتروپی کراس همان چیزی است که کاهش انحراف KL است. شما توزیع مدل خود را به سمت توزیع واقعی فشار می دهید.
 
-انحراف KL متراکی نیست: D_KL  P  Q) != D_KL  Q  P)
+انحراف KL همت نیست: $D_{KL}(P \Vert Q) \ne D_{KL}(Q \Vert P)$. اين يه اندازه گيري فاصله واقعي نيست
 
 ### اطلاعات متقابل
 
 اطلاعات متقابل اندازه گیری می کند که دانستن یک متغیر به شما در مورد دیگری چه چیزی می گوید.
 
-```
-I(X; Y) = H(X) - H(X|Y)
-        = H(X) + H(Y) - H(X, Y)
+```math
+\begin{aligned}
+I(X; Y) &= H(X) - H(X \mid Y) \\
+&= H(X) + H(Y) - H(X, Y)
+\end{aligned}
 ```
 
-اگر X و Y مستقل باشند، اطلاعات متقابل صفر است. دانستن یکی از آنها به شما چیزی در مورد دیگری نمی گوید. اگر آنها به طور کامل مرتبط باشند، اطلاعات متقابل برابر با انتروپی هر یک از متغیرها است.
+اگه$X$و$Y$اگر اطلاعات متقابل به طور کامل مرتبط باشند، اطلاعات متقابل برابر به انتروپی هر یک از متغیرها است.
 
 در انتخاب ویژگی، اطلاعات متقابل بالا بین یک ویژگی و هدف به این معنی است که ویژگی مفید است. اطلاعات متقابل کم به این معنی است که شور است.
 
 ### انتروپی مشروط
 
-H(Y در X) اندازه گیری می کند که بعد از مشاهده X چقدر عدم اطمینان در مورد Y باقی مانده است.
+$H(Y \mid X)$اندازه گیری می کند که چقدر عدم اطمینان باقی مانده است$Y$بعد از اينکه مشاهده کردي$X$. .
 
-```
-H(Y|X) = H(X,Y) - H(X)
+```math
+H(Y \mid X) = H(X,Y) - H(X)
 ```
 
 دو تا حد:
-- اگر X کاملاً Y را تعیین کند، پس H(Y ≠X) = 0. دانستن X تمام عدم اطمینان در مورد Y را از بین می برد. مثال: X = دمای در سانتیگراد، Y = دمای در فهرنهایت.
-- اگر X چیزی در مورد Y به شما نمی گوید، پس H(YX (YX) = H(Y) است. دانستن X عدم اطمینان شما را در همه کاهش نمی دهد. مثال: X = فلپ سکه، Y = آب و هوا فردا.
+- اگه$X$کاملاً مشخصه$Y$، پس$H(Y \mid X) = 0$. دانستن$X$تمام عدم قطعیت ها را از بین می برد$Y$. نمونه: $X$= درجه حرارت در سانتیگراد$Y$= درجه حرارت در فارنهايت
+- اگه$X$چيزي در موردش نميگه$Y$، پس$H(Y \mid X) = H(Y)$. دانستن$X$این موضوع هیچ گونه عدم اطمینان شما را کاهش نمی دهد.$X$= تکه پول$Y$= هوا فردا
 
-انتروپی مشروط همیشه غیر منفی است و هرگز H(Y را فراتر نمی برد:
+انتروپی مشروط همیشه منفی نیست و هرگز از آن فراتر نمی رود$H(Y)$:
 
+```math
+0 \le H(Y \mid X) \le H(Y)
 ```
-0 <= H(Y|X) <= H(Y)
-```
 
-در یادگیری ماشین، انتروپی مشروط در درختان تصمیم ظاهر می شود. در هر تقسیم، الگوریتم ویژگی X را انتخاب می کند که H  Y  X را به حداقل می رساند - ویژگی ای که بیشترین عدم اطمینان را در مورد برچسب Y حذف می کند.
+در یادگیری ماشین، انتروپی مشروط در درختان تصمیم ظاهر می شود. در هر تقسیم، الگوریتم ویژگی را انتخاب می کند $X$که حداقل ميکنه$H(Y \mid X)$-- اين خصوصيت که بيشترين عدم قطعيت در مورد برچسب ها را از بين مي برد$Y$. .
 
 ### انتروپ مشترک
 
-H ((X,Y) انتروپی توزیع مشترک X و Y با هم است.
+$H(X,Y)$اینترپی توزیع مشترک $X$و$Y$با هم
 
-```
-H(X,Y) = -sum sum p(x,y) * log(p(x,y))   for all x, y
+```math
+H(X,Y) = -\sum_{x} \sum_{y} p(x,y) \log(p(x,y))
 ```
 
 ویژگی اصلی:
 
-```
-H(X,Y) <= H(X) + H(Y)
+```math
+H(X,Y) \le H(X) + H(Y)
 ```
 
-برابری زمانی برقرار می شود که X و Y مستقل باشند. اگر اطلاعات را به اشتراک بگذارند، انتروپی مشترک کمتر از مجموع انتروپی های فردی است. انتروپی "متفق" دقیقاً اطلاعات متقابل است.
+برابری در زمان$X$و$Y$این دو گروه مستقل هستند. اگر اطلاعات را به اشتراک بگذارند، انترپی مشترک کمتر از مجموع انترپی های فردی است.
 
 ```mermaid
 graph TD
@@ -167,50 +173,52 @@ graph TD
 ```
 
 روابط:
-- H(X,Y) = H(X) + H(Y
-- X;Y) = H(X) - H(IX
-- H(X,Y) = H(X) + H(Y) - I(X;Y)
+- $H(X,Y) = H(X) + H(Y \mid X) = H(Y) + H(X \mid Y)$
+- $I(X;Y) = H(X) - H(X \mid Y) = H(Y) - H(Y \mid X)$
+- $H(X,Y) = H(X) + H(Y) - I(X;Y)$
 
 ### اطلاعات متقابل (زوردی عمیق)
 
-اطلاعات متقابل I  X Y) مقدار می دهد که دانستن یک متغیر تا چه اندازه عدم اطمینان در مورد دیگری را کاهش می دهد.
+اطلاعات متقابل$I(X;Y)$مقدار دانستن یک متغیر را کاهش می دهد تا میزان عدم اطمینان در مورد متغیر دیگر را کاهش دهد.
 
-```
-I(X;Y) = H(X) - H(X|Y)
-       = H(Y) - H(Y|X)
-       = H(X) + H(Y) - H(X,Y)
-       = sum sum p(x,y) * log(p(x,y) / (p(x) * p(y)))
+```math
+\begin{aligned}
+I(X;Y) &= H(X) - H(X \mid Y) \\
+&= H(Y) - H(Y \mid X) \\
+&= H(X) + H(Y) - H(X,Y) \\
+&= \sum_{x} \sum_{y} p(x,y) \log\left(\frac{p(x,y)}{p(x) \, p(y)}\right)
+\end{aligned}
 ```
 
 خواص:
-- I ((X;Y) >=0 همیشه. شما هرگز با مشاهده چیزی اطلاعات را از دست نمی دهید.
-- I(X;Y) = 0 اگر و فقط اگر X و Y مستقل باشند.
-- I(X;Y) = I(Y;X) این همتایی است، برخلاف انحراف KL.
-- I  X = H  X) یک متغیر تمام اطلاعات خود را با خود به اشتراک می گذارد.
+- $I(X;Y) \ge 0$هرگز با مشاهده چیزی اطلاعات را از دست نمی دهی.
+- $I(X;Y) = 0$اگر و فقط اگر$X$و$Y$مستقل هستند.
+- $I(X;Y) = I(Y;X)$. این همتایی است، برخلاف انحراف KL
+- $I(X;X) = H(X)$. یک متغیر تمام اطلاعات خود را با خود به اشتراک می گذارد.
 
 **Mutual information for feature selection.**در ML، شما ویژگی هایی را می خواهید که در مورد هدف اطلاعات بخش باشند. اطلاعات متقابل به شما یک روش اصول برای رتبه بندی ویژگی ها می دهد:
 
-1. برای هر ویژگی X_i، محاسبه I(X_i؛ Y) که Y متغیر هدف است.
+1. برای هر ویژگی$X_i$، حساب کردن$I(X_i; Y)$کجا$Y$متغیر هدف است.
 2. رتبه بندی از نظر نمره MI
-3. .تازهاي بالا رو نگه دار
+3. اون بالا رو نگه دار$k$ویژگی ها
 
-این برای هر رابطه ای بین ویژگی و هدف کار می کند - خطی، غیر خطی، یکمناطیسی یا نه. ارتباط فقط روابط خطی را ضبط می کند. MI همه چیز را ضبط می کند.
+این برای هر رابطه ای بین ویژگی و هدف کار می کند - خطی، غیر خطی، یکمناطیسی یا نه. ارتباط پیرسون فقط روابط خطی را ضبط می کند. MI هر گونه وابستگی را ضبط می کند، اما با داده های محدود تخمینش به نمونه های کافی و یک ترکیب منطقی نیاز دارد.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|
-| Pearson correlation | Linear relationships | O(n) | No |
-| Spearman correlation | Monotonic relationships | O(n log n) | No |
-| Mutual information | Any statistical dependency | O(n log n) with binning | Yes |
+| Pearson correlation | Linear relationships | $O(n)$ | No |
+| Spearman correlation | Monotonic relationships | $O(n \log n)$ | No |
+| Mutual information | Any statistical dependency | $O(n \log n)$ with binning | Yes |
 
 ### نرم کردن برچسب و کراس انترپی
 
 طبقه بندی استاندارد از اهداف سخت استفاده می کند: [0, 0, 1, 0]. کلاس واقعی احتمال 1 را به دست می آورد، همه چیز دیگر به دست می آید 0.
 
-```
-soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
+```math
+\text{soft\_target} = (1 - \epsilon) \cdot \text{hard\_target} + \epsilon / \text{num\_classes}
 ```
 
-با ایپسایلون = 0.1 و 4 کلاس:
+با$\epsilon = 0.1$و 4 کلاس:
 - هدف سخت: [0, 0, 1, 0]
 - هدف نرم: [0.025, 0.025, 0.925, 0.025]
 
@@ -224,8 +232,8 @@ soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
 
 از دست دادن انترپی در حال نرم کردن برچسب به این شکل می شود:
 
-```
-L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction)
+```math
+L = (1 - \epsilon) \cdot \text{CE}(\text{hard\_target}, \text{prediction}) + \epsilon \cdot H_{\text{uniform}}(\text{prediction})
 ```
 
 اصطلاح دوم پیش بینی هایی را مجازات می کند که از یکسانی دور هستند -- یک تنظیم مستقیم در مورد اعتماد.
@@ -236,12 +244,14 @@ L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction
 
 **Information theory view.**کراس انترپی اندازه گیری می کند که چقدر بیت از دست می دهید با استفاده از توزیع مدل شما به جای توزیع واقعی. به حداقل رساندن آن باعث می شود مدل شما موثرترین کدگر واقعیت باشد.
 
-**Maximum likelihood view.**برای نمونه های آموزش N با کلاس های واقعی y_i:
+**Maximum likelihood view.**برای$N$نمونه های آموزش با کلاس های واقعی$y_i$:
 
-```
-Likelihood     = product( q(y_i) )
-Log-likelihood = sum( log(q(y_i)) )
-Negative log-likelihood = -sum( log(q(y_i)) )
+```math
+\begin{aligned}
+\text{Likelihood} &= \prod_i q(y_i) \\
+\text{Log-likelihood} &= \sum_i \log(q(y_i)) \\
+\text{Negative log-likelihood} &= -\sum_i \log(q(y_i))
+\end{aligned}
 ```
 
 این خط آخر، از دست دادن انترپی کراس است. حداقل کردن انترپی کراس = حداکثر کردن احتمال داده های آموزش تحت مدل شما.
@@ -258,15 +268,17 @@ log base e   -> nats      (machine learning convention)
 log base 10  -> hartleys  (rarely used)
 ```
 
-1 nat = 1/ln(2) بیت = 1.4427 بیت. PyTorch و TensorFlow به طور پیش فرض از log طبیعی (nats) استفاده می کنند.
+1 nat = $1/\ln(2)$بایت = 1.4427 بایت. PyTorch و TensorFlow از log طبیعی (nats) به طور پیش فرض استفاده می کنند.
 
 ### گیج و گیج
 
 تعصب نمایه ی انترپی متقابل است. این به شما می گوید که تعداد واقعی از گزینه های به همان اندازه احتمالی که مدل بین آنها نامشخص است.
 
-```
-Perplexity = 2^H(P,Q)   (if using bits)
-Perplexity = e^H(P,Q)   (if using nats)
+```math
+\begin{aligned}
+\text{Perplexity} &= 2^{H(P,Q)} \quad \text{(if using bits)} \\
+\text{Perplexity} &= e^{H(P,Q)} \quad \text{(if using nats)}
+\end{aligned}
 ```
 
 یک مدل زبان با پیچیدگی 50 به طور متوسط، به همان اندازه گیج کننده است که انگار باید از 50 توکن بعدی یکسانی انتخاب کند. پایین تر بهتر است.
@@ -445,19 +457,29 @@ print(f"KL div:     {np_kl_divergence(true, pred):.4f} nats")
 
 2. یک مدل برای نمونه با کلاس واقعی 1، logits [5.0, 2.0, 0.5] را خارج می کند. از دست از دست دادن آنترپی را محاسبه کنید و سپس با `cross_entropy_loss`چه جور لوجیت ها صفر از دست دادن را به دست می آورند؟
 
-3. نشان دهید که انحراف KL متناظر نیست. دو توزیع P و Q را انتخاب کنید و D_KL_P_K  Q) و DL Q  P را محاسبه کنید. توضیح دهید که چرا آنها متفاوت هستند.
+3. نشان بده که انحراف KL همتقارن نيست. دو توزیع را انتخاب کن$P$و$Q$و محاسبه$D_{KL}(P \Vert Q)$و$D_{KL}(Q \Vert P)$توضیح بده که چرا فرق دارن
 
 4. یک تابع ایجاد کنید که پیچیدگی را برای یک سری پیش بینی های توکن محاسبه کند. با توجه به یک لیست از زوج های (true_token_index، predicted_logits) ، پیچیدگی ترتیب را بازگردانید.
+
+### اشاره ها
+
+**Exercise 1.**تماس بگیرید`entropy`با 26 احتمال برابر؛ نتیجه باید باشد$\log_2 26 \approx 4.70$بایت ها. فرکانس های واقعی حرف ها یکسانی نیستند، بنابراین انترپی با آنها باید پایین تر باشد.
+
+**Exercise 2.**حساب کردن`softmax`از لغو ها پس$-\ln$از احتمال در شاخص 1 و مقایسه با `cross_entropy_loss(1, logits)`هر دو باید نزدیک به 3.06 باشند. خسارت تنها زمانی به 0 نزدیک می شود که منطق کلاس 1 از دو کلاس دیگر بسیار بزرگتر باشد.
+
+**Exercise 3.**برای مثال از دو توزیع کوچک با شکل های مختلف استفاده کنید$P = [0.9, 0.1]$و$Q = [0.5, 0.5]$و زنگ بزن`kl_divergence`این دو مقدار باید متفاوت باشند، زیرا هر جهت نسبت log را با توزیع متفاوتی وزن می کند.
+
+**Exercise 4.**برای هر جفت حساب کنید`cross_entropy_loss(true_token_index, predicted_logits)`، متوسط رو بردار و به اون بده`perplexity`. با دستگير هاي يونيفورم بررسي کنيد$V$توکن ها: مشکوک بودن باید باشد$V$. .
 
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: -log(p) |
+| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: $-\log(p)$ |
 | Entropy | "Randomness" | The average surprise across all outcomes of a distribution. Measures irreducible uncertainty. |
-| Cross-entropy | "The loss function" | Average surprise when using model distribution Q to encode events from true distribution P. |
-| KL divergence | "Distance between distributions" | Extra bits wasted by using Q instead of P. Equals cross-entropy minus entropy. Not symmetric. |
-| Mutual information | "How related are X and Y" | Reduction in uncertainty about X from knowing Y. Zero means independent. |
+| Cross-entropy | "The loss function" | Average surprise when using model distribution $Q$ to encode events from true distribution $P$. |
+| KL divergence | "Distance between distributions" | Extra bits wasted by using $Q$ instead of $P$. Equals cross-entropy minus entropy. Not symmetric. |
+| Mutual information | "How related are X and Y" | Reduction in uncertainty about $X$ from knowing $Y$. Zero means independent. |
 | Softmax | "Turn logits into probabilities" | Exponentiate and normalize. Maps any real-valued vector to a valid probability distribution. |
 | Perplexity | "How confused the model is" | Exponential of cross-entropy. The effective vocabulary size the model is choosing from at each step. |
 | Bits | "Shannon's unit" | Information measured with log base 2. One bit resolves one fair coin flip. |

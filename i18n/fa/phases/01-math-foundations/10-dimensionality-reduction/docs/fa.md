@@ -38,9 +38,9 @@ Dimension    Avg distance ratio (max/min between random points)
 1000         ~1.02
 ```
 
-**Volume concentrates in corners.**یک واحد هیپرکوب در ابعاد d دارای گوشه های 2d است. در ابعاد 100، تقریبا تمام حجم در گوشه ها، دور از مرکز است. نقاط داده به حاشیه ها گسترش می یابد و مدل های شما به دنبال داده های داخل هستند.
+**Volume concentrates in corners.**يه واحد هائپرکوب در$d$ابعاد داره$2^d$گوشه ها. در 100 ابعاد، تقریبا تمام حجم در گوشه ها، دور از مرکز است. نقاط داده به لبه ها گسترش می یابد و مدل های شما به دنبال داده های داخل هستند.
 
-**You need exponentially more data.**برای حفظ تراکم نمونه ها در یک فضا، رفتن از 2D به 20D به این معنی است که شما نیاز به 10^18 برابر اطلاعات بیشتری دارید. شما هرگز به اندازه کافی ندارید. کاهش ابعاد، تراکم داده را به چیزی قابل عمل می رساند.
+**You need exponentially more data.**برای حفظ تراکم نمونه ها در یک فضا، رفتن از 2D به 20D به این معنی است که شما نیاز دارید$10^{18}$شما هرگز به اندازه کافی ندارید. کاهش ابعاد داده ها تراکم داده را به چیزی قابل عمل می رساند.
 
 ### PCA: مسیرهای مهم را پیدا کنید
 
@@ -88,7 +88,7 @@ PC4          0.89          0.089              0.925
 
 1. **Threshold.**اجزای کافی را نگه دارید تا 90 تا 95 درصد از تفاوت را توضیح دهد.
 2. **Elbow method.**نقشه به اختلافات هر قطعه توضیح داده شده دنبال یه سقوط حاد
-3. **Downstream performance.**از PCA به عنوان پردازش پیش از انجامش استفاده کن. k را پاک کن و دقت مدلت را اندازه گیری کن. بهترین k هر جا که سطح بالایی دقت باشد.
+3. **Downstream performance.**از PCA به عنوان فراری استفاده کن$k$و دقت مدل شما رو اندازه گیری کنید.$k$هر جا که درستگي سطحه
 
 ### ت-SNE: حفظ محله ها
 
@@ -101,7 +101,7 @@ t-SNE (T-SNE) برای تماشای طراحی شده است. این داده ه
 - .استوکاستیک .مختلفهاي اجرا طرح هاي مختلف رو ميده
 - پارامتر حیرانی کنترل می کند که چند همسایه باید در نظر گرفته شوند (متناسب محدوده: 5-50).
 - فاصله بین کلستر ها در محصول معنی دار نیست فقط کلستر ها خودشان معنی دار هستند.
-- در مجموعه داده های بزرگ آهسته.
+- در مجموعه داده های بزرگ کند.$O(n^2)$به طور پیش فرض
 
 ### UMAP: ساختار جهانی سریعتر و بهتر
 
@@ -135,27 +135,27 @@ PCA استاندارد فرعی خطی را پیدا می کند. سیستم ه�
 PCA هسته ای PCA را در یک فضای ویژگی های بالا بعدی که توسط یک تابع هسته ای ایجاد می شود، بدون محاسبه صریح همبستگی ها در این فضا اعمال می کند. این ترفند هسته ای است - همان ایده پشت SVM.
 
 الگوریتم:
-1. ماتریس هسته K را محاسبه کنید که K_ij = k(x_i، x_j)
+1. ماتریکس هسته را محاسبه کنید$K$کجا$K_{ij} = k(x_i, x_j)$
 2. مرکز ماتریک هسته در فضای ویژگی
 3. Eigendecompose ماتریس هسته مرکزی
-4. متریهای اصلی بالا (با مقیاس 1/sqrt(مقدار اصلی)) پروژکتورها هستند
+4. متریهای اصلی بالا (بعد از $1/\sqrt{\text{eigenvalue}}$) پیش بینی ها
 
 عملکردهای مشترک هسته:
 
 | Kernel | Formula | Good for |
 |--------|---------|----------|
-| RBF (Gaussian) | exp(-gamma * \|\|x - y\|\|^2) | Most nonlinear data, smooth manifolds |
-| Polynomial | (x . y + c)^d | Polynomial relationships |
-| Sigmoid | tanh(alpha * x . y + c) | Neural network-like mappings |
+| RBF (Gaussian) | $\exp(-\gamma \lVert x - y \rVert^2)$ | Most nonlinear data, smooth manifolds |
+| Polynomial | $(x \cdot y + c)^d$ | Polynomial relationships |
+| Sigmoid | $\tanh(\alpha x \cdot y + c)$ | Neural network-like mappings |
 
 زمانی که از PCA هسته مقابل PCA استاندارد استفاده شود:
 
 | Criterion | Standard PCA | Kernel PCA |
 |-----------|-------------|------------|
 | Data structure | Linear subspace | Nonlinear manifold |
-| Speed | O(min(n^2 d, d^2 n)) | O(n^2 d + n^3) |
+| Speed | $O(\min(n^2 d, d^2 n))$ | $O(n^2 d + n^3)$ |
 | Interpretability | Components are linear combinations of features | Components lack direct feature interpretation |
-| Scalability | Works on millions of samples | Kernel matrix is n x n, memory-limited |
+| Scalability | Works on millions of samples | Kernel matrix is $n \times n$, memory-limited |
 | Reconstruction | Direct inverse transform | Requires pre-image approximation |
 
 مثال کلاسیک: حلقه های متمرکز در دو بعدی. دو حلقه نقطه، یکی در داخل دیگری. PCA استاندارد هر دو را به یک خط نشان می دهد - بی فایده برای طبقه بندی. هسته PCA با هسته RBF حلقه داخلی و حلقه خارجی را به مناطق مختلف نقشه می زند، و آنها را خطی جدا می کند.
@@ -165,22 +165,24 @@ PCA هسته ای PCA را در یک فضای ویژگی های بالا بعد�
 چقدر کاهش ابعاد خوبي داره؟ 784 ابعاد رو به 50 ابعاد فشرده کردي.
 
 اندازه گیری خطای بازسازی:
-1. داده های پروژه به k ابعاد: X_reduced = X @ W_k
-2. بازسازی: X_hat = X_reduced @ W_k^T
-3. MSE محاسبه: متوسط (X - X_hat) ^2)
+1. داده های پروژه به $k$ابعاد: $X_{\text{reduced}} = X W_k$
+2. بازسازی:$\hat{X} = X_{\text{reduced}} W_k^T$
+3. حساب MSE: $\text{mean}((X - \hat{X})^2)$
 
 برای PCA، خطا بازسازی رابطه پاک با تفاوت توضیح داده شده دارد:
 
-```
-Reconstruction error = sum of eigenvalues NOT included
-Total variance = sum of ALL eigenvalues
-Fraction lost = (sum of dropped eigenvalues) / (sum of all eigenvalues)
+```math
+\begin{aligned}
+\text{Reconstruction error} &= \text{sum of eigenvalues NOT included} \\
+\text{Total variance} &= \text{sum of ALL eigenvalues} \\
+\text{Fraction lost} &= \frac{\text{sum of dropped eigenvalues}}{\text{sum of all eigenvalues}}
+\end{aligned}
 ```
 
 نسبت تفاوت توضیح داده شده برای هر جزء عبارت است از:
 
-```
-explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
+```math
+\text{explained\_ratio}_k = \frac{\text{eigenvalue}_k}{\sum \text{all eigenvalues}}
 ```
 
 نقشه برداری متغیرات تجمعی توضیح داده شده در برابر تعداد اجزای به شما منحنی "کعب" می دهد. تعداد صحیح اجزای در جایی است که:
@@ -188,7 +190,7 @@ explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
 - متغیر تجمعی از حد عبور می کند (معمولا 0.90 یا 0.95)
 - سطح سطح عملکرد وظایف در جریان پایین
 
-خطا بازسازی مفید است و فراتر از انتخاب k. می توانید از آن برای تشخیص ناهنجاری استفاده کنید: نمونه هایی که دارای خطا بازسازی بالا هستند، غیرمعمولی هستند که به زیر فضای آموخته نمی رسند. این پایه تشخیص ناهنجاری مبتنی بر PCA در سیستم های تولید است.
+اشتباه بازسازی از انتخاب فراتر از انتخاب مفید است$k$شما می توانید از آن برای تشخیص ناهنجاری استفاده کنید: نمونه هایی که دارای خطا بازسازی بالا هستند، غیرمعمول هستند که به زیر فضای آموخته نمی رسند. این پایه تشخیص ناهنجاری مبتنی بر PCA در سیستم های تولید است.
 
 ```figure
 pca-axes
@@ -353,6 +355,14 @@ for k in [10, 30, 50, 100, 200]:
 
 3. مجموعه داده ای را با 50 ویژگی که تنها 5 مورد اطلاعات است، بگیرید (یک با `sklearn.datasets.make_classification`) PCA را اعمال کنید و بررسی کنید که آیا منحنی متغیر توضیح داده شده به درستی نشان می دهد که داده ها به طور موثر پنج بعدی هستند.
 
+### اشاره ها
+
+**Exercise 1.**بخون`inverse_transform`در`PCA`کلاس و تناسب یک مدل برای هر تعداد اجزای. محاسبه `reconstruction_error`برای 10، 50 و 200 قطعه، خطای باید با افزایش تعداد قطعات کاهش یابد.
+
+**Exercise 2.**مناسب`sklearn.manifold.TSNE`سه بار در همان زیر مجموعه، فقط تغییر می کند `perplexity`، و از همون استفاده کن`random_state`کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم کم
+
+**Exercise 3.**تماس بگیرید`make_classification(n_features=50, n_informative=5, n_redundant=45)`، مناسب`PCA`، و متغیر تجمعی توضیح داده شده را چاپ کنید. ویژگی های اضافی ترکیبی خطی از اطلاعات هستند، بنابراین منحنی به تقریباً 1.0 در 5 عنصر می رسد. سپس سعی کنید`n_redundant=0`: 45 ویژگی دیگر صدای مستقل هستند و منحنی مسطح نمی شود.
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
@@ -360,8 +370,8 @@ for k in [10, 30, 50, 100, 200]:
 | Curse of dimensionality | "Too many features" | Distances, volumes, and data density all behave counterintuitively as dimensions grow. Models need exponentially more data to compensate. |
 | PCA | "Reduce dimensions" | Rotate your coordinate system so the axes align with the directions of maximum variance, then drop the low-variance axes. |
 | Principal component | "An important direction" | An eigenvector of the covariance matrix. The direction in feature space along which the data varies most. |
-| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top k ratios to see how much k components preserve. |
-| Covariance matrix | "How features correlate" | A symmetric matrix where entry (i,j) measures how feature i and feature j move together. Diagonal entries are individual variances. |
+| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top $k$ ratios to see how much $k$ components preserve. |
+| Covariance matrix | "How features correlate" | A symmetric matrix where entry $(i,j)$ measures how feature $i$ and feature $j$ move together. Diagonal entries are individual variances. |
 | t-SNE | "That cluster plot" | A nonlinear method that maps high-dimensional data to 2D by preserving pairwise neighborhood probabilities. Good for visualization, not for preprocessing. |
 | UMAP | "Faster t-SNE" | A nonlinear method based on topological data analysis. Preserves both local and some global structure. Scales better than t-SNE. |
 | Perplexity | "A t-SNE knob" | Controls the effective number of neighbors each point considers. Low perplexity focuses on very local structure. High perplexity captures broader patterns. |

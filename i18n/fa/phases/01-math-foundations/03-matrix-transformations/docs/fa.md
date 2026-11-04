@@ -45,7 +45,7 @@ graph LR
 
 ### چرخش
 
-یک چرخش دو بعدی با زاویه تتا فاصله ها و زاویه ها را حفظ می کند.
+یک چرخش دو بعدی با زاویه$\theta$فاصله ها و زاویه ها را حفظ می کند. هر نقطه ای را در طول یک قوس دایره ای حرکت می دهد.
 
 ```mermaid
 graph LR
@@ -66,18 +66,12 @@ graph LR
 
 در 3D، شما در اطراف یک محور چرخش می کنید. هر محور دارای ماتریس چرخش خاص خود است:
 
-```
-Rz(theta) = | cos  -sin  0 |     Rotate around z-axis
-            | sin   cos  0 |     (x-y plane spins, z stays)
-            |  0     0   1 |
-
-Rx(theta) = | 1   0     0    |   Rotate around x-axis
-            | 0  cos  -sin   |   (y-z plane spins, x stays)
-            | 0  sin   cos   |
-
-Ry(theta) = |  cos  0  sin |     Rotate around y-axis
-            |   0   1   0  |     (x-z plane spins, y stays)
-            | -sin  0  cos |
+```math
+\begin{aligned}
+R_z(\theta) &= \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad \text{Rotate around z-axis (x-y plane spins, z stays)} \\[6pt]
+R_x(\theta) &= \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix} \quad \text{Rotate around x-axis (y-z plane spins, x stays)} \\[6pt]
+R_y(\theta) &= \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix} \quad \text{Rotate around y-axis (x-z plane spins, y stays)}
+\end{aligned}
 ```
 
 ### مقیاس بندی
@@ -123,8 +117,8 @@ graph LR
 ```
 
 ماتریس های شیر:
-- `Shx = [[1, k], [0, 1]]`تغییر x توسط k * y
-- `Shy = [[1, 0], [k, 1]]`تغییر y توسط k * x
+- `Shx = [[1, k], [0, 1]]`.$x$از طرف$k \cdot y$
+- `Shy = [[1, 0], [k, 1]]`.$y$از طرف$k \cdot x$
 
 ### بازتاب
 
@@ -196,7 +190,7 @@ Eigenvector [1, -1] with eigenvalue 1:
 
 ### ترکیب خاص
 
-اگر یک ماتریس دارای n ویکتورهای مستقل خطی باشد، می تواند تجزیه شود:
+اگر یک ماتریکس داشته باشد$n$متغیرهای مستقل خطی، می تواند تجزیه شود:
 
 ```
 A = V @ D @ V^(-1)
@@ -210,7 +204,7 @@ This says: rotate into eigenvector coordinates, scale along each axis, rotate ba
 
 ### چرا ارزش های شخصی مهم هستند
 
-**PCA.**ویکتورهای خونی ماتریس کوویاریانس اجزای اصلی هستند. ارزش های خونی به شما می گویند که هر اجزای چقدر تفاوت را جذب می کند. به ارزش خونی ترتیب دهید، k بالا را نگه دارید و شما کاهش ابعاد دارید.
+**PCA.**ویکتورهای خونی ماتریس کوویاریانس اجزای اصلی هستند. ارزش های خونی به شما می گویند که هر اجزای چقدر تفاوت را ضبط می کند. به لحاظ خونی، بالای آن را نگه دارید $k$و شما کاهش ابعاد دارید.
 
 **Stability.**در شبکه های مکرر و سیستم های پویا، مقادیر خاص با شدت > 1 باعث انفجار خروجی می شود. مقادیر < 1 باعث ناپدید شدن آنها می شود. این مشکل انحلال ناپدید شدن / انفجار است که در یک جمله بیان شده است.
 
@@ -309,7 +303,7 @@ print(f"Same? {result1 == result2}")
 
 ### مرحله 3: ارزش های شخصی از ابتدا (2x2)
 
-برای ماتریک 2×2`[[a, b], [c, d]]`, ارزش های خاص معادله مشخص را حل می کنند: `lambda^2 - (a+d)*lambda + (ad - bc) = 0`. .
+برای ماتریک 2×2`[[a, b], [c, d]]`, ارزش های خاص معادله مشخص را حل می کنند: $\lambda^2 - (a+d)\lambda + (ad - bc) = 0$. .
 
 ```python
 def eigenvalues_2x2(matrix):
@@ -443,6 +437,14 @@ print(f"Rotate 90 around x: {np.round(rotated_x, 4)}")
 
 3. ترکیب سه تحول را ایجاد کنید (به سرعت 30 درجه، مقیاس با [1.5, 0.8، برش با kx=0.3) و آن را به 8 نقطه در یک دایره ترتیب دهید. قبل و بعد از همبستگی چاپ کنید. تعیین کننده ماتریس ترکیب را محاسبه کنید و تأیید کنید که برابر با محصول تعیین کننده های فردی است.
 
+### اشاره ها
+
+**Exercise 1.**درخواست کنید`rotation_2d`،`scaling_2d`و`shearing_2d`به هر گوشه با`mat_vec_mul`برای چرخش، طول چهار طرف و دو قطر قبل و بعد را محاسبه کنید؛ هر کدام باید یکسان باشند.
+
+**Exercise 2.**معادله مشخصی را بنویسید $\lambda^2 - (\text{trace})\lambda + \det = 0$و آن را حل کنید. بررسی کنید که دو مقدار شما به دنباله (7) اضافه شده و به تعیین کننده (10) ضرب شده است، سپس با `eigenvalues_2x2`و`np.linalg.eigvals`. .
+
+**Exercise 3.**سه ماتریس رو بسازید`shearing_2d(0.3, 0)`برای برش، آنها را با ضرب کنید`mat_mul`در ترتیب درخواست، و نتیجه را به 8 نقطه اعمال کنید $(\cos\theta, \sin\theta)$. چرخش یک تعیین کننده 1 و تراش یک تعیین کننده 1 دارد ، بنابراین `det_2x2`از ترکیب باید برابر باشد$1.5 \times 0.8 = 1.2$. .
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
@@ -454,9 +456,9 @@ print(f"Rotate 90 around x: {np.round(rotated_x, 4)}")
 | Composition | "Do two things" | Multiplying transformation matrices to chain operations. Order matters: B @ A means apply A first, then B. |
 | Eigenvector | "Special direction" | A direction that the matrix only scales, never rotates. The transformation's fingerprint. |
 | Eigenvalue | "How much it stretches" | The scalar factor by which the matrix scales its eigenvector. Can be negative (flip) or complex (rotation). |
-| Eigendecomposition | "Break the matrix apart" | Writing a matrix as V @ D @ V^(-1), separating it into its fundamental scaling directions and magnitudes. |
+| Eigendecomposition | "Break the matrix apart" | Writing a matrix as $V D V^{-1}$, separating it into its fundamental scaling directions and magnitudes. |
 | Determinant | "A single number from a matrix" | The factor by which the transformation scales area (2D) or volume (3D). Zero means the transformation is irreversible. |
-| Characteristic equation | "Where eigenvalues come from" | det(A - lambda * I) = 0. The polynomial whose roots are the eigenvalues. |
+| Characteristic equation | "Where eigenvalues come from" | $\det(A - \lambda I) = 0$. The polynomial whose roots are the eigenvalues. |
 
 ## خواندن بیشتر
 

@@ -28,14 +28,14 @@
 
 ### نورم: اندازه گیری حجم بردار
 
-نورم اندازه گیری "حجم" یک متری است. هر تابع فاصله بین دو متری می تواند به عنوان نورم تفاوت آنها نوشته شود: d(a، b) = a - b)
+یک استاندارد اندازه گیری "حجم" یک متری است. هر تابع فاصله بین دو متری می تواند به عنوان استاندارد تفاوت آنها نوشته شود:$d(a, b) = \lVert a - b \rVert$پس درک اصول، درک فاصله است.
 
 ### L1 نورم (مسافت مانهاتن)
 
 استاندارد L1 ارزش های مطلق تمام اجزای را جمع می کند.
 
-```
-||x||_1 = |x_1| + |x_2| + ... + |x_n|
+```math
+\lVert x \rVert_1 = |x_1| + |x_2| + \cdots + |x_n|
 ```
 
 این فاصله به نام فاصله منهتن است چون اندازه گیری می کند که چقدر در یک شبکه شهر می توانید حرکت کنید که فقط در امتداد محورها حرکت کنید. هیچ دایگانال.
@@ -54,7 +54,7 @@ On a grid, you walk 3 blocks east and 4 blocks north.
 - وقتی می خواهید قوی به غیر معمول (یک تفاوت بزرگ حاکم نیست)
 - مشکلات انتخاب ویژگی ها (تدبیر L1 باعث کمکی می شود)
 
-اتصال به L1 تنظیم: اضافه کردن به عملکرد ضایع شما، مجموع ارزش های وزن مطلق را مجازات می کند. این باعث می شود وزن های کوچک به صفر برسد و انتخاب ویژگی های خودکار را انجام دهد. مجازات L1 مناطق محدود در فضای وزن به شکل الماس ایجاد می کند و گوشه های الماس در محور هایی قرار دارند که برخی از وزن ها صفر هستند.
+ارتباط با تنظیم L1 (Lasso): اضافه کردن $\lVert w \rVert_1$این کار وزن های کوچک را به صفر می اندازد و انتخاب ویژگی های خودکار را انجام می دهد. مجازات L1 مناطق محدود شکل الماس را در فضای وزن ایجاد می کند و گوشه های الماس بر محور هایی قرار دارند که برخی از وزن ها صفر هستند.
 
 ارتباط با عملکردهای از دست دادن: خطای مطلق متوسط (MAE) فاصله L1 میان پیش بینی ها و اهداف است. این خطایی را خطی مجازات می کند و در مقایسه با MSE به طور قابل اعتماد به غیرمعمولی تبدیل می شود.
 
@@ -62,11 +62,11 @@ On a grid, you walk 3 blocks east and 4 blocks north.
 
 استاندارد L2 فاصله خط مستقيم است. ریشه مربع مجموع اجزای مربع.
 
-```
-||x||_2 = sqrt(x_1^2 + x_2^2 + ... + x_n^2)
+```math
+\lVert x \rVert_2 = \sqrt{x_1^2 + x_2^2 + \cdots + x_n^2}
 ```
 
-این فاصله ای است که در کلاس هندسه یاد گرفتید. پیتاگوراس در ابعاد n.
+اين فاصله اي است که تو در کلاس هندسي ياد گرفتي.$n$ابعاد
 
 ```
 Point A = (1, 1)
@@ -83,24 +83,26 @@ The straight line, cutting diagonally through the grid.
 - فاصله های فیزیکی (داده های فضایی، خواندن سنسورها)
 - شباهت تصویر در سطح پیکسل
 
-اتصال به L2 تنظیم: اضافه کردن Unww      به عملکرد ضایع شما وزن های بزرگ را مجازات می کند. مانند L1 ، وزن را به صفر فشار نمی دهد. همه وزن ها را به سمت صفر متناسب کاهش می دهد. مجازات L2 مناطق محدود دایره ای ایجاد می کند ، بنابراین گوشه ای در محور وجود ندارد. وزن کوچک می شود اما به ندرت دقیقا صفر است.
+اتصال به تنظیم L2 (Ridge): اضافه کردن $\lVert w \rVert_2^2$در این حالت، این قابلیت به طور قابل توجهی به وزن های بزرگ کمک می کند. برخلاف L1, وزن ها را به صفر فشار نمی دهد. این تمام وزن ها را به طور متناسب به سمت صفر کاهش می دهد. مجازات L2 مناطق محدود گرد ایجاد می کند، بنابراین گوشه ای در محور وجود ندارد. وزن ها کوچک می شوند اما به ندرت دقیقا صفر.
 
 ارتباط با عملکردهای از دست دادن: خطای مربع متوسط (MSE) میانگین فاصله های L2 مربع است. مربع سازی خطاهای بزرگ را بیشتر از کوچک مجازات می کند.
 
-```
-MAE (L1 loss):  |y - y_hat|         Linear penalty. Robust to outliers.
-MSE (L2 loss):  (y - y_hat)^2       Quadratic penalty. Sensitive to outliers.
+```math
+\begin{aligned}
+\text{MAE (L1 loss):} \quad & |y - \hat{y}| && \text{Linear penalty. Robust to outliers.} \\
+\text{MSE (L2 loss):} \quad & (y - \hat{y})^2 && \text{Quadratic penalty. Sensitive to outliers.}
+\end{aligned}
 ```
 
 ### Lp نورم: خانواده عمومی
 
 L1 و L2 موارد ویژه ی استاندارد Lp هستند:
 
-```
-||x||_p = (|x_1|^p + |x_2|^p + ... + |x_n|^p)^(1/p)
+```math
+\lVert x \rVert_p = (|x_1|^p + |x_2|^p + \cdots + |x_n|^p)^{1/p}
 ```
 
-ارزش های مختلف p باعث ایجاد "کاله های واحد" شکل های مختلف می شوند (مجموعه همه نقاط در فاصله 1 از اصل):
+ارزش های مختلف $p$"کاله های واحد" شکل های مختلف را تولید می کنند (مجموعه همه نقاط در فاصله حداکثر 1 از اصل؛ شکل های زیر مرزهای آنها هستند):
 
 ```
 p=1:    Diamond shape      (corners on axes)
@@ -111,19 +113,20 @@ p=inf:  Square/hypercube   (flat sides along axes)
 
 ### نورم بی نهایت L (سافه چبیشوف)
 
-وقتی p به بی نهایت نزدیک می شود، نورم Lp به حداکثر قطعه مطلق نزدیک می شود.
+مثل$p$در حال نزدیک شدن به بی نهایت، نورم Lp به حداکثر قطعه مطلق نزدیک می شود.
 
-```
-||x||_inf = max(|x_1|, |x_2|, ..., |x_n|)
+```math
+\lVert x \rVert_\infty = \max(|x_1|, |x_2|, \ldots, |x_n|)
 ```
 
 فاصله بین دو نقطه توسط ابعاد تک تعیین می شود که بیشترین تفاوت آنها را دارند.
 
-```
-Point A = (1, 1)
-Point B = (4, 5)
-
-L-inf distance = max(|4-1|, |5-1|) = max(3, 4) = 4
+```math
+\begin{aligned}
+\text{Point } A &= (1, 1) \\
+\text{Point } B &= (4, 5) \\[6pt]
+L_\infty \text{ distance} &= \max(|4-1|, |5-1|) = \max(3, 4) = 4
+\end{aligned}
 ```
 
 چه زمانی باید L- Infinity را استفاده کنید:
@@ -135,19 +138,20 @@ L-inf distance = max(|4-1|, |5-1|) = max(3, 4) = 4
 
 شباهت کوسین زاویه بین دو متری را اندازه گیری می کند، بدون توجه به شدت آنها.
 
-```
-cos_sim(a, b) = (a . b) / (||a||_2 * ||b||_2)
+```math
+\text{cos\_sim}(a, b) = \frac{a \cdot b}{\lVert a \rVert_2 \, \lVert b \rVert_2}
 ```
 
 این از -1 (جهات مخالف) تا +1 (جهات مشابه) متفاوت است. متریک عمودی دارای شباهت کوسین 0 هستند.
 
 فاصله کوسین آن را به فاصله تبدیل می کند: cosine_distance = 1 - cosine_similarity. این از 0 (سیستم یکسان) تا 2 (سیستم مخالف) می باشد.
 
-```
-a = (1, 0)    b = (1, 1)
-
-cos_sim = (1*1 + 0*1) / (1 * sqrt(2)) = 1/sqrt(2) = 0.707
-cos_dist = 1 - 0.707 = 0.293
+```math
+\begin{aligned}
+& a = (1, 0) \qquad b = (1, 1) \\[6pt]
+& \text{cos\_sim} = \frac{1 \cdot 1 + 0 \cdot 1}{1 \cdot \sqrt{2}} = \frac{1}{\sqrt{2}} = 0.707 \\
+& \text{cos\_dist} = 1 - 0.707 = 0.293
+\end{aligned}
 ```
 
 چرا کوزین بر NLP و ادغام ها تسلط دارد: در متن، طول سند نباید بر شباهت تاثیر بگذارد. یک سند در مورد گربه ها که دو برابر طولانی تر از سند دیگری در مورد گربه ها است باید هنوز هم "مثل" باشد. شباهت کوسین حجم (طول) را نادیده می گیرد و فقط به جهت اهمیت می دهد. دو سند با همان توزیع کلمه اما طول های مختلف به سمت یک جهت اشاره می کنند و شبیه سازی کوسینو 1.0 را دریافت می کنند.
@@ -162,16 +166,17 @@ cos_dist = 1 - 0.707 = 0.293
 
 عدد نقطه ای دو متری است:
 
-```
-a . b = a_1*b_1 + a_2*b_2 + ... + a_n*b_n
-      = ||a|| * ||b|| * cos(angle)
+```math
+\begin{aligned}
+a \cdot b &= a_1 b_1 + a_2 b_2 + \cdots + a_n b_n \\
+&= \lVert a \rVert \, \lVert b \rVert \cos(\text{angle})
+\end{aligned}
 ```
 
 شباهت کوسین محصول نقطه ای است که توسط هر دو مقادیر نرمال می شود. هنگامی که هر دو بردار قبلاً به صورت واحد نرمال می شوند (مقادیر = 1) ، محصول نقطه ای و شباهت کوسین یکسان هستند.
 
-```
-If ||a|| = 1 and ||b|| = 1:
-    a . b = cos(angle between a and b)
+```math
+\text{If } \lVert a \rVert = 1 \text{ and } \lVert b \rVert = 1: \quad a \cdot b = \cos(\text{angle between } a \text{ and } b)
 ```
 
 وقتی که آنها متفاوت هستند: مقدار قطبی شامل اطلاعات بزرگی است. ویکتور با مقدار بزرگتر نمره محصول قطبی بالاتر را می گیرد. این در برخی از سیستم های بازیافت اهمیت دارد که می خواهید موارد "عالی" رتبه بالاتر را داشته باشند. مقدار به عنوان یک سیگنال ضمنی کیفیت یا اهمیت عمل می کند.
@@ -197,13 +202,13 @@ Both agree on direction, but dot product also reflects magnitude.
 
 فاصله ماهالانوبیس ساختار کوویاریانس داده ها را محاسبه می کند.
 
-```
-d_M(x, y) = sqrt((x - y)^T * S^(-1) * (x - y))
+```math
+d_M(x, y) = \sqrt{(x - y)^T S^{-1} (x - y)}
 ```
 
-جایی که S ماتریس همتای داده ها است.
+کجا$S$ماتریس همتای داده ها است.
 
-با توجه به این که فاصله ماهالانوبیسی ابتدا داده ها را غیر مرتبط و عادی می کند (پاکسازی) ، سپس فاصله L2 را در این فضای تبدیل محاسبه می کند. اگر S ماتریس هویت (غیر مرتبط، ویژگی های متغیر واحد) باشد، فاصله ماهالانوبیسی به فاصله یوکلیدیسی کاهش می یابد.
+با توجه به این که فاصله ماهالانوبی ابتدا داده ها را غیر مرتبط و عادی می کند (پاک کردن) ، سپس فاصله L2 را در این فضا تبدیل می کند. اگر$S$میترکس هویت (غیر مرتبط، ویژگی های متغیر واحد) است، فاصله ماهالانوبی به فاصله یوکلیدی کاهش می یابد.
 
 ```
 Example: height and weight are correlated.
@@ -225,8 +230,8 @@ because it accounts for the height-weight correlation.
 
 اندازه گیری های شباهت جکارد بین دو مجموعه تعاونی می کند.
 
-```
-J(A, B) = |A intersect B| / |A union B|
+```math
+J(A, B) = \frac{|A \cap B|}{|A \cup B|}
 ```
 
 این فاصله از 0 (بدون تعادل) تا 1 (مجموعه های یکسان) می باشد. فاصله جکارد = 1 - شباهت جکارد.
@@ -263,7 +268,7 @@ sittin -> sitting (insert g)
 Edit distance = 3
 ```
 
-با استفاده از برنامه نویسی پویا محاسبه شده است. یک ماتریس را پر کنید که در آن ورودی (i، j) فاصله ویرایش بین اولین i حرف های رشته A و اولین j حرف های رشته B است.
+با استفاده از برنامه نویسی پویا محاسبه شده. یک ماتریس را پر کنید که در آن درج شده است $(i, j)$فاصله ی ویرایش بین اولین $i$حرف های رشته A و اول $j$حرف های رشته B
 
 ```
         ""  s  i  t  t  i  n  g
@@ -286,20 +291,20 @@ Edit distance = 3
 
 انحراف KL اندازه گیری می کند که چگونه توزیع احتمال از دیگری متفاوت است. در درس 09 پوشش داده شده است، اما به این بحث تعلق دارد زیرا مردم آن را به عنوان یک "مسافت" با وجود اینکه یک نیست، استفاده می کنند.
 
-```
-D_KL(P || Q) = sum(p(x) * log(p(x) / q(x)))
+```math
+D_{KL}(P \,\|\, Q) = \sum_x p(x) \log\frac{p(x)}{q(x)}
 ```
 
 ویژگی حیاتی: انحراف KL متقابل نیست.
 
-```
-D_KL(P || Q) != D_KL(Q || P)
+```math
+D_{KL}(P \,\|\, Q) \ne D_{KL}(Q \,\|\, P)
 ```
 
 این بدان معنی است که این مورد نیاز اساسی یک متریک فاصله را برآورده نمی کند. همچنین عدم برابری مثلث را برآورده نمی کند. این یک انحراف است، نه فاصله.
 
-KL پیش رو (D_KL(P از Q)) "مطالعه معنی" است: Q سعی می کند تمام حالت های P را پوشش دهد.
-KL معکوس (D_KL(Q از P)) "طلب کردن حالت" است: Q بر روی یک حالت واحد از P تمرکز می کند.
+جلو KL $(D_{KL}(P \Vert Q))$"مطالب به معنی" است: $Q$تلاش می کند تمام روش های$P$. .
+کالا رو برگردون$(D_{KL}(Q \Vert P))$"طلب کردن حالت": $Q$تمرکز بر یک روش واحد$P$. .
 
 وقتی که انحراف KL رو میبینید:
 - VAEs (مدد KL در ELBO توزیع پنهان را به سمت یک پیش رو فشار می دهد)
@@ -311,14 +316,14 @@ KL معکوس (D_KL(Q از P)) "طلب کردن حالت" است: Q بر روی 
 
 فاصله واسستین حداقل "کار" لازم را برای تبدیل یک توزیع احتمال به دیگری اندازه گیری می کند. به این فکر کنید که: اگر یک توزیع یک توده خاک و دیگری یک سوراخ باشد، چقدر خاک باید حرکت کنید و چقدر؟
 
-```
-W(P, Q) = inf over all transport plans gamma of E[d(x, y)]
+```math
+W(P, Q) = \inf_{\gamma} \mathbb{E}[d(x, y)] \quad \text{(over all transport plans } \gamma\text{)}
 ```
 
 برای توزیع های یک بعدی، این را به یکپارچه تفاوت مطلق عملکردهای توزیع تجمعی ساده می کند:
 
-```
-W_1(P, Q) = integral |CDF_P(x) - CDF_Q(x)| dx
+```math
+W_1(P, Q) = \int |\text{CDF}_P(x) - \text{CDF}_Q(x)| \, dx
 ```
 
 چرا واسستين مهمه:
@@ -353,7 +358,7 @@ Wasserstein gives a meaningful gradient. KL does not.
 | Set overlap (tags, categories) | Jaccard | Data is naturally set-valued, not vectorial |
 | String matching | Edit distance | Operations map to human editing intuition |
 | Outlier detection | Mahalanobis | Accounts for feature correlations and scales |
-| Comparing distributions | KL divergence | Measures information lost by using Q instead of P |
+| Comparing distributions | KL divergence | Measures information lost by using $Q$ instead of $P$ |
 | GAN training | Wasserstein | Provides gradients even when distributions do not overlap |
 | Embeddings (vector DB) | Cosine or dot product | Embeddings are trained to encode meaning in direction |
 | Recommendation | Dot product | Magnitude can encode popularity or confidence |
@@ -404,7 +409,7 @@ Elastic Net:                  loss + lambda_1 * ||w||_1 + lambda_2 * ||w||_2^2
 
 هر تابع فاصله به مشکل جستجوی نزدیک ترین همسایه اشاره دارد: با توجه به یک نقطه جستجو، نزدیک ترین نقاط در مجموعه داده ها را پیدا کنید.
 
-دقیق ترین جستجوی همسایه در یک مجموعه داده از نقاط n با ابعاد d O(n * d) در هر جستجو است. برای مجموعه داده های بزرگ، این خیلی کند است.
+نزدیک ترین همسایه جستجو$O(n \cdot d)$در هر سوال در مجموعه داده ای از $n$نقاط با $d$برای مجموعه داده های بزرگ، این خیلی کند است.
 
 الگوریتم های نزدیک ترین همسایه (ANN) مقدار کمی دقت را برای افزایش سرعت عظیم معامله می کنند:
 
@@ -469,7 +474,7 @@ print(f"Similarities: {similarities[top_k]}")
 
 ## تمرینات
 
-1. فاصله های L1, L2 و L-بی نهایت را بین (1, 2, 3) و (4, 0, 6) محاسبه کنید. بررسی کنید که L-inf <= L2 <= L1 همیشه برای هر جفت نقطه ای معتبر است. ثابت کنید که چرا این ترتیب تضمین شده است.
+1. فاصله های L1, L2 و L- بی نهایت را بین (1, 2, 3) و (4, 0, 6) محاسبه کنید.$L_\infty \le L_2 \le L_1$هميشه براي هر جفت نقطه اي نگه داريد. ثابت کنيد چرا اين سفارش تضمین شده است.
 
 2. دو متری ایجاد کنید که شباهت کوسین بالا (> 0.9) باشد اما فاصله L2 بزرگ (> 10) باشد. به صورت هندسی توضیح دهید که چه اتفاقی می افتد. سپس دو متری ایجاد کنید که شباهت کوسین کم باشد (< 0.3) اما فاصله L2 کوچک باشد (< 0.5).
 
@@ -479,6 +484,18 @@ print(f"Similarities: {similarities[top_k]}")
 
 5. MinHash را برای شباهت جاکارد نزدیک پیاده سازی کنید. 100 مجموعه تصادفی تولید کنید، جاکارد دقیق را برای همه جفت ها محاسبه کنید و با استفاده از 50، 100 و 200 تابع هش با تقرب MinHash مقایسه کنید. خطای تقرب را نقشه برداری کنید.
 
+### اشاره ها
+
+**Exercise 1.**متری تفاوت (-3, 2, -3) است، بنابراین سه قانون متری را با `l1_norm`،`l2_norm`و`linf_norm`برای اثبات، بزرگترين را مقایسه کن$\lvert d_i \rvert$با مجموع مربع ها، و مقایسه مجموع مربع ها با مربع مجموع ارزش های مطلق.
+
+**Exercise 2.**شبیه سازی کوسین طول را نادیده می گیرد، بنابراین با دو متری که تقریبا در همان جهت اشاره می کنند شروع کنید و یکی از آنها را بسیار طولانی تر کنید. برای مورد دوم، از دو متری کوتاه در نزدیکی اصل استفاده کنید که در جهت های مختلف اشاره می کنند، سپس هر دو شرایط را با `cosine_similarity`و`l2_distance`. .
+
+**Exercise 3.**تماس بگیرید`find_nearest_neighbor(query, dataset, distance_fn)`یک بار برای هر یک از آنها`l1_distance`،`l2_distance`،`cosine_distance`و`mahalanobis_distance`.`demo_different_neighbors`یک مجموعه داده را نشان می دهد که در آن متریکها با هم موافق نیستند، بنابراین اول آن را بخوانید و سپس نقاط را تغییر دهید تا همه چهار پاسخ متفاوت باشند.
+
+**Exercise 4.**مجموعه ی تجمعی هر توزیع را بنویسید، سپس تفاوت های مطلق دو مجموعه ی تجمعی را اضافه کنید. نتایج هر دو دست را با `wasserstein_1d(p, q)`، سپس مقدار بزرگتر را با اینکه چه اندازه باید جرم احتمال حرکت کند توضیح دهید.
+
+**Exercise 5.**برای هر تابع هش، امضای MinHash یک مجموعه حداقل ارزش هش بر عناصر آن است و بخش از تابع های هش که دو مجموعه به همان حداقل تخمین ها شباهت جیکارد خود را دریافت می کنند.`jaccard_similarity`اشتباه باید تقریباً به عنوان$1/\sqrt{k}$برای$k$تابع هاش
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
@@ -486,15 +503,15 @@ print(f"Similarities: {similarities[top_k]}")
 | Norm | "Size of a vector" | A function that maps a vector to a non-negative scalar, satisfying triangle inequality, absolute homogeneity, and zero only for the zero vector |
 | L1 norm | "Manhattan distance" | Sum of absolute component values. Produces sparsity in optimization. Robust to outliers |
 | L2 norm | "Euclidean distance" | Square root of sum of squared components. The straight-line distance in Euclidean space |
-| Lp norm | "Generalized norm" | The p-th root of the sum of p-th powers of absolute components. L1 and L2 are special cases |
-| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as p approaches infinity |
+| Lp norm | "Generalized norm" | The $p$-th root of the sum of $p$-th powers of absolute components. L1 and L2 are special cases |
+| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as $p$ approaches infinity |
 | Cosine similarity | "Angle between vectors" | Dot product normalized by both magnitudes. Ranges from -1 to +1. Ignores vector length |
 | Cosine distance | "1 minus cosine similarity" | Converts cosine similarity to a distance. Ranges from 0 to 2 |
 | Dot product | "Unnormalized cosine" | Sum of component-wise products. Equals cosine similarity times both magnitudes |
 | Mahalanobis distance | "Correlation-aware distance" | L2 distance in a space that has been whitened (decorrelated and normalized) using the data covariance matrix |
 | Jaccard similarity | "Set overlap" | Size of intersection divided by size of union. For sets, not vectors |
 | Edit distance | "Levenshtein distance" | Minimum insertions, deletions, and substitutions to transform one string into another |
-| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using Q to encode P |
+| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using $Q$ to encode $P$ |
 | Wasserstein distance | "Earth mover's distance" | Minimum work to transport mass from one distribution to another. A true metric |
 | Approximate nearest neighbor | "ANN search" | Algorithms (HNSW, LSH, IVF) that find approximately closest points much faster than exact search |
 | HNSW | "The vector DB algorithm" | Hierarchical Navigable Small World graph. Multi-layer graph for fast approximate nearest neighbor search |

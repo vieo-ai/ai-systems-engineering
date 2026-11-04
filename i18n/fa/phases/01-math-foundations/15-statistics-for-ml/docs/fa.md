@@ -44,7 +44,7 @@ Mode:   most frequent value
         Useful for categorical data. For continuous data, rarely informative.
 ```
 
-میانگین نقطه تعادل است. میانگین نشان نیمه راه است. هنگامی که آنها منحرف می شوند، توزیع شما منحرف می شود. توزیع درآمد میانگین >> میانگین (محور راست از میلیاردرها) دارد. توزیع زیان در طول آموزش اغلب میانگین << میانگین (محور چپ از نمونه های آسان) دارد.
+متوسط نقطه توازن است. متوسط نقطه نیمه راه است. وقتی آنها متمایز می شوند، توزیع شما منحرف می شود. توزیع درآمد شما دارای$\text{mean} \gg \text{median}$(در حق با اربابین منحرف) توزیع خسارت در طول آموزش اغلب$\text{mean} \ll \text{median}$(تاهل چپ از نمونه های آسان)
 
 **Measures of spread**پاسخ "داده ها چقدر پخش شده اند؟"
 
@@ -75,14 +75,16 @@ For latency monitoring:
 
 در ML، شما به درصد ها برای تاخیر نتیجه گیری، توزیع اطمینان پیش بینی و توزیع خطا درک اهمیت می دهید. یک مدل با خطای متوسط پایین اما خطای وحشتناک P99 ممکن است برای برنامه های حیاتی ایمنی بی فایده باشد.
 
-**Sample vs population statistics.**در هنگام محاسبه متغیر از یک نمونه، به جای n به (n-1) تقسیم کنید. این اصلاح بسل است. این باعث تعویض این واقعیت می شود که متوسط نمونه شما متوسط جمعیت واقعی نیست. با n در نامگذاری، شما به طور سیستماتیک متغیر واقعی را دست کم می اندازید. با (n-1) ، تخمین غیر جانبدار است.
+**Sample vs population statistics.**در هنگام محاسبه تفاوت از یک نمونه، تقسیم به $(n-1)$به جای$n$اين تصحيحي باسل است که تعويض ميکنه که متوسط نمونه شما متوسط اصلي جمعیت نيست$n$در نامگذاری، شما به طور سیستماتیک تفاوت واقعی را دست کم می دهید.$(n-1)$، تخمین غیر جانبدار است
 
-```
-Population variance: sigma^2 = (1/N) * sum((x_i - mu)^2)
-Sample variance:     s^2     = (1/(n-1)) * sum((x_i - x_bar)^2)
+```math
+\begin{aligned}
+\text{Population variance:} \quad \sigma^2 &= \frac{1}{N} \sum (x_i - \mu)^2 \\
+\text{Sample variance:} \quad s^2 &= \frac{1}{n-1} \sum (x_i - \bar{x})^2
+\end{aligned}
 ```
 
-در عمل: اگر n بزرگ باشد (هزاران نمونه) ، تفاوت بسیار کوچک است. اگر n کوچک باشد (دزنان نمونه) ، مهم است.
+در عمل: اگر$n$اگر تعداد نمونه ها زیاد باشد، تفاوت بسیار کم است.$n$کوچک است (دوشنها نمونه) ، مهم است.
 
 ### ارتباط: چگونه متغیرها با هم حرکت می کنند
 
@@ -100,7 +102,7 @@ r =  0:  no linear relationship (but there might be a nonlinear one!)
 Range: [-1, 1]
 ```
 
-پیرسون فرض می کند که رابطه خطی است و هر دو متغیر تقریباً به طور طبیعی توزیع شده است. این نسبت به غیر معمول حساس است. یک نقطه انتهای واحد می تواند r را از 0.1 تا 0.9 جذب کند.
+پیرسون فرض می کند که رابطه خطی است و هر دو متغیر تقریباً به طور طبیعی توزیع شده است.$r$از 0.1 تا 0.9
 
 **Spearman rank correlation**اقدامات یکنواختگی:
 
@@ -139,7 +141,7 @@ Cov(X, Y) < 0:  when X increases, Y tends to decrease
 Cov(X, Y) = 0:  no linear co-movement
 ```
 
-برای ویژگی های d، ماتریس کوویاریانس C یک ماتریس d x d است که C[i][j] = Cov(feature_i، feature_j). ورودی های دیگاکال C[i][i] متغیرات هر ویژگی هستند.
+برای$d$ویژگی ها، ماتریس همگرایی $C$یک$d \times d$ماتریکس که در آن$C[i][j] = \mathop{\mathrm{Cov}}(\text{feature}_i, \text{feature}_j)$. ورودی های دیگاکال$C[i][i]$تفاوت هر ویژگی است.
 
 ```
 C = | Var(x1)      Cov(x1,x2)  Cov(x1,x3) |
@@ -155,7 +157,7 @@ Properties:
 
 **Connection to PCA.**PCA خود ماتریس کووریانس را ترکیب می کند. خود متریها اجزای اصلی (معیار حداکثر متغیر) هستند. ارزش های خود به شما می گویند که هر متغیر چقدر متغیر را ضبط می کند. این دقیقاً چیزی است که درس 10 پوشش داده است، اما اکنون می بینید که چرا ماتریس کووریانس چیزی مناسب برای تجزیه است: آن را کدگذاری می کند تمام روابط خطی جفت در داده های شما.
 
-**Connection to correlation.**ماتریس ارتباط ماتریس کوویاریانس متغیرهای استاندارد (هر کدام با انحراف استاندارد خود تقسیم می شود) است. ارتباط کوویاریانس را عادی می کند بنابراین تمام ارزش ها در [-1, 1] سقوط می کنند.
+**Connection to correlation.**ماتریس ارتباط ماتریس همبستگی متغیرهای استاندارد (هر کدام با انحراف استاندارد خود تقسیم می شود) است. همبستگی همبستگی را عادی می کند بنابراین تمام ارزش ها در $[-1, 1]$. .
 
 ### آزمایش فرضیه
 
@@ -205,10 +207,11 @@ is a 95% probability the true mean is in this specific interval.
 
 **One-sample t-test:**آیا متوسط جمعیت از یک ارزش فرضیه متفاوت است؟
 
-```
-t = (x_bar - mu_0) / (s / sqrt(n))
-
-degrees of freedom = n - 1
+```math
+\begin{aligned}
+t &= \frac{\bar{x} - \mu_0}{s / \sqrt{n}} \\[4pt]
+\text{degrees of freedom} &= n - 1
+\end{aligned}
 ```
 
 **Two-sample t-test (independent):**دو گروه معنی متفاوتی دارند؟
@@ -297,19 +300,20 @@ engineering cost of deploying a new model.
 
 **Effect size**میزان تفاوت را مستقل از اندازه نمونه مشخص می کند:
 
-```
-Cohen's d = (mean_1 - mean_2) / pooled_std
-
-d = 0.2:  small effect
-d = 0.5:  medium effect
-d = 0.8:  large effect
+```math
+\begin{aligned}
+\text{Cohen's } d &= \frac{\text{mean}_1 - \text{mean}_2}{\text{pooled\_std}} \\[4pt]
+d &= 0.2: \quad \text{small effect} \\
+d &= 0.5: \quad \text{medium effect} \\
+d &= 0.8: \quad \text{large effect}
+\end{aligned}
 ```
 
 همیشه هر دو p-قیمت و اندازه اثر را گزارش کنید. p-قیمت به شما می گوید که آیا تفاوت واقعی است. اندازه اثر به شما می گوید که آیا مهم است.
 
 ### مشکل مقایسه چندگانه
 
-وقتی فرضیه های زیادی را آزمایش می کنید، بعضی ها به طور تصادفی "مهم" خواهند بود. اگر 20 چیز را با الفا = 0.05 آزمایش کنید، حتی وقتی هیچ چیز واقعی نباشد، انتظار یک مثبت نادرست را دارید.
+وقتی که فرضیه های زیادی را آزمایش می کنید، بعضی ها به طور تصادفی "مهم" خواهند بود.$\alpha = 0.05$، شما انتظار یک مثبت نادرست حتی زمانی که هیچ چیز واقعی نیست.
 
 ```
 P(at least one false positive) = 1 - (1 - alpha)^m
@@ -320,7 +324,7 @@ P(false positive) = 1 - 0.95^20 = 0.64
 You have a 64% chance of at least one false positive.
 ```
 
-**Bonferroni correction:**الفا را با تعداد آزمایشات تقسیم کنید.
+**Bonferroni correction:**تقسیم کنید$\alpha$با تعداد آزمایشات
 
 ```
 Adjusted alpha = alpha / m = 0.05 / 20 = 0.0025
@@ -417,11 +421,11 @@ Kruskal-Wallis:     compares multiple groups (replaces ANOVA)
 - More statistical power (better at detecting real differences)
 ```
 
-در آزمایش های ML، شما معمولا دارای n کوچک (5 یا 10 فولدهای اعتبارسنجی متقاطع) هستید، بنابراین تست های غیر پارامترکی مانند Wilcoxon-signed-rank اغلب مناسب تر از تست های t هستند.
+در آزمایشات ML، شما معمولاً کوچک$n$(۵ یا ۱۰ فولد اعتبارسنجی متقاطع) ، بنابراین تست های غیر پارامترکی مانند Wilcoxon- دستخط درجه اغلب مناسب تر از تست های t هستند.
 
 ### نظریه محدودیتی مرکزی: پیامدهای عملی
 
-CLT می گوید توزیع نمونه به توزیع طبیعی نزدیک می شود زیرا n رشد می کند، بدون توجه به توزیع اساسی جمعیت.
+CLT می گوید توزیع نمونه به طور متوسط به توزیع عادی نزدیک می شود.$n$رشد می کند، بدون توجه به توزیع اساسی جمعیت.
 
 ```
 If X_1, X_2, ..., X_n are iid with mean mu and variance sigma^2:
@@ -473,7 +477,7 @@ For highly skewed distributions, you might need n >= 100.
 
 9. **Assuming independence when data is not independent.**تصاویر پزشکی از همان بیمار، جمله های متعدد از همان سند. مشاهدات درون یک گروه مرتبط است.
 
-10. **P-hacking.**آزمایش آزمایش های مختلف، زیر مجموعه ها یا معیارهای حذف تا زمانی که شما p < 0.05 را بدست آورید. نتیجه یک اثر از جستجوی است.
+10. **P-hacking.**امتحان کردن تست های مختلف، زیر مجموعه ها یا معیارهای حذف تا زمانی که شما$p < 0.05$نتیجه ی این جستجو، یک اثر هنری است.
 
 ## ساخت آن
 
@@ -484,7 +488,7 @@ For highly skewed distributions, you might need n >= 100.
 3. **Hypothesis tests**(تخت یک نمونه، تست دو نمونه، تست چایی مربع)
 4. **Bootstrap confidence intervals**(برای هر آماری، هیچ فرضیه ای لازم نیست)
 5. **A/B test simulator**(تولید داده ها، آزمایش، بررسی برای خطا های نوع I و نوع II)
-6. **Statistical vs practical significance demo**(که نشان می دهد این n بزرگ همه چیز را "مهم" می کند)
+6. **Statistical vs practical significance demo**(که اینقدر بزرگ رو نشان میده)$n$همه چیز را "مهم" می کند)
 
 همه چيز از ابتداست، فقط با استفاده از`math`و`random`نه گندگي، نه گندگي
 
@@ -501,7 +505,7 @@ f3-bootstrap-resample
 | Standard deviation | Square root of variance. Measures spread in original units. |
 | Percentile | Value below which a given percentage of data falls. |
 | IQR | Interquartile range. Q3 minus Q1. The spread of the middle 50%. |
-| Pearson correlation | Measures linear association between two variables. Range [-1, 1]. |
+| Pearson correlation | Measures linear association between two variables. Range $[-1, 1]$. |
 | Spearman correlation | Measures monotonic association using ranks. |
 | Covariance matrix | Matrix of pairwise covariances between all features. |
 | Null hypothesis | Default assumption of no effect or no difference. |
