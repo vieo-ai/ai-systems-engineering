@@ -21,9 +21,9 @@ C'est la recette de diffusion stable. SD 1.x / 2.x a utilisé un U-Net de 860M s
 
 **Two stages, separately trained.**
 
-1. **Stage 1 — VAE.**Le codeur `E(x) → z`, décodeur `D(z) → x`. Compression cible: 8 fois échantillon en bas dans chaque axe spatial + réglage des canaux de sorte que la taille totale latente soit ~1/16e du nombre de pixels. Perte = reconstruction (L1 + LPIPS perceptuelle) + KL (peut-être faible poids)`z`n'est pas forcé trop Gaussian, parce que nous n'avons pas besoin de prélèvement exact de `z`Les images décodées sont souvent nettes.
+1. **Stage 1 — VAE.**Le codeur $E(x) \to z$, décodeur $D(z) \to x$. Compression cible: 8 fois échantillon en bas dans chaque axe spatial + réglage des canaux de sorte que la taille totale latente soit ~1/16e du nombre de pixels. Perte = reconstruction (L1 + LPIPS perceptuelle) + KL (peut-être faible poids)$z$n'est pas forcé trop Gaussian, parce que nous n'avons pas besoin de prélèvement exact de $z$Les images décodées sont souvent nettes.
 
-2. **Stage 2 — diffusion on `z`.**Traiter`z = E(x_real)`En effet, les données sont les données de l'entreprise.`z_t`- À l' inférence: échantillon `z_0`par diffusion, alors `x = D(z_0)`- Je suis désolé .
+2. **Stage 2 — diffusion on $z$.**Traiter$z = E(x_{\text{real}})$En effet, les données sont les données de l'entreprise.$z_t$- À l' inférence: échantillon $z_0$par diffusion, alors $x = D(z_0)$- Je suis désolé .
 
 **Text conditioning.**Deux composants supplémentaires: un encodeur de texte gelé (CLIP-L pour SD 1.x, CLIP-L+OpenCLIP-G pour SD 2/XL, T5-XXL pour SD3 et Flux).`[Q = image features, K = V = text tokens]`Les jetons sont la seule façon dont le texte influence l'image.
 
@@ -49,7 +49,7 @@ noise-schedule
 
 ## Faites-le
 
-`code/main.py`Il met un jouet 1-D "VAE" (encodeur d'identité + décodeur, pour démonstration; un vrai VAE serait un réseau de convex) en haut du DDPM de la leçon 06 et ajoute un conditionnement de classe avec une orientation sans classifiant. Il montre que la même perte de diffusion fonctionne que vous exécutez sur des valeurs 1D brutes ou sur des valeurs codées  l'information clé.
+`code/main.py`Il ajoute un jouet 1-D "VAE" (un encodeur à échelle fixe par 0,5 et son inverse exact comme décodeur, pour la démonstration; un vrai VAE serait un convnet) sur le dessus du DDPM de la leçon 06 et ajoute un conditionnement de classe avec une orientation sans classifiant. Il montre que la même perte de diffusion fonctionne que vous exécutez sur des valeurs 1D brutes ou sur des valeurs codées. C'est l'idée clé.
 
 ### Étape 1: codeur/décodeur
 
@@ -58,21 +58,21 @@ def encode(x):    return x * 0.5          # toy "compression" to smaller scale
 def decode(z):    return z * 2.0
 ```
 
-Pour la pédagogie, cette carte linéaire suffit à montrer que la diffusion opère sur`z`sans se soucier de l'espace de données original.
+Pour la pédagogie, cette carte linéaire suffit à montrer que la diffusion opère sur$z$sans se soucier de l'espace de données original.
 
 ### Étape 2: diffusion dans `z`- l'espace
 
-Le même DDPM que la leçon 06.`z = E(x)`Après le prélèvement`z_0`, décodez avec `D(z_0)`- Je suis désolé .
+Le même DDPM que la leçon 06.$z = E(x)$Après le prélèvement$z_0$, décodez avec $D(z_0)$- Je suis désolé .
 
 ### Étape 3: orientation sans classifiant
 
-Pendant la formation, laissez tomber l'étiquette de classe 10% du temps (replacez-la par un jeton nul).`ε_cond`et `ε_uncond`, puis:
+Pendant la formation, laissez tomber l'étiquette de classe 10% du temps (replacez-la par un jeton nul).$\epsilon_{\text{cond}}$et $\epsilon_{\text{uncond}}$, puis:
 
 ```python
 eps_cfg = (1 + w) * eps_cond - w * eps_uncond
 ```
 
-`w = 0`= aucune orientation (plénière diversité), `w = 3`= par défaut, `w = 7+`= saturée / trop tranchante.
+$w = 0$= aucune orientation (plénière diversité), $w = 3$= par défaut, $w = 7+$= saturée / trop tranchante.
 
 ### Étape 4: conditionnement du texte (concept, pas code)
 
@@ -90,7 +90,7 @@ C'est la seule différence substantielle entre un modèle de diffusion classé e
 - **Text encoder silently wrong.**SD3 a besoin de T5-XXL avec >=128 jetons, et le retour à CLIP-seulement est perçu.`use_t5=True`ou des cratères de fidélité rapides.
 - **Mixing latent spaces.**SDXL, SD3, Flux utilisent tous différents VAE. Un LoRA formé sur les latents SDXL ne fonctionnera pas sur SD3.
 - **CFG too high.** `w > 10`Il est donc important de noter que les résultats obtenus par la Commission sont très variés.`w = 3-7`- Je suis désolé .
-- **Negative prompts leaking.**Une requête négative vide devient le jeton nul; une requête négative remplie devient la `ε_uncond`Ce n'est pas la même chose, certains pipelines sont silencieusement défauts à la nullité.
+- **Negative prompts leaking.**Une requête négative vide devient le jeton nul; une requête négative remplie devient la $\epsilon_{\text{uncond}}$Ce n'est pas la même chose, certains pipelines sont silencieusement défauts à la nullité.
 
 ## Utilisez-le
 
@@ -111,7 +111,7 @@ Stacks de production en 2026:
 
 ## Exercices
 
-1. **Easy.**On court .`code/main.py`avec une direction `w ∈ {0, 1, 3, 7, 15}`- Enregistrer l'échantillon moyen par classe.`w`les moyens de classe divergent-ils au-delà des moyens de données réelles ?
+1. **Easy.**On court .`code/main.py`avec une direction $w \in \lbrace 0, 1, 3, 7, 15 \rbrace$- Enregistrer l'échantillon moyen par classe.$w$les moyens de classe divergent-ils au-delà des moyens de données réelles ?
 2. **Medium.**Le codeur linéaire du jouet est remplacé par un codeur/décodeur tanh-MLP avec une perte de reconstruction.
 3. **Hard.**Installez une réelle inférence de diffusion stable avec des diffuseurs: charge `sdxl-base`, exécute 30 étapes Euler avec CFG = 7, le temps.`sdxl-turbo`Le même sujet, une qualité différente  décrit ce qui a changé et pourquoi.
 
@@ -121,8 +121,8 @@ Stacks de production en 2026:
 |------|-----------------|-----------------------|
 | First stage | "The VAE" | Trained encoder/decoder pair; compresses 512² to 64². |
 | Second stage | "The U-Net" | Diffusion model over the latent space. |
-| CFG | "Guidance scale" | `(1+w)·ε_cond - w·ε_uncond`; tunes conditioning strength. |
-| Null token | "Empty prompt embed" | Unconditional embed used for `ε_uncond`. |
+| CFG | "Guidance scale" | $(1+w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$; tunes conditioning strength. |
+| Null token | "Empty prompt embed" | Unconditional embed used for $\epsilon_{\text{uncond}}$. |
 | Cross-attention | "How text gets in" | Each U-Net block attends to text tokens as K and V. |
 | DiT | "Diffusion Transformer" | Replace U-Net with a transformer over latent patches; scales better. |
 | MMDiT | "Multi-modal DiT" | SD3's architecture: text and image streams with joint attention. |
@@ -132,7 +132,7 @@ Stacks de production en 2026:
 
 L'intégration de référence Flux est la recette canonique "J'ai un GPU de consommation, puis-je expédier ceci?"
 
-1. **Staggered loading.**Flux a trois réseaux qui n'ont jamais besoin de coexister dans VRAM: T5-XXL encodeur de texte (~ 10 Go en fp32), CLIP-L (petit), le 12B MMDiT, et le VAE. Encodez le prompt d'abord, * supprimez* les encodeurs, chargez le DiT, dénoncez, * supprimez* le DiT, chargez le VAE, décodez. Les GPU de 8 Go de consommation ne s'adaptent qu'à une étape à la fois.
+1. **Staggered loading.**Flux a quatre réseaux qui n'ont jamais besoin de coexister dans VRAM: T5-XXL encodeur de texte (~ 10 Go en fp32), CLIP-L (petit), le 12B MMDiT, et le VAE. Encodez le prompt d'abord, * supprimez* les encodeurs, chargez le DiT, dénoncez, * supprimez* le DiT, chargez le VAE, décodez. Les GPU de 8 Go de consommation ne s'adaptent qu'à une étape à la fois.
 2. **4-bit quantization via bitsandbytes.** `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)`Le codeur T5 et le DiT. Coupe la mémoire 8x, la baisse de qualité est imperceptible pour les textes à images par référence d'Aritra (lié dans le carnet).
 3. **CPU offload.** `pipe.enable_model_cpu_offload()`Il échange automatiquement les modules entre le processeur et la GPU à mesure que chaque passage avance.
 
