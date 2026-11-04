@@ -9,9 +9,9 @@
 
 ## مشکل
 
-یک مدل تولید کننده یک کار را انجام می دهد: نمونه های آموزش داده شده از برخی توزیع ناشناخته گرفته شده است `p_data(x)`صورت ها، جمله ها، فایل های MIDI، ساختار پروتئین ها همه همان مشکل هستند اگر چشمک بزنید.
+یک مدل تولید کننده یک کار را انجام می دهد: نمونه های آموزش داده شده از برخی توزیع ناشناخته گرفته شده است $p_{\text{data}}(x)$صورت ها، جمله ها، فایل های MIDI، ساختار پروتئین ها همه همان مشکل هستند اگر چشمک بزنید.
 
-مشکل اينه که`p_data`در یک فضا با میلیون ها ابعاد زندگی می کند (تصاویر 512x512 RGB ابعاد ~786k است) ، نمونه ها روی یک دسته نازک در داخل این فضا قرار دارند و شما فقط 10M نمونه دارید. فشار دادن کثافت بی امید است. هر مدل تولید کننده یک سازشی است که یک مشکل سخت را به یک مشکل کمی کمتر سخت می کند.
+مشکل اينه که$p_{\text{data}}$در یک فضا با میلیون ها ابعاد زندگی می کند (تصاویر 512x512 RGB ابعاد ~786k است) ، نمونه ها روی یک دسته نازک در داخل این فضا قرار دارند و شما فقط 10M نمونه دارید. فشار دادن کثافت بی امید است. هر مدل تولید کننده یک سازشی است که یک مشکل سخت را به یک مشکل کمی کمتر سخت می کند.
 
 پنج خانواده در 12 سال گذشته زنده ماندند. دانستن اینکه هر خانواده چه سازشی می کند، به شما می گوید چرا در برخی وظایف برنده می شود و در دیگران سقوط می کند.
 
@@ -19,13 +19,13 @@
 
 ![Five families of generative models — taxonomy by what they model](../assets/taxonomy.svg)
 
-**1. Explicit density, tractable.**بنویس`log p(x)`در این حالت، ما می توانیم به طور کلی با توجه به این که ما در حال بررسی این موضوع هستیم، به عنوان یک مبلغ که شما واقعا می توانید ارزیابی کنید.`p(x) = ∏ p(x_i | x_<i)`.تولید جریان های عادی (RealNVP, Glow)`p(x)`Pro: احتمال دقیق، از دست دادن آموزش تمیز Con: نتیجه گیری خودکشی تسلسل است (در دنباله های طولانی آهسته) ، جریان ها نیاز به معماری های قابل برگشت (متمرکز معماری) دارند.
+**1. Explicit density, tractable.**بنویس$\log p(x)$در این حالت، ما می توانیم به طور کلی با توجه به این که ما در حال بررسی این موضوع هستیم، به عنوان یک مبلغ که شما واقعا می توانید ارزیابی کنید.$p(x) = \prod_i p(x_i \mid x_{<i})$.تولید جریان های عادی (RealNVP, Glow)$p(x)$Pro: احتمال دقیق، از دست دادن آموزش تمیز Con: نتیجه گیری خودکشی تسلسل است (در دنباله های طولانی آهسته) ، جریان ها نیاز به معماری های قابل برگشت (متمرکز معماری) دارند.
 
-**2. Explicit density, approximate.**بسته شده`log p(x)`از پایین (ELBO) و بهینه سازی مرز. VAEs (Kingma 2013) از یک کدگر-دکودر با یک عقب تغییر استفاده می کنند. مدل های انتشار (DDPM، Ho 2020) یک داینوسر را آموزش می دهند که ضمنی طور یک ELBO وزن شده را بهینه می کند. انتشار است که ستون فقرات تصویر، ویدیو و 3D در سال 2026 غالب است.
+**2. Explicit density, approximate.**بسته شده$\log p(x)$از پایین (ELBO) و بهینه سازی مرز. VAEs (Kingma 2013) از یک کدگر-دکودر با یک عقب تغییر استفاده می کنند. مدل های انتشار (DDPM، Ho 2020) یک داینوسر را آموزش می دهند که ضمنی طور یک ELBO وزن شده را بهینه می کند. انتشار است که ستون فقرات تصویر، ویدیو و 3D در سال 2026 غالب است.
 
-**3. Implicit density.**تمامي تراکم رو رد کنيد. يک ژنراتور ياد بگيريد.`G(z)`که نمونه ها و یک تبعیض کننده تولید می کند`D(x)`این مدل به عنوان یک مدل جدید برای عکاسی با دامنه ثابت ( چهره ها، اتاق خواب) در سال 2026 نیز در حال پیشرفت است.
+**3. Implicit density.**تمامي تراکم رو رد کنيد. يک ژنراتور ياد بگيريد.$G(z)$که نمونه ها و یک تبعیض کننده تولید می کند$D(x)$این مدل به عنوان یک مدل جدید برای عکاسی با دامنه ثابت ( چهره ها، اتاق خواب) در سال 2026 نیز در حال پیشرفت است.
 
-**4. Score-based / continuous-time.**گرادینت تراکم چوب را یاد بگیرید`∇_x log p(x)`(نمره) مستقیماً. Song & Ermon (2019) نشان داد که مطابقت نمره انتشار را به یک SDE عمومی می کند. مطابقت جریان (Lipman 2023) گرمای 2024-2026 است: آموزش بدون شبیه سازی، مسیرهای مستقیم تر، نمونه گیری 4-10 برابر سریعتر از DDPM. Stable Diffusion 3, Flux، AudioCraft 2 همه از مطابقت جریان استفاده می کنند.
+**4. Score-based / continuous-time.**گرادینت تراکم چوب را یاد بگیرید$\nabla_x \log p(x)$(نمره) مستقیماً. Song & Ermon (2019) نشان داد که مطابقت نمره انتشار را به یک SDE عمومی می کند. مطابقت جریان (Lipman 2023) گرمای 2024-2026 است: آموزش بدون شبیه سازی، مسیرهای مستقیم تر، نمونه گیری 4-10 برابر سریعتر از DDPM. Stable Diffusion 3, Flux، AudioCraft 2 همه از مطابقت جریان استفاده می کنند.
 
 **5. Token-based autoregressive over discrete codes.**داده های با حجم بالا را با یک VQ-VAE یا کوانتیزر باقیمانده به یک سلسله کوتاه از توکن های متمایز فشرده کنید، سپس از یک ترانسفارمر برای مدل سازی تسلسل توکن استفاده کنید. Parti، MuseNet، AudioLM، VALL-E، توکنایزر پیچ Sora همه از این استفاده می کنند. این سطل 1 به علاوه یک توکنایزر آموخته است.
 
@@ -53,7 +53,7 @@
 وقتی یک مقاله جدید مدل تولید کننده کاهش می یابد، قبل از خواندن بخش روش، به این پنج سوال پاسخ دهید.
 
 1. **What is being modeled?**پیکسل ها، غش ها، توکن های متمایز، گاسیان های 3D، میش ها، شکل های موج؟
-2. **Is the density explicit or implicit?**آیا می نویسند؟`log p(x)`؟
+2. **Is the density explicit or implicit?**آیا می نویسند؟$\log p(x)$؟
 3. **Sampling: one-shot or iterative?**تکرار به معنای نتیجه گیری کندتر است؛ یک شات معمولا به معنای مخالف یا مستقیم است.
 4. **Conditioning: unconditional, class, text, image, pose?**این باعث می شود که از دست دادن و ساخت و ساز را تعیین کند.
 5. **Evaluation: FID, CLIP score, IS, human preference, task accuracy?**هر کدام از آنها روش های شکست را می شناسند (به درس ۱۴ نگاه کنید).
@@ -90,7 +90,7 @@ implicit (nearest-sample gen): 20 new samples printed, no p(x)
 | Text-to-video | Diffusion Transformer + flow matching | Sora, Veo 2, Kling. |
 | Speech + music | Token-based AR (AudioLM, VALL-E, MusicGen) or flow matching (AudioCraft 2) | Discrete tokens scale cheaply. |
 | 3D scenes | Gaussian Splatting fit, diffusion prior | 3D-GS for reconstruction, diffusion for novel-view. |
-| Density estimation (no sampling) | Flows | Only family with exact `log p(x)`. |
+| Density estimation (no sampling) | Flows | Only family with exact $\log p(x)$. |
 | Simulation / physics | Flow matching, score SDE | Straight-line paths, smooth vector fields. |
 
 ## -باده
@@ -109,11 +109,11 @@ implicit (nearest-sample gen): 20 new samples printed, no p(x)
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Generative model | "It makes new stuff" | Learns a sampler for `p_data(x)`, optionally exposes `log p(x)`. |
-| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable `log p(x)`. |
-| Implicit density | "GAN-style" | Only a sampler — no way to evaluate `p(x)` of a given point. |
-| ELBO | "Evidence lower bound" | A tractable lower bound on `log p(x)`; VAEs and diffusion optimize it. |
-| Score | "Gradient of log-density" | `∇_x log p(x)`; diffusion and SDE models learn this field. |
+| Generative model | "It makes new stuff" | Learns a sampler for $p_{\text{data}}(x)$, optionally exposes $\log p(x)$. |
+| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable $\log p(x)$. |
+| Implicit density | "GAN-style" | Only a sampler — no way to evaluate $p(x)$ of a given point. |
+| ELBO | "Evidence lower bound" | A tractable lower bound on $\log p(x)$; VAEs and diffusion optimize it. |
+| Score | "Gradient of log-density" | $\nabla_x \log p(x)$; diffusion and SDE models learn this field. |
 | Manifold hypothesis | "Data lives on a surface" | High-dim data concentrates on a low-dim manifold; why dimensionality reduction works. |
 | Autoregressive | "Predict the next piece" | Factorize joint as product of conditionals. |
 | Latent | "Compressed code" | Low-dim representation from which a decoder can reconstruct the input. |

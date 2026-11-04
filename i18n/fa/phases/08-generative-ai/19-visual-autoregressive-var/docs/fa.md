@@ -21,7 +21,7 @@ VAR مشکل نظم تولید را با تغییر آنچه تولید می ش�
 
 ### VQ-VAE Tokenizer چند مقیاس
 
-VAR به یک**multi-scale discrete tokenizer**برای تصویر x، یک سری از شبکه های توکن با وضوح بالاتر را تولید می کند:
+VAR به یک**multi-scale discrete tokenizer**. براي يه تصويري$x$، این یک سری از شبکه های توکن با وضوح بالاتر را تولید می کند:
 
 ```
 x -> encoder -> latent f
@@ -31,13 +31,13 @@ f -> tokenize at 2x2: token grid z_2 of shape (2, 2)
 f -> tokenize at (H/p)x(W/p): token grid z_K of shape (H/p, W/p)
 ```
 
-هر z_k از همان کد بوک استفاده می کند (حجم معمول 4096-16384). توکن سازی در هر مقیاس مستقل نیست  به طوری آموزش داده شده است که جمع کردن باقیمانده در هر مقیاس بازسازی f:
+هرکدوم$z_k$استفاده از همان کد بوک (حجم معمول 4096-16384) نشان دادن در هر مقیاس مستقل نیست  آن را آموزش داده شده است تا جمع باقیمانده در هر مقیاس بازسازی می شود $f$:
 
-```
-f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size)
+```math
+f \approx \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_1), \text{target\_size}) + \cdots + \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_K), \text{target\_size})
 ```
 
-این یه**residual VQ**متغیر. مقیاس k آنچه را که مقیاس 1..k-1 از دست داده است را ضبط می کند. decoder مجموعه تمام گنجانده های مقیاس را می گیرد و تصویر را تولید می کند.
+این یه**residual VQ**متغیر.$k$چه ترازو را ضبط می کند$1 \ldots k-1$کدگر مجموع تمام گنجانده های مقیاس را می گیرد و تصویر را تولید می کند.
 
 توکنایزر VQ چند مقیاس یک بار آموزش داده می شود (مانند VQGAN) و سپس منجمد می شود. تمام کار تولیدی توسط مدل autoregressive در بالا انجام می شود.
 
@@ -50,9 +50,9 @@ f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size
 [START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
 ```
 
-گنجانده شدن موقعیت هر دو شاخص مقیاس و موقعیت فضایی را در مقیاس رمزگذاری می کند. توجه به ترتیب مقیاس سبب است: توکن در مقیاس k، موقعیت (i، j) می تواند به تمام توکن ها در مقیاس 1..k و به توکن های در مقیاس k خود که در هر ترتیب درون مقیاس مورد استفاده قرار می گیرند، توجه به موقعیت ثابت بدون علت در مقیاس استفاده کند.
+گنجانده شدن موقعیت هر دو شاخص مقیاس و موقعیت فضایی را در مقیاس رمزگذاری می کند. توجه به ترتیب مقیاس و بلوک در داخل مقیاس است: نشانه در مقیاس $k$، موقعیت$(i, j)$ميتونم به تمام توکن ها در مقیاس ها توجه کنم$1 \ldots k$، شامل هر موقعیت مقیاس$k$هیچ نظم درون مقیاس و هیچ علت در داخل مقیاس وجود ندارد، بنابراین همه موقعیت ها در یک مقیاس به طور موازی پیش بینی می شوند.
 
-از دست دادن تمرین: در هر مقیاس k، توکن z_k را با توجه به تمام توکن های مقیاس قبلی پیش بینی کنید. از دست دادن کرس انتروپی در کد های VQ متمایز. ساختار مشابه GPT به جز "سلسل" اکنون مقیاس ساختار یافته است.
+از دست دادن آموزش: در هر مقیاس$k$، توکن ها رو پیش بینی کن$z_k$با توجه به تمام توکن های مقیاس قبلی، از دست دادن انتروپی متقابل در کد های VQ متمایز. ساختار مشابه GPT به جز "سلسل" اکنون ساختار مقیاس است.
 
 ### نسل
 
@@ -66,7 +66,7 @@ decode: f = sum of embed-and-upsample scales 1..K
 image = VAE_decoder(f)
 ```
 
-برای مقیاس K = 10، تولید 10 ترانسفورمتر به جلو عبور می کند. هر گذر تمام مقیاس خود را در موازی تولید می کند  هیچ خود پاشنه هر توکن در یک مقیاس. برای یک تصویر 256x256 این تقریبا 10 گذر نسبت به 28-50 DiT است.
+برای$K = 10$در مقیاس ها، تولید 10 ترانسفورمتر به جلو عبور می کند. هر گذر تمام مقیاس خود را در موازی تولید می کند  هیچ خود پاشنه هر توکن در یک مقیاس. برای یک تصویر 256x256 این تقریبا 10 گذر نسبت به 28-50 DiT است.
 
 ### چرا مقیاس بعدی بر مقیاس بعدی برنده می شود
 
@@ -127,7 +127,7 @@ gx-var-next-scale
 | Multi-scale VQ tokenizer | "Residual VQ" | VQ-VAE that produces K token grids of increasing resolution, with decoder summing all scales |
 | Scale k | "Pyramid level k" | One of K resolution levels, from 1x1 at k=1 up to (H/p)x(W/p) at k=K |
 | Parallel-within-scale | "One forward per scale" | All tokens at scale k are predicted in one transformer pass, not autoregressively |
-| Causal-across-scales | "Scale-ordered attention" | Token at scale k can attend to all of scales 1..k but not scales k+1..K |
+| Causal-across-scales | "Scale-ordered attention" | Token at scale $k$ can attend to all of scales $1 \ldots k$ but not scales $k+1 \ldots K$ |
 | Residual VQ | "Additive tokenization" | Each scale's tokens encode the residual left by lower scales; decoder sums all scale embeddings |
 | VAR scaling law | "Image GPT scaling" | FID follows a predictable power law in compute, like language models' perplexity |
 | HART | "Hybrid VAR + text" | Text-conditional VAR variant combining MaskGIT-style iterative decoding with VAR's scale structure |

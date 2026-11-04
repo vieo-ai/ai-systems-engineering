@@ -39,15 +39,15 @@ features += weight_a * control_a(depth) + weight_b * control_b(pose)
 
 ### LoRA (Hu et al., 2021)
 
-برای هر لایه خطی `W ∈ R^{d×d}`در مدل، منجمد شدن`W`و دلتای درجه پایین اضافه کنید:
+برای هر لایه خطی $W \in \mathbb{R}^{d \times d}$در مدل، منجمد شدن$W$و دلتای درجه پایین اضافه کنید:
 
+```math
+W' = W + \Delta W, \quad \Delta W = B A, \quad A \in \mathbb{R}^{r \times d}, \quad B \in \mathbb{R}^{d \times r}
 ```
-W' = W + ΔW,  ΔW = B @ A,  A ∈ R^{r×d},  B ∈ R^{d×r}
-```
 
-با`r << d`رتبه 4-16 برای توجه استاندارد است، رتبه 64-128 برای آهنگ های سنگین.`2 · d · r`به جای`d²`. براي توجه به SDXL با `d=640`،`r=16`: 20k پارامای در هر آداپتور به جای 410k  20x کاهش. در سراسر مدل: یک LoRA معمولا 20-200MB در مقابل پایه 5GB است.
+با$r \ll d$رتبه 4-16 برای توجه استاندارد است، رتبه 64-128 برای آهنگ های سنگین.$2 \cdot d \cdot r$به جای$d^2$. براي توجه به SDXL با $d=640$،$r=16$: 20k پارامای در هر آداپتور به جای 410k  20x کاهش. در سراسر مدل: یک LoRA معمولا 20-200MB در مقابل پایه 5GB است.
 
-در نتیجه می تونید لورا رو مقیاس بزنید:`W' = W + α · B @ A`.`α = 0.5-1.5`این امر طبیعی است. LORA های متعدد به صورت اضافی (با توجه به هشدار معمول که آنها به روش های غیر خطی تعامل می کنند) ، جمع می شوند.
+در نتیجه می تونید لورا رو مقیاس بزنید:$W' = W + \alpha \cdot B A$.$\alpha = 0.5\text{-}1.5$این امر طبیعی است. LORA های متعدد به صورت اضافی (با توجه به هشدار معمول که آنها به روش های غیر خطی تعامل می کنند) ، جمع می شوند.
 
 ### آداپتور IP (Ye et al., 2023)
 
@@ -74,7 +74,7 @@ v4-controlnet-zero
 
 `code/main.py`دو مکانیسم را در 1-D شبیه سازی می کند:
 
-1. **LoRA.**یک لایه خطی پیش از آموزش`W`. یخش بده . یه درجه پایین رو آموزش بده`B @ A`مثل اين`W + BA`با یک لایه خطی هدف مطابقت دارد. نشان دهید که`r = 1`برای یادگیری یک اصلاح درجه 1 به طور کامل کافی است.
+1. **LoRA.**یک لایه خطی پیش از آموزش$W$. یخش بده . یه درجه پایین رو آموزش بده$BA$مثل اين$W + BA$با یک لایه خطی هدف مطابقت دارد. نشان دهید که$r = 1$برای یادگیری یک اصلاح درجه 1 به طور کامل کافی است.
 
 2. **ControlNet-lite.**یک پیش بینی کننده "بنیاد منجمد" و یک "شبکه جانبی" که سیگنال اضافی را می خواند. خروجی شبکه جانبی توسط یک مقیاس قابل یادگیری که به صفر آغاز شده است (ورژن ما از صفر-conv) بسته شده است. قطار و نگاه کردن به رامپ دروازه بالا.
 
@@ -98,11 +98,11 @@ h = base(x) + gated
 
 ## دام ها
 
-- **Over-scaling LoRAs.** `α = 2`یا`α = 3`یک هک معمول "باید قوی تر شود" است که باعث تولید محصولات بیش از حد سبک شده / شکسته می شود. نگه دارید `α ≤ 1.5`. .
+- **Over-scaling LoRAs.** $\alpha = 2$یا$\alpha = 3$یک هک معمول "باید قوی تر شود" است که باعث تولید محصولات بیش از حد سبک شده / شکسته می شود. نگه دارید $\alpha \le 1.5$. .
 - **ControlNet weight conflict.**استفاده از یک Pose ControlNet با وزن 1.0 و یک Depth ControlNet با وزن 1.0 معمولاً بیش از حد انجام می شود. مجموع وزن ≈ 1.0 یک پیش فرض امن است.
 - **LoRA on the wrong base.**SDXL LoRA به طور خاموشي در SD 1.5 بدون کار ميکنه چون ابعاد توجه با هم مطابقت نداره.
 - **Textual Inversion drift.**توکن هایی که در یک نقطه بازرسی آموزش دیده اند به طور بدی در نقطه بازرسی دیگری حرکت می کنند.
-- **LoRA weight-merging and storage.**شما می توانید یک LoRA را به وزن مدل پایه برای نتیجه گیری سریعتر (بدون اضافه کردن زمان اجرا) درست کنید، اما توانایی مقیاس را از دست می دهید`α`در زمان اجرا، هر دو نسخه رو نگه دار
+- **LoRA weight-merging and storage.**شما می توانید یک LoRA را به وزن مدل پایه برای نتیجه گیری سریعتر (بدون اضافه کردن زمان اجرا) درست کنید، اما توانایی مقیاس را از دست می دهید$\alpha$در زمان اجرا، هر دو نسخه رو نگه دار
 
 ## ازش استفاده کن
 
@@ -125,7 +125,7 @@ h = base(x) + gated
 
 1. **Easy.**در`code/main.py`، درجه LoRA را تغییر دهید`r`در چه درجه ای LoRA دقیقا با دلتای هدف درجه 2 مطابقت دارد؟
 2. **Medium.**دو LoRA جداگانه را روی دو تغییر هدف آموزش دهید. آنها را با هم بارگذاری کنید و تعامل اضافی آنها را نشان دهید. تعامل خطی را چه زمانی شکسته است؟
-3. **Hard.**استفاده از diffusers برای جمع آوری: SDXL-base + Canny-ControlNet (وزن 0.8) + یک سبک LoRA (α 0.8) + IP-Adapter (وزن 0.6). اندازه گیری FID-vs-prompt-adherence trade-off به عنوان وزن های جمع متفاوت است.
+3. **Hard.**استفاده از پخش کننده ها برای جمع آوری: SDXL-بز + Canny-ControlNet (وزن 0.8) + یک سبک LoRA ($\alpha$0.8) + IP-Adapter (وزن 0.6) با توجه به تغییر وزن های دسته، تعادل FID در برابر تعمیل فوری را اندازه گیری کنید.
 
 ## اصطلاحات کلیدی
 
@@ -133,9 +133,9 @@ h = base(x) + gated
 |------|-----------------|-----------------------|
 | ControlNet | "Spatial control" | Cloned encoder + zero-conv skips; reads a conditioning image. |
 | Zero convolution | "Starts as identity" | 1×1 conv initialized to zero; ControlNet starts as no-op. |
-| LoRA | "Low-rank adapter" | `W + B @ A`, `r << d`; 100x fewer params than a full fine-tune. |
+| LoRA | "Low-rank adapter" | $W + BA$, $r \ll d$; 100x fewer params than a full fine-tune. |
 | rank r | "The knob" | LoRA compression; 4-16 typical, 64+ for heavy personalization. |
-| α | "LoRA strength" | Runtime scaling of the LoRA delta. |
+| $\alpha$ | "LoRA strength" | Runtime scaling of the LoRA delta. |
 | IP-Adapter | "Reference image" | Small image-conditioning adapter via CLIP-image tokens. |
 | DreamBooth | "Full subject fine-tune" | Train the full model on ~30 images of a subject. |
 | Textual Inversion | "New token" | Learn a new word embedding only; legacy, mostly replaced. |
@@ -144,7 +144,7 @@ h = base(x) + gated
 
 یک سامسونگ واقعی از متن به تصویر صدها LoRA و ده ها ControlNets را در یک نقطه بازرسی پایه خدمت می کند. مشکل ارائه بسیار شبیه به LLM چند تنانسی است (ادبیات تولید مورد LLM را تحت دسته بندی مداوم و LoRAX / S-LoRA پوشش می دهد):
 
-- **Hot-swap LoRAs, do not merge.**ادغام`W' = W + α·B·A`به پايه مياد و 3-5% سریعتر در هر مرحله نتيجه ميده اما منجمد ميشه`α`و پایه. لورا ها را در VRAM به عنوان دلتا درجه r گرم نگه دارید.`pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`برای فعال کردن هر درخواست هزینه تبادل`2 · d · r · num_layers`وزن  در مقیاس MB، زیر ثانیه.
+- **Hot-swap LoRAs, do not merge.**ادغام$W' = W + \alpha \cdot B \cdot A$به پايه مياد و 3-5% سریعتر در هر مرحله نتيجه ميده اما منجمد ميشه$\alpha$و پایه. لورا ها را در VRAM به عنوان دلتا درجه r گرم نگه دارید.`pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`برای فعال کردن هر درخواست هزینه تبادل`2 · d · r · num_layers`وزن  در مقیاس MB، زیر ثانیه.
 - **ControlNet as a second attention lane.**کدگر کلر شده به طور موازی با پایه اجرا می شود. دو ControlNets با وزن 1.0 هر یک = دو گذر اضافی به جلو در هر مرحله، نه یک گذر ادغام شده. حجم دسته به شکل مربع کاهش می یابد. بودجه برای ~ 1.5 × هزینه مرحله ای در هر ControlNet فعال.
 - **Quantized LoRAs too.**اگر پایه را کمی کنید (به درس 07، جریان در 8GB نگاه کنید) ، دلتا LoRA نیز به طور تمیز به 8 یا 4 بیت کمی می کند. بارگذاری به سبک QLoRA به شما اجازه می دهد 5-10 LoRA را در بالای یک پایه 4 بیت Flux بدون شکستن حافظه جمع کنید.
 
