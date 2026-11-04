@@ -1,6 +1,6 @@
 # RL برای بازی ها  AlphaZero، MuZero و عصر استدلال LLM
 
-> 1992: TD-Gammon قهرمانان انسانی را در بازی پشت بازی با TD خالص شکست داد. 2016: AlphaGo Lee Sedol را شکست داد. 2017: AlphaZero از ابتدا بر شطرنج، شوگی و گو تسلط داشت. 2024: DeepSeek-R1 ثابت کرد که همان دستور کار را با جایگزین کردن PPO، GRPO بر روی استدلال کار می کند. بازی ها معیار است که هر پیشرفت را در این مرحله هدایت می کند.
+> 1992: TD-Gammon قهرمانان انسانی را در بازی پشت بازی با TD خالص شکست داد. 2016: AlphaGo Lee Sedol را شکست داد. 2017: AlphaZero از ابتدا بر شطرنج، شوگی و گو تسلط داشت. 2025: DeepSeek-R1 ثابت کرد که همان دستور کار را با جایگزین کردن PPO، GRPO بر روی استدلال کار می کند. بازی ها معیار است که هر پیشرفت را در این مرحله هدایت می کند.
 
 **Type:** Build
 **Languages:** Python
@@ -30,19 +30,19 @@ while True:
 
 **AlphaZero (2017).**Silver et al. به عنوان یک بازی (شطرنج، شوجی، گاو) با قوانین شناخته شده:
 
-- شبکه ارزش سیاست: یک برج `f_θ(s) → (p, v)`.`p`. در مورد اقدامات حقوقی پیش رويه`v`نتیجه بازی انتظار می رود.
-- جستجوی درخت مونت کارلو (MCTS): در هر حرکت، درختی از ادامه های احتمالی را گسترش دهید. استفاده کنید `(p, v)`به عنوان پیش + بوترپ. نودها را با UCB (PUCT) انتخاب کنید: `a* = argmax Q(s, a) + c · p(a|s) · √N(s) / (1 + N(s, a))`. .
-- خود بازی: بازی های بازیگر علیه بازیگر.`t`، توزیع بازدیدهای MCTS`π_t`به عنوان هدف آموزش سیاست تبدیل می شود.
-- خسارت:`L = (v - z)² - π · log p + c · ||θ||²`.`z`نتیجه بازی (+1 / 0 / -1) است.
+- شبکه ارزش سیاست: یک برج $f_\theta(s) \to (p, v)$.$p$. در مورد اقدامات حقوقی پیش رويه$v$نتیجه بازی انتظار می رود.
+- جستجوی درخت مونت کارلو (MCTS): در هر حرکت، درختی از ادامه های احتمالی را گسترش دهید. استفاده کنید $(p, v)$به عنوان پیش + بوترپ. نودها را با UCB (PUCT) انتخاب کنید: $a^{\ast} = \arg\max_a Q(s, a) + c \cdot p(a \mid s) \cdot \sqrt{N(s)} / (1 + N(s, a))$. .
+- خود بازی: بازی های بازیگر علیه بازیگر.$t$، توزیع بازدیدهای MCTS$\pi_t$به عنوان هدف آموزش سیاست تبدیل می شود.
+- خسارت:$L = (v - z)^2 - \pi \cdot \log p + c \cdot \lVert \theta \rVert^2$.$z$نتیجه بازی (+1 / 0 / -1) است.
 
 صفر دانش انسان، صفر هوریستیک دستکاری، یک دستورالعملی که پس از چند ده میلیون بازی خود بازی، شطرنج، شوگی و گاو را تسلط می دهد.
 
 **MuZero (2019).**Schrittwieser et al. نیاز به دانستن قوانین را حذف می کند.
 
-- به جای یک محیط ثابت، یک مدل دینامیک پنهان یاد بگیرید`(h, g, f)`:
-  - `h(s)`: مشاهده را به حالت غفلت کدگذاری کنید.
-  - `g(s_latent, a)`: پیش بینی حالت غائب بعدی + پاداش
-  - `f(s_latent)`: پیش بینی سیاست قبلی + ارزش
+- به جای یک محیط ثابت، یک مدل دینامیک پنهان یاد بگیرید$(h, g, f)$:
+  - $h(s)$: مشاهده را به حالت غفلت کدگذاری کنید.
+  - $g(s_{\text{latent}}, a)$: پیش بینی حالت غائب بعدی + پاداش
+  - $f(s_{\text{latent}})$: پیش بینی سیاست قبلی + ارزش
 - MCTS در فضای پنهان آموخته اجرا می شود. همان جستجو، همان حلقه آموزش.
 - کار ميکنه روي گو، شطرنج، شگوي و آتاري يه الگوریتم، بدون علم قاعده
 
@@ -54,13 +54,13 @@ while True:
 
 - "Game": پاسخ به یک مشکل ریاضی / کدگذاری / استدلال. "Win" = تایید کننده (پاس آزمون مورد، پاسخ عددی مطابقت) 1 را باز می آورد.
 - سیاست: LLM. اقدامات: توکن ها. دولت: فوری + پاسخ - تا کنون.
-- هیچ منتقدی (به سبک PPO V_φ) در عوض، برای هر پرامپ، نمونه `G`از پوليس به دست آمده است. پاداش را براي هر يك محاسبه كنيد. از روش**group-relative advantage** `A_i = (r_i - mean_r) / std_r`به عنوان سیگنال برای بروزرسانی به سبک REINFORCE.
+- هیچ منتقدی (به سبک PPO)$V_\phi$) در عوض، برای هر پرامپ، نمونه$G$از پوليس به دست آمده است. پاداش را براي هر يك محاسبه كنيد. از روش**group-relative advantage** $A_i = (r_i - \text{mean}_r) / \text{std}_r$به عنوان سیگنال برای بروزرسانی به سبک REINFORCE.
 - مجازات KL به سیاست مرجع برای جلوگیری از حرکت (مانند RLHF).
 - خسارت کامل:
 
-  `L_GRPO(θ) = -E_{q, {o_i}} [ (1/G) Σ_i A_i · log π_θ(o_i | q) ] + β · KL(π_θ || π_ref)`
+  $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
-هیچ مدل پاداش، هیچ منتقد، هیچ MCTS. پایه مربوط به گروه جایگزین هر سه. مطابقت با یا بالاتر از کیفیت PPO-RLHF در معیار استدلال در یک بخش از محاسبه.
+هیچ مدل پاداش آموخته، هیچ منتقد، هیچ MCTS. یک تأیید کننده مبتنی بر قوانین پاداش را فراهم می کند، خط پایه مربوط به گروه جایگزین منتقد می شود و مرحله جستجو رها می شود. کیفیت PPO-RLHF در معیار های استدلال در یک بخش از محاسبه مطابقت دارد یا از آن فراتر می رود.
 
 **The R1 recipe in full.**DeepSeek-R1 (DeepSeek 2025) دو مدل در یک مقاله است:
 
@@ -86,7 +86,7 @@ f3-selfplay-ladder
 
 ## آن را بسازید
 
-کد در`code/main.py`ابزارها**GRPO in miniature** یک غارتگر با گروه های متعدد نمونه. الگوریتم مشابه یک LLM است؛ تنها سیاست و محیط ساده تر است. این * ضرر * و * مزایای مربوط به گروه * را آموزش می دهد، که نوآوری 2025 است.
+کد در`code/main.py`ابزارها**GRPO in miniature**: یک غارتگر با گروه های متعدد نمونه. الگوریتم مشابه در یک LLM است؛ تنها سیاست و محیط ساده تر است. این * ضرر * و * مزایای مربوط به گروه * را یاد می دهد، که نوآوری 2024 از DeepSeekMath است.
 
 ### مرحله اول: یک محیط کوچک تایید کننده
 
@@ -144,7 +144,7 @@ def grpo_step(theta, p_idx, G=8, beta=0.01, lr=0.1, rng=None):
 ## دام ها
 
 - **Reward hacking via verifier gaming.**GRPO ریسک RLHF را به ارث می برد: اگر تأیید کننده اشتباه باشد یا قابل بهره برداری باشد، LLM به دنبال بهره برداری خواهد بود.
-- **Group size too small.**تفاوت خط پایه گروه به این شکل است`1/√G`. زیر`G = 4`، سیگنال مزایایی سر و صداست ، انتخاب استاندارد`G = 8`به`64`. .
+- **Group size too small.**تفاوت میانگین گروه به این شکل است:$1/G$(خطای استانداردش مثل$1/\sqrt{G}$) زیر$G = 4$، سیگنال مزایایی سر و صداست ، انتخاب استاندارد$G = 8$تا 64
 - **Length bias.**تکمیل LLM در طول های مختلف احتمالات مختلف ثبت را دارند. با تعداد توکن ها عادی سازی کنید، یا از سطح ردیابی استفاده کنید، یا به حداکثر طول کوتاه کنید.
 - **Pure self-play cycles.**تمرینات سبک آلفا صفر می تواند در حلقه های تسلط در بازی های مجموع عمومی گیر کند.
 - **Search-policy mismatch.**آلفازرو سیاست را برای تقلید از نتایج جستجو آموزش می دهد. اگر شبکه سیاست برای نشان دادن توزیع جستجو خیلی کوچک باشد، آموزش متوقف می شود.
@@ -195,7 +195,7 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 ## تمرینات
 
-1. **Easy.**در سال ۲۰۰۱،`code/main.py`. آموزش در 2 پیامک × 4 جواب هر نشان. به هم در < 1000 بروزرسانی با `G=8`. .
+1. **Easy.**در سال ۲۰۰۱،`code/main.py`. آموزش در 2 پیامک × 4 جواب هر نشان. به هم در < 1000 بروزرسانی با $G=8$. .
 2. **Medium.**پلو در PPO (کسته شده) و وانیل REINFORCE. مقایسه بهره وری نمونه و تفاوت پاداش به GRPO در همان باندیت.
 3. **Hard.**به یک "سلسلۀ استدلال" طول-2 گسترش دهید: نماینده دو توکن را صادر می کند و تأیید کننده جفت را پاداش می دهد. اندازه گیری چگونگی GRPO در جهت تعیین اعتبار در دو ردیف مرحله ای انجام می شود. (تغییر: مزایای گروه محاسبه در هر *سلسل کامل*، به هر دو موقعیت توکن گسترش دهید.)
 
@@ -203,11 +203,11 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned `(p, v)` priors. |
+| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned $(p, v)$ priors. |
 | AlphaZero | "Self-play + MCTS" | Policy-value net trained to match MCTS visits and game outcome. |
 | MuZero | "Learned-model AlphaZero" | Same loop but in latent space via learned dynamics. |
 | GRPO | "Critic-free PPO" | Group Relative Policy Optimization; REINFORCE with group-mean baseline + KL. |
-| PUCT | "AlphaZero's UCB" | `Q + c · p · √N / (1 + N_a)` — balances value estimate with prior. |
+| PUCT | "AlphaZero's UCB" | $Q + c \cdot p \cdot \sqrt{N} / (1 + N_a)$ — balances value estimate with prior. |
 | Self-play | "Agent vs past self" | Standard for zero-sum; symmetric training signal. |
 | League play | "Population-based self-play" | Past + current + exploiters sampled as opponents. |
 | Verifier reward | "Verifiable RL" | Reward comes from a deterministic checker (tests pass, answer matches). |

@@ -11,9 +11,9 @@
 
 Q-Learning و DQN عملکرد *value* را پارامتر می کنند. شما اقدامات را با `argmax Q`این برای اقدامات متمایز و حالت متمایز خوب است.`argmax`در مورد یک چرخش 10 بعدی?) یا زمانی که شما می خواهید یک سیاست استوکاستیک (`argmax`(به لحاظ ساختاری تعیین کننده است).
 
-در عوض گرادینت های سیاست، *سیاست* را پارامتر می کنند. `π_θ(a | s)`شبکه عصبی است که توزیع بر روی اقدامات را تولید می کند. از آن برای عمل نمونه بگیرید.`θ`. قدم به بالا . نه`argmax`. نه بازپسين بيلمن فقط ارتفاع گرادينت`J(θ) = E_{π_θ}[G]`. .
+در عوض گرادینت های سیاست، *سیاست* را پارامتر می کنند. $\pi_\theta(a \mid s)$شبکه عصبی است که توزیع بر روی اقدامات را تولید می کند. از آن برای عمل نمونه بگیرید.$\theta$. قدم به بالا . نه`argmax`. نه بازپسين بيلمن فقط ارتفاع گرادينت$J(\theta) = \mathbb E_{\pi_\theta}[G]$. .
 
-نظریه REINFORCE (ویلیامز 1992) به شما می گوید این گرادینت قابل محاسبه است:`∇J(θ) = E_π[ G · ∇_θ log π_θ(a | s) ]`. قسمتي رو اجرا کن حسابي رو بکني`∇ log π_θ(a | s)`در هر مرحله، متوسط، ارتفاع درجه، تمام شد
+نظریه REINFORCE (ویلیامز 1992) به شما می گوید این گرادینت قابل محاسبه است:$\nabla J(\theta) = \mathbb E_\pi[ G \cdot \nabla_\theta \log \pi_\theta(a \mid s) ]$. قسمتي رو اجرا کن حسابي رو بکني$\nabla \log \pi_\theta(a \mid s)$در هر مرحله، متوسط، ارتفاع درجه، تمام شد
 
 هر الگوریتم LLM-RL در 2026  PPO، DPO، GRPO  یک اصلاح REINFORCE است. درک آن در انگشتان شما شرط لازم برای بقیه این مرحله و برای مرحله 10 · 07 (تطبيق RLHF) و مرحله 10 · 08 (DPO) است.
 
@@ -21,36 +21,44 @@ Q-Learning و DQN عملکرد *value* را پارامتر می کنند. شما
 
 ![Policy gradient: softmax policy, log-π gradient, return-weighted update](../assets/policy-gradient.svg)
 
-**The policy gradient theorem.**برای هر سیاست`π_θ`که توسط `θ`:
+**The policy gradient theorem.**برای هر سیاست$\pi_\theta$که توسط $\theta$:
 
-`∇J(θ) = E_{τ ~ π_θ}[ Σ_{t=0}^{T} G_t · ∇_θ log π_θ(a_t | s_t) ]`
+```math
+\nabla J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}[ \sum_{t=0}^{T} G_t \cdot \nabla_\theta \log \pi_\theta(a_t \mid s_t) ]
+```
 
-کجا`G_t = Σ_{k=t}^{T} γ^{k-t} r_{k+1}`بازده تخفیف شده از مرحله است`t`انتظارات از مسیرهای کامل گذشته`τ`نمونه ای از`π_θ`. .
+کجا$G_t = \sum_{k=t}^{T} \gamma^{k-t} r_{k+1}$بازده تخفیف شده از مرحله است$t$انتظارات از مسیرهای کامل گذشته$\tau$نمونه ای از$\pi_\theta$. .
 
-**The proof is short.**فرقش رو تشخیص بده`J(θ) = Σ_τ P(τ; θ) G(τ)`از انتظارش کم شده`∇P(τ; θ) = P(τ; θ) ∇ log P(τ; θ)`(ترک مشتقات روزنامه) فاکتور`log P(τ; θ) = Σ log π_θ(a_t | s_t) + environment terms that do not depend on θ`اصطلاحات محیط ناپدید می شوند. دو خط الجبر به شما نظریه می دهند.
+**The proof is short.**فرقش رو تشخیص بده$J(\theta) = \sum_\tau P(\tau; \theta) G(\tau)$از انتظارش کم شده$\nabla P(\tau; \theta) = P(\tau; \theta) \nabla \log P(\tau; \theta)$(ترک مشتقات روزنامه) فاکتور$\log P(\tau; \theta) = \sum \log \pi_\theta(a_t \mid s_t) + \text{environment terms that do not depend on } \theta$اصطلاحات محیط ناپدید می شوند. دو خط الجبر به شما نظریه می دهند.
 
-**Variance reduction tricks.**وانيلا رينفورس تغيرات قاتلانه اي داره`∇ log π`دو راه حل استاندارد:
+**Variance reduction tricks.**وانيلا رينفورس تغيرات قاتلانه اي داره$\nabla \log \pi$دو راه حل استاندارد:
 
-1. **Baseline subtraction.**جایگزینش کن`G_t`با`G_t - b(s_t)`برای هر خط اصلی`b(s_t)`که بستگی به `a_t`. بدون طرفدار چون`E[b(s_t) · ∇ log π(a_t | s_t)] = 0`انتخاب معمول:`b(s_t) = V̂(s_t)`یک منتقد به او آموخته است (درسی 07).
-2. **Reward-to-go.**جایگزینش کن`Σ_t G_t · ∇ log π_θ(a_t | s_t)`با`Σ_t G_t^{from t} · ∇ log π_θ(a_t | s_t)`فقط بازده های آینده برای یک اقدام خاص مهم است  پاداش های گذشته به صداهای صفر متوسط کمک می کنند.
+1. **Baseline subtraction.**جایگزینش کن$G_t$با$G_t - b(s_t)$برای هر خط اصلی$b(s_t)$که بستگی به $a_t$. بدون طرفدار چون$\mathbb{E}[b(s_t) \cdot \nabla \log \pi(a_t \mid s_t)] = 0$انتخاب معمول:$b(s_t) = \hat{V}(s_t)$یک منتقد به او آموخته است (درسی 07).
+2. **Reward-to-go.**جایگزینش کن$\sum_t G_t \cdot \nabla \log \pi_\theta(a_t \mid s_t)$با$\sum_t G_t^{\text{from } t} \cdot \nabla \log \pi_\theta(a_t \mid s_t)$فقط بازده های آینده برای یک اقدام خاص مهم است  پاداش های گذشته به صداهای صفر متوسط کمک می کنند.
 
 با هم جمع می کنید:
 
-`∇J ≈ (1/N) Σ_{i=1}^{N} Σ_{t=0}^{T_i} [ G_t^{(i)} - V̂(s_t^{(i)}) ] · ∇_θ log π_θ(a_t^{(i)} | s_t^{(i)})`
+```math
+\nabla J \approx (1/N) \sum_{i=1}^{N} \sum_{t=0}^{T_i} [ G_t^{(i)} - \hat{V}(s_t^{(i)}) ] \cdot \nabla_\theta \log \pi_\theta(a_t^{(i)} \mid s_t^{(i)})
+```
 
 که REINFORCE با خط پایه است  اجداد مستقیم A2C (درسی 07) و PPO (درسی 08).
 
 **Softmax policy parameterization.**برای اقدامات متمایز، انتخاب استاندارد:
 
-`π_θ(a | s) = exp(f_θ(s, a)) / Σ_{a'} exp(f_θ(s, a'))`
+```math
+\pi_\theta(a \mid s) = \exp(f_\theta(s, a)) / \sum_{a'} \exp(f_\theta(s, a'))
+```
 
-کجا`f_θ`هر شبکه عصبی است که در هر عمل نمره ای را تولید می کند. گرادینت دارای شکل پاک است:
+کجا$f_\theta$هر شبکه عصبی است که در هر عمل نمره ای را تولید می کند. گرادینت دارای شکل پاک است:
 
-`∇_θ log π_θ(a | s) = ∇_θ f_θ(s, a) - Σ_{a'} π_θ(a' | s) ∇_θ f_θ(s, a')`
+```math
+\nabla_\theta \log \pi_\theta(a \mid s) = \nabla_\theta f_\theta(s, a) - \sum_{a'} \pi_\theta(a' \mid s) \nabla_\theta f_\theta(s, a')
+```
 
 یعنی امتیاز اقدام انجام شده به غیر از ارزش انتظار شده در چارچوب سیاست.
 
-**Gaussian policy for continuous actions.** `π_θ(a | s) = N(μ_θ(s), σ_θ(s))`.`∇ log N(a; μ, σ)`این تمام نیازهای SAC مرحله 9 · 07 است.
+**Gaussian policy for continuous actions.** $\pi_\theta(a \mid s) = N(\mu_\theta(s), \sigma_\theta(s))$.$\nabla \log N(a; \mu, \sigma)$این تمام نیازهای SAC مرحله 9 · 07 است.
 
 ```figure
 policy-gradient-landscape
@@ -119,19 +127,19 @@ def reinforce_step(theta, trajectory, gamma, lr, baseline=0.0):
                 theta[i][j] += lr * advantage * grad_log_pi_a[i] * s[j]
 ```
 
-گرادینت`∇ log π(a|s) = e_a - π(·|s)`(به جز`a`- احتمالات) قلب گرادینت های سیاست نرم ماکس است. آن را به حافظه عضلانی بسوزانید.
+گرادینت$\nabla \log \pi(a \mid s) = e_a - \pi(\cdot \mid s)$(به جز$a$- احتمالات) قلب گرادینت های سیاست نرم ماکس است. آن را به حافظه عضلانی بسوزانید.
 
 ### مرحله 5: خط پایه
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .`G`در مورد قسمت های اخیر کاهش تفاوت کافی برای اجرای یک 4 × 4 GridWorld است؛ برای همگام شدن حدود 500 قسمت طول می کشد.`V̂(s)`و شما نقاد بازیگر می گیرید.
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .$G$در مورد قسمت های اخیر کاهش تفاوت کافی برای اجرای یک 4 × 4 GridWorld است؛ برای همگام شدن حدود 500 قسمت طول می کشد.$\hat{V}(s)$و شما نقاد بازیگر می گیرید.
 
 ## دام ها
 
-- **Exploding gradients.**بازده ها مي تونن بيشتر باشه هميشه به حالت عادی برسه`G`به`~N(0, 1)`در طول دسته قبل از ضرب با `∇ log π`. .
-- **Entropy collapse.**اين سيستم به يک عمل نزديک تقرير گرانه زودي تبديل ميشه، بازيابي رو متوقف ميکنه، گیر ميکنه.`β · H(π(·|s))`به هدف
+- **Exploding gradients.**بازده ها مي تونن بيشتر باشه هميشه به حالت عادی برسه$G$به`~N(0, 1)`در طول دسته قبل از ضرب با $\nabla \log \pi$. .
+- **Entropy collapse.**اين سيستم به يک عمل نزديک تقرير گرانه زودي تبديل ميشه، بازيابي رو متوقف ميکنه، گیر ميکنه.$\beta \cdot H(\pi(\cdot \mid s))$به هدف
 - **High variance.**وانیل REINFORCE به هزاران قسمت نیاز دارد. یک خط پایه انتقادی (درسی 07) یا منطقه اعتماد TRPO / PPO (درسی 08) استانداردی است.
 - **Sample inefficiency.**در سیاست به این معنی است که شما هر انتقال را پس از یک بروزرسانی از بین می برید. اصلاحات خارج از سیاست از طریق نمونه گیری اهمیت، داده ها را به هزینه اختلاف می آورند (نسب PPO وزن IS کاهش یافته است).
-- **Non-stationary gradients.**همون گرادينت از 100 قسمت پيش از اون استفاده ميکنه`π`روش هاي مربوط به سياست هر چند بار به روز رسيدن به اين دليل
+- **Non-stationary gradients.**همون گرادينت از 100 قسمت پيش از اون استفاده ميکنه$\pi$روش هاي مربوط به سياست هر چند بار به روز رسيدن به اين دليل
 - **Credit assignment.**بدون پاداش به دست، پاداش های گذشته باعث شور می شوند.
 
 ## ازش استفاده کن
@@ -178,20 +186,20 @@ Refuse REINFORCE-no-baseline on horizons > 500 steps. Refuse continuous-action c
 
 1. **Easy.**اجرای REINFORCE در 4 × 4 GridWorld با یک سیاست نرم حداکثر خطی. آموزش برای 1000 قسمت بدون خط پایه. نقشه منحنی یادگیری؛ اندازه گیری متغیر (std بازگشت).
 2. **Medium.**یک خط پایه متوسط اجرا را اضافه کنید. دوباره تمرین کنید. بهره وری نمونه و تفاوت را با جریان وانیل مقایسه کنید. خط پایه مراحل به سمت تقارب را تا چه اندازه کاهش می دهد؟
-3. **Hard.**اضافه کردن یک امتیاز انتروپی`β · H(π)`. پاک کردن`β ∈ {0, 0.01, 0.1, 1.0}`. نقشه بازگشت نهایی و انتروپی سیاست کجا نقطه ی خوش این کار است؟
+3. **Hard.**اضافه کردن یک امتیاز انتروپی$\beta \cdot H(\pi)$. پاک کردن$\beta \in \lbrace 0, 0.01, 0.1, 1.0 \rbrace$. نقشه بازگشت نهایی و انتروپی سیاست کجا نقطه ی خوش این کار است؟
 
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Policy gradient | "Train the policy directly" | `∇J(θ) = E[G · ∇ log π_θ(a\|s)]`; derived from the log-derivative trick. |
+| Policy gradient | "Train the policy directly" | $\nabla J(\theta) = \mathbb{E}[G \cdot \nabla \log \pi_\theta(a \mid s)]$; derived from the log-derivative trick. |
 | REINFORCE | "The original PG algorithm" | Williams (1992); Monte Carlo returns multiplied by log-policy gradient. |
-| Log-derivative trick | "Score function estimator" | `∇P(τ;θ) = P(τ;θ) · ∇ log P(τ;θ)`; makes gradients of expectations tractable. |
-| Baseline | "Variance reduction" | Any `b(s)` subtracted from `G`; unbiased because `E[b · ∇ log π] = 0`. |
-| Reward-to-go | "Only future returns count" | `G_t^{from t}` instead of the full `G_0`; correct and lower-variance. |
-| Entropy bonus | "Encourage exploration" | `+β · H(π(·\|s))` term keeps the policy from collapsing. |
+| Log-derivative trick | "Score function estimator" | $\nabla P(\tau;\theta) = P(\tau;\theta) \cdot \nabla \log P(\tau;\theta)$; makes gradients of expectations tractable. |
+| Baseline | "Variance reduction" | Any $b(s)$ subtracted from $G$; unbiased because $\mathbb{E}[b \cdot \nabla \log \pi] = 0$. |
+| Reward-to-go | "Only future returns count" | $G_t^{\text{from } t}$ instead of the full $G_0$; correct and lower-variance. |
+| Entropy bonus | "Encourage exploration" | $+\beta \cdot H(\pi(\cdot \mid s))$ term keeps the policy from collapsing. |
 | On-policy | "Train on what you just saw" | Gradient expectation is w.r.t. the current policy — cannot reuse old data directly. |
-| Advantage | "How much better than average" | `A(s, a) = G(s, a) - V(s)`; the signed quantity REINFORCE-with-baseline multiplies. |
+| Advantage | "How much better than average" | $A(s, a) = G(s, a) - V(s)$; the signed quantity REINFORCE-with-baseline multiplies. |
 
 ## خواندن بیشتر
 

@@ -21,31 +21,31 @@ RLHF (Christiano et al. 2017; Ouyang et al. 2022) ترجیحات را به یک 
 
 ![Three-stage RLHF: SFT, RM training on pairwise prefs, PPO with KL penalty](../assets/rlhf.svg)
 
-**Stage 1: Supervised Fine-Tuning (SFT).**از یک مدل پایه پیش از آموزش آغاز کنید. تنظیم دقیق در نمایش های نوشته شده توسط انسان از رفتار هدف (پاسخ های پس از دستورالعمل، پاسخ های مفید و غیره). نتیجه: یک مدل `π_SFT`که *به سمت رفتار خوب طرفدار است* اما هنوز فضای عمل نامحدود دارد.
+**Stage 1: Supervised Fine-Tuning (SFT).**از یک مدل پایه پیش از آموزش آغاز کنید. تنظیم دقیق در نمایش های نوشته شده توسط انسان از رفتار هدف (پاسخ های پس از دستورالعمل، پاسخ های مفید و غیره). نتیجه: یک مدل $\pi_{\text{SFT}}$که *به سمت رفتار خوب طرفدار است* اما هنوز فضای عمل نامحدود دارد.
 
 **Stage 2: Reward Model training.**
 
-- جفت های پاسخ جمع آوری کنید `(y_+, y_-)`به دستورات`x`, توسط انسان ها به عنوان "y_+ در مقابل y_-. ترجیح داده می شود".
-- مدل پاداش رو آموزش بده`R_φ(x, y)`برای دادن نمره های بالاتر به `y_+`. .
+- جفت های پاسخ جمع آوری کنید $(y_+, y_-)$به دستورات$x$, توسط انسان ها به عنوان "y_+ در مقابل y_-. ترجیح داده می شود".
+- مدل پاداش رو آموزش بده$R_\phi(x, y)$برای دادن نمره های بالاتر به $y_+$. .
 - خسارت:**Bradley-Terry pairwise logistic**:
 
-  `L(φ) = -E[ log σ(R_φ(x, y_+) - R_φ(x, y_-)) ]`
+  $L(\phi) = -\mathbb{E}[ \log \sigma(R_\phi(x, y_+) - R_\phi(x, y_-)) ]$
 
-  σ سیگمائید است. تفاوت پاداش به معنای یک امتیاز ترجیح داده می شود. BT از سال 1952 (برادلی-ترری) استاندارد بوده و انتخاب غالب در RLHF مدرن است.
+  $\sigma$BT از سال 1952 (برادلی-ترری) استاندارد بوده و انتخاب غالب در RLHF مدرن است.
 
-- `R_φ`معمولا از مدل SFT با سر اسکالر در بالا آغاز می شود. همان ستون فقرات ترانسفورماتور؛ یک لایه خطی واحد پاداش را خارج می کند.
+- $R_\phi$معمولا از مدل SFT با سر اسکالر در بالا آغاز می شود. همان ستون فقرات ترانسفورماتور؛ یک لایه خطی واحد پاداش را خارج می کند.
 
 **Stage 3: PPO against the RM with KL penalty.**
 
-- شروع کردن سیاست آموزش پذیر`π_θ`از`π_SFT`. يه مرجع رو نگه دار`π_ref = π_SFT`. .
-- پاداش در پایان پاسخ`y`:
+- شروع کردن سیاست آموزش پذیر$\pi_\theta$از$\pi_{\text{SFT}}$. يه مرجع رو نگه دار$\pi_{\text{ref}} = \pi_{\text{SFT}}$. .
+- پاداش در پایان پاسخ$y$:
 
-  `r_total(x, y) = R_φ(x, y) - β · KL(π_θ(·|x) || π_ref(·|x))`
+  $r_{\text{total}}(x, y) = R_\phi(x, y) - \beta \cdot \mathrm{KL}(\pi_\theta(\cdot \mid x) \Vert \pi_{\text{ref}}(\cdot \mid x))$
 
-  مجازات " کلو " مانع از اين مي شود`π_θ`از انحراف تعسفي از`π_SFT` این یک *regularizer* است، نه یک منطقه اعتماد سخت. `β`معمولاً`0.01`-بله .`0.05`. .
+  مجازات " کلو " مانع از اين مي شود$\pi_\theta$از انحراف تعسفي از$\pi_{\text{SFT}}$ این یک *regularizer* است، نه یک منطقه اعتماد سخت. $\beta$معمولاً 0.01-0.05
 - با این پاداش PPO (درسی 08) اجرا کنید. مزایای بر روی مسیر سطح توکن محاسبه می شوند، اما RM فقط پاسخ کامل را نمره می دهد.
 
-**Why the KL?**بدون آن، PPO با خوشحالی استراتژی های هک پاداش را پیدا می کند. RM فقط در تکمیل در توزیع آموزش دیده است. پاسخ خارج از توزیع ممکن است بالاتر از هر پاسخ نوشته شده توسط انسان باشد. KL نگه می دارد.`π_θ`در نزدیکی دسته بندی که RM آموزش داده شده است. این مهم ترین دستبندی در RLHF است.
+**Why the KL?**بدون آن، PPO با خوشحالی استراتژی های هک پاداش را پیدا می کند. RM فقط در تکمیل در توزیع آموزش دیده است. پاسخ خارج از توزیع ممکن است بالاتر از هر پاسخ نوشته شده توسط انسان باشد. KL نگه می دارد.$\pi_\theta$در نزدیکی دسته بندی که RM آموزش داده شده است. این مهم ترین دستبندی در RLHF است.
 
 **2026 status:**
 
@@ -97,7 +97,7 @@ def rm_train_step(w, x, y_pos, y_neg, lr):
 
 ### مرحله سوم: سیاست مشابه PPO بر روی RM
 
-ما در قانون اسباب بازی ما یک توکن واحد از یک لغت تولید می کنیم.`log π_θ(token | prompt)`، به جریمه ی KL به عنوان مرجع اضافه کنید و جایگزین PPO را که قطع شده است اعمال کنید.
+ما در قانون اسباب بازی ما یک توکن واحد از یک لغت تولید می کنیم.$\log \pi_\theta(\text{token} \mid \text{prompt})$، به جریمه ی KL به عنوان مرجع اضافه کنید و جایگزین PPO را که قطع شده است اعمال کنید.
 
 ```python
 def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
@@ -113,7 +113,7 @@ def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
 
 ### مرحله 4: کنترل KL
 
-متوسط مسیر`KL(π_θ || π_ref)`هر تازه کاری اگه از قبل هم پیش بره`~5-10`سیاست ها از راه دور رفتند`π_SFT` پایین تر `β`این اولین تشخیص در RLHF واقعی است.
+متوسط مسیر$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$هر تازه کاری اگه از قبل هم پیش بره`~5-10`(در هر پاسخ KL در nats، جمع آوری بیش از توکن ها، واحد TRL ثبت) سیاست به دور از $\pi_{\text{SFT}}$: یا$\beta$این تشخیص بالا در RLHF واقعی است.
 
 ### مرحله 5: دستور تهیه با TRL
 
@@ -163,7 +163,7 @@ for batch in dataloader:
 
 ## دام ها
 
-- **Over-optimization / reward hacking.**RM ناقصه`π_θ`علائم: پاداش تا حد نامحدودی بالا می رود در حالی که ارزیابی انسانی نمره های بالا یا پایین می آید. تصحیح: زود متوقف شوید، افزایش دهید `β`، اطلاعات آموزش RM را گسترش دهید.
+- **Over-optimization / reward hacking.**RM ناقصه$\pi_\theta$علائم: پاداش تا حد نامحدودی بالا می رود در حالی که ارزیابی انسانی نمره های بالا یا پایین می آید. تصحیح: زود متوقف شوید، افزایش دهید $\beta$، اطلاعات آموزش RM را گسترش دهید.
 - **Length hacking.**RMs آموزش داده شده در پاسخ های مفید اغلب ضمنی پاداش طول. سیاست یاد می گیرد تا پاسخ ها را بسته کند. اصلاح: پاداش نرمال شده در طول، یا RLAIF با RM آگاه در طول.
 - **Too-small RM.**RM باید حداقل به اندازه پوليس بزرگ باشه. RM کوچکی نمیتونه به طور وفادار نتایج پوليس رو بدست بیاره
 - **KL tuning.***تراکم کردن β → حرکت و هک پاداش. *تراکم کردن β → سیاست به سختی تغییر می کند. *تراکم استاندارد *تراکم است که به یک KL ثابت در هر مرحله هدف قرار می دهد.
@@ -213,7 +213,7 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 ## تمرینات
 
 1. **Easy.**مدل پاداش برادلي-تيري رو آموزش بده`code/main.py`در 500 جفت ترجیح مصنوعی دقت جفتی را در 100 جفت نگه داشته اندازه گیری کنید. باید 90 درصد را فراتر ببرد.
-2. **Medium.**با استفاده از حلقه PPO-RLHF بازی رو اجرا کن`β ∈ {0.0, 0.1, 1.0}`براي هر يک، نمره RM رو به KL نسبت به اطلاعاتي که در موردش هست بازي کنيد
+2. **Medium.**با استفاده از حلقه PPO-RLHF بازی رو اجرا کن$\beta \in \lbrace 0.0, 0.1, 1.0 \rbrace$براي هر يک، نمره RM رو به KL نسبت به اطلاعاتي که در موردش هست بازي کنيد
 3. **Hard.**DPO (خسرت احتمال اولویت در فرم بسته) را بر روی همان داده های اولویت اعمال کنید و با خط لوله RLHF-PPO در محاسبه مورد استفاده و نمره نهایی RM که بدست آمده است مقایسه کنید.
 
 ## اصطلاحات کلیدی
@@ -222,8 +222,8 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 |------|-----------------|-----------------------|
 | RLHF | "Alignment RL" | Three-stage SFT + RM + PPO pipeline (Christiano 2017, Ouyang 2022). |
 | Reward Model (RM) | "The scoring net" | Learned scalar function fit to pairwise preferences via Bradley-Terry. |
-| Bradley-Terry | "Pairwise logistic loss" | `P(y_+ ≻ y_-) = σ(R(y_+) - R(y_-))`; the standard RM objective. |
-| KL penalty | "Stay near the reference" | `β · KL(π_θ \|\| π_ref)` in the reward; the anti-reward-hacking regularizer. |
+| Bradley-Terry | "Pairwise logistic loss" | $P(y_+ \succ y_-) = \sigma(R(y_+) - R(y_-))$; the standard RM objective. |
+| KL penalty | "Stay near the reference" | $\beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$ in the reward; the anti-reward-hacking regularizer. |
 | Reward hacking | "Goodhart's law" | Policy exploits RM flaws; symptoms: reward up, human eval flat. |
 | RLAIF | "AI-labeled preferences" | RLHF where labels come from another LM instead of humans. |
 | PRM | "Process Reward Model" | Scores partial reasoning steps; used in reasoning pipelines. |

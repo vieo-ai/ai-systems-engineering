@@ -21,31 +21,31 @@
 
 ![Four MARL regimes: indep, centralized critic, self-play, league](../assets/marl.svg)
 
-**Formalism: Markov Game.**یک عمومی سازی از MDP: دولت ها `S`، یک اقدام مشترک`a = (a_1, …, a_n)`، انتقال`P(s' | s, a)`، و پاداش هر مامور`R_i(s, a, s')`. هر مامور`i`به حداکثر رساندن بازده خودش در چارچوب سیاست خودش`π_i`اگه پاداش ها همديگه باشه،**fully cooperative**اگه صفر جمع بشه، اونم**adversarial**اگه مخلوط باشه، درست ميشه**general-sum**. .
+**Formalism: Markov Game.**یک عمومی سازی از MDP: دولت ها $S$، یک اقدام مشترک$a = (a_1, \ldots, a_n)$، انتقال$P(s' \mid s, a)$، و پاداش هر مامور$R_i(s, a, s')$. هر مامور$i$به حداکثر رساندن بازده خودش در چارچوب سیاست خودش$\pi_i$اگه پاداش ها همديگه باشه،**fully cooperative**اگه صفر جمع بشه، اونم**adversarial**اگه مخلوط باشه، درست ميشه**general-sum**. .
 
 **Core challenges:**
 
-- **Non-stationarity.** `P(s' | s, a_i)`از مامور`i`نظر شما بستگی داره`π_{-i}`، که داره عوض ميشه
+- **Non-stationarity.** $P(s' \mid s, a_i)$از مامور$i$نظر شما بستگی داره$\pi_{-i}$، که داره عوض ميشه
 - **Credit assignment.**با پاداش مشترک، کدام عامل باعثش شد؟
 - **Exploration coordination.**ماموران باید استراتژی های مکمل را کشف کنند نه به طور فرعی در مورد یک وضعیت مشابه.
-- **Scalability.**فضای عمل مشترک به طور نمایی در `n`. .
+- **Scalability.**فضای عمل مشترک به طور نمایی در $n$. .
 - **Partial observability.**هر عامل فقط مشاهدات خودش رو می بیند؛ وضعیت جهانی پنهان شده
 
 **Four dominant regimes:**
 
 **1. Independent Q-learning / independent PPO (IQL, IPPO).**هر عامل Q یا سیاست خود را یاد می گیرد و دیگران را به عنوان بخشی از محیط می شناسد. ساده است، گاهی کار می کند (به ویژه با تکرار تجربه به عنوان یک ترفند مدل سازی عامل نرم کننده عمل می کند). کنورژن نظری: هیچ. در عمل: برای وظایف بسته بندی شل، خوب برای کارهای بسته بندی بد است.
 
-**2. Centralized training, decentralized execution (CTDE).**رایج ترین پارادایم مدرن هر عامل دارای سیاست خودش است`π_i`که شرایط مشاهده محلی`o_i` اجرای استاندارد غیرمتمرکز در زمان استفاده. در طول *تدريب* یک منتقد متمرکز `Q(s, a_1, …, a_n)`شرایط وضعیت جهانی کامل و اقدامات مشترک.
+**2. Centralized training, decentralized execution (CTDE).**رایج ترین پارادایم مدرن هر عامل دارای سیاست خودش است$\pi_i$که شرایط مشاهده محلی$o_i$ اجرای استاندارد غیرمتمرکز در زمان استفاده. در طول *تدريب* یک منتقد متمرکز $Q(s, a_1, \ldots, a_n)$شرایط وضعیت جهانی کامل و اقدامات مشترک.
 - **MADDPG**(لو و همکاران 2017): DDPG با یک منتقد متمرکز در هر نماینده.
-- **COMA**(Foerster et al. 2017): اصل اصل ضدفی  بپرسید "اگر اقدام می کردم پاداش من چه خواهد بود `a'`در عوض؟"  سهم من را جدا می کند.
+- **COMA**(Foerster et al. 2017): اصل اصل ضدفی  بپرسید "اگر اقدام می کردم پاداش من چه خواهد بود $a'$در عوض؟"  سهم من را جدا می کند.
 - **MAPPO**-**IPPO**با منتقد مشترک (Yu et al. 2022): PPO با یک عملکرد ارزش متمرکز. در سال 2026 برای همکاری MARL غالب است.
-- **QMIX**(Rashid و همکاران 2018): تجزیه ارزش  `Q_tot(s, a) = f(Q_1(s, a_1), …, Q_n(s, a_n))`با مخلوط کردن یکسره.
+- **QMIX**(Rashid و همکاران 2018): تجزیه ارزش  $Q_{\text{tot}}(s, a) = f(Q_1(s, a_1), \ldots, Q_n(s, a_n))$با مخلوط کردن یکسره.
 
 **3. Self-play.**دو نسخه از همان عامل با یکدیگر بازی می کنند. سیاست مخالف *است* سیاست من از یک عکس گذشته. الفاگو / الفا زرو / MuZero. OpenAI پنج. بهترین کار برای بازی های صفر جمع است؛ سیگنال آموزش همتقارن است.
 
 **4. League play.**گسترش خود بازی به محیط های عمومی / خصومت: نگه داشتن جمعیت از سیاست های گذشته و فعلی، نمونه یک مخالف از لیگ، آموزش در برابر آنها. اضافه استفاده کنندگان (تخصص در شکست بهترین فعلی) و استحصال کنندگان اصلی (تخصص در شکست استحصال کنندگان). AlphaStar (StarCraft II). مورد نیاز زمانی که بازی اجازه می دهد چرخه استراتژی "روک کاغذ-کاسیور".
 
-**Communication.**اجازه بدين که ماموران پيام هاي آموخته رو بفرستند`m_i`Foerster et al. (2016) نشان داد که ارتباطات بین عوامل قابل تفاوتی می تواند از پایان به آخر آموزش داده شود. سیستم های چند عامل مبتنی بر LLM امروز (فاز 16) اساسا به زبان طبیعی ارتباط برقرار می کنند.
+**Communication.**اجازه بدين که ماموران پيام هاي آموخته رو بفرستند$m_i$Foerster et al. (2016) نشان داد که ارتباطات بین عوامل قابل تفاوتی می تواند از پایان به آخر آموزش داده شود. سیستم های چند عامل مبتنی بر LLM امروز (فاز 16) اساسا به زبان طبیعی ارتباط برقرار می کنند.
 
 ```figure
 f3-marl-orbit
@@ -86,10 +86,15 @@ def independent_q(env, episodes, alpha, gamma, epsilon):
     Q1, Q2 = defaultdict(default_q), defaultdict(default_q)
     for _ in range(episodes):
         s = env.reset()
+        done = False
         while not done:
             a1 = epsilon_greedy(Q1, s, epsilon)
             a2 = epsilon_greedy(Q2, s, epsilon)
             s_next, r, done = env.step(s, (a1, a2))
+            if done:
+                Q1[s][a1] += alpha * (r - Q1[s][a1])
+                Q2[s][a2] += alpha * (r - Q2[s][a2])
+                break
             target1 = r + gamma * max(Q1[s_next].values())
             target2 = r + gamma * max(Q2[s_next].values())
             Q1[s][a1] += alpha * (target1 - Q1[s][a1])
@@ -101,11 +106,11 @@ def independent_q(env, episodes, alpha, gamma, epsilon):
 
 ### مرحله 3: Q متمرکز با بروزرسانی ارزش تجزیه شده
 
-از یک Q در مقابل اقدامات مشترک استفاده کنید `Q(s, a_1, a_2)`. از پاداش مشترک به روز رسانی کنید . در اجرای توسط کنار گذاشتن:`π_i(s) = argmax_{a_i} max_{a_{-i}} Q(s, a_1, a_2)`. تجارت فضاهای مشترک اکشن برای یک دیدگاه جهانی *صحيح*
+از یک Q در مقابل اقدامات مشترک استفاده کنید $Q(s, a_1, a_2)$. از پاداش مشترک به روز رسانی کنید . در اجرای توسط کنار گذاشتن:$\pi_i(s) = \arg\max_{a_i} \max_{a_{-i}} Q(s, a_1, a_2)$. تجارت فضاهای مشترک اکشن برای یک دیدگاه جهانی *صحيح*
 
 ### مرحله 4: بازی ساده (دو عامل مخالف)
 
-همون مامور، دو نقش مامور قطار A با مامور B`K`قسمت ها، وزن هاي A رو به B نقل ميکنيم آموزش همتايي، پيشرفت ثابت
+همون مامور، دو نقش مامور قطار A با مامور B$K$قسمت ها، وزن هاي A رو به B نقل ميکنيم آموزش همتايي، پيشرفت ثابت
 
 ## دام ها
 
@@ -167,11 +172,11 @@ Refuse independent Q-learning on tightly-coupled cooperative tasks. Refuse to re
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Markov game | "Multi-agent MDP" | `(S, A_1, …, A_n, P, R_1, …, R_n)`; each agent has its own reward. |
+| Markov game | "Multi-agent MDP" | $(S, A_1, \ldots, A_n, P, R_1, \ldots, R_n)$; each agent has its own reward. |
 | CTDE | "Centralized training, decentralized execution" | Joint critic at training time; each agent's policy uses only local obs. |
 | IPPO | "Independent PPO" | Each agent runs PPO separately. Simple baseline; often underrated. |
 | MAPPO | "Multi-agent PPO" | PPO with a centralized value function conditioned on global state. |
-| QMIX | "Monotonic value decomposition" | `Q_tot = f_monotone(Q_1, …, Q_n)` allows decentralized argmax. |
+| QMIX | "Monotonic value decomposition" | $Q_{\text{tot}} = f_{\text{monotone}}(Q_1, \ldots, Q_n)$ allows decentralized argmax. |
 | COMA | "Counterfactual multi-agent" | Advantage = my Q minus expected Q marginalizing over my action. |
 | Self-play | "Agent vs past self" | Single agent, two roles; standard for zero-sum games. |
 | League play | "Population training" | Cache past policies, sample opponents from the pool; handles strategy cycles. |

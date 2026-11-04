@@ -21,20 +21,24 @@
 
 **The five objects.**
 
-- **States** `S`همه چيزي که مامور بايد تصميم بگيره در گريد ورلد سلول در شطرنج بورد در ماجرا تحصيلي پنجره ي زمینه و هر خاطره
-- **Actions** `A`انتخاب ها، حرکت بالا/ پایین/ چپ/ راست، حرکت بازی کنید، یک توکن بفرستید.
-- **Transitions** `P(s' | s, a)`. به نظر می رسد`s`و اقدام`a`در شطرنج، استوکاستیک در موجودی، تقریباً تعیین کننده در رمزگذاری LLM.
-- **Rewards** `R(s, a, s')`. سیگنال مقیاس. برنده = +1، ضرر = -1. درآمد - هزینه. اصطلاح نسبت احتمال ثبت در GRPO.
-- **Discount** `γ ∈ [0, 1)`چقدر پاداش آینده با حال مهمه`γ = 0.99`افق 100 قدم را می خرید.`γ = 0.9`10 تا میخر
+- **States** $S$همه چيزي که مامور بايد تصميم بگيره در گريد ورلد سلول در شطرنج بورد در ماجرا تحصيلي پنجره ي زمینه و هر خاطره
+- **Actions** $A$انتخاب ها، حرکت بالا/ پایین/ چپ/ راست، حرکت بازی کنید، یک توکن بفرستید.
+- **Transitions** $P(s' \mid s, a)$. به نظر می رسد$s$و اقدام$a$در شطرنج، استوکاستیک در موجودی، تقریباً تعیین کننده در رمزگذاری LLM.
+- **Rewards** $R(s, a, s')$. سیگنال مقیاس. برنده = +1، ضرر = -1. درآمد - هزینه. اصطلاح نسبت احتمال ثبت در GRPO.
+- **Discount** $\gamma \in [0, 1)$چقدر پاداش آینده با حال مهمه$\gamma = 0.99$افق 100 قدم را می خرید.$\gamma = 0.9$10 تا میخر
 
-**The Markov property** `P(s_{t+1} | s_t, a_t) = P(s_{t+1} | s_0, a_0, …, s_t, a_t)`آینده فقط به وضعیت فعلی بستگی دارد. اگر اینگونه نباشد، نمایندگی دولت نامکمل است.
+**The Markov property** $P(s_{t+1} \mid s_t, a_t) = P(s_{t+1} \mid s_0, a_0, \ldots, s_t, a_t)$آینده فقط به وضعیت فعلی بستگی دارد. اگر اینگونه نباشد، نمایندگی دولت نامکمل است.
 
-**Policies and returns.**یک سیاست`π(a | s)`نقشه ها به توزیع عمل می پردازند.`G_t = r_t + γ r_{t+1} + γ² r_{t+2} + …`ارزش سود سود سود کم شده پاداش های آینده است.`V^π(s) = E[G_t | s_t = s]`عواقب انتظار می رود که از `s`در چارچوب سیاست`π`. ارزش ق`Q^π(s, a) = E[G_t | s_t = s, a_t = a]`هر الگوریتم RL یکی از این دو را تخمین می زند، سپس بهبود می یابد `π`در این صورت
+**Policies and returns.**یک سیاست$\pi(a \mid s)$نقشه ها به توزیع عمل می پردازند.$G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \ldots$ارزش سود سود سود کم شده پاداش های آینده است.$V^\pi(s) = \mathbb{E}[G_t \mid s_t = s]$عواقب انتظار می رود که از $s$در چارچوب سیاست$\pi$. ارزش ق$Q^\pi(s, a) = \mathbb{E}[G_t \mid s_t = s, a_t = a]$هر الگوریتم RL یکی از این دو را تخمین می زند، سپس بهبود می یابد $\pi$در این صورت
 
 **The Bellman equations.**معادلات نقطه ثابت که همه چیز در این مرحله استفاده می کند:
 
-`V^π(s) = Σ_a π(a|s) Σ_{s', r} P(s', r | s, a) [r + γ V^π(s')]`
-`Q^π(s, a) = Σ_{s', r} P(s', r | s, a) [r + γ Σ_{a'} π(a'|s') Q^π(s', a')]`
+```math
+\begin{aligned}
+V^\pi(s) &= \sum_a \pi(a \mid s) \sum_{s', r} P(s', r \mid s, a) [r + \gamma V^\pi(s')] \\
+Q^\pi(s, a) &= \sum_{s', r} P(s', r \mid s, a) [r + \gamma \sum_{a'} \pi(a' \mid s') Q^\pi(s', a')]
+\end{aligned}
+```
 
 این تقسیم انتظار می رود به "جایز این مرحله" به همراه "قیمت تخفیف شده از جایی که فرود می روید" بازگردد. هر الگوریتم در مرحله 9 یا این معادله را به تقارب (برنامه سازی پویا) ، نمونه هایی از آن (مونت کارلو) ، یا یک مرحله (تفاوت زمانی) شروع می کند.
 
@@ -113,16 +117,16 @@ def policy_evaluation(policy, gamma=0.99, tol=1e-6):
 
 ### مرحله چهارم:`γ`یک پارامتر فوق العاده با معنی فیزیکی است
 
-افق موثر تقریباً`1 / (1 - γ)`.`γ = 0.9`→ 10 قدم`γ = 0.99`→ 100 قدم`γ = 0.999`→ 1000 قدم
+افق موثر تقریباً$1 / (1 - \gamma)$.$\gamma = 0.9$→ 10 قدم$\gamma = 0.99$→ 100 قدم$\gamma = 0.999$→ 1000 قدم
 
-خیلی کم و عامل به طور نزدیک رفتار می کند. بیش از حد بالا و اختصاص اعتبار می شود شور، زیرا بسیاری از مراحل اولیه مسئولیت پاداش آینده را به اشتراک می گذارند. LLM RLHF معمولا استفاده می کند `γ = 1`چون قسمت ها کوتاه و محدود هستند.`0.95–0.99`. بازی های استراتژی افق بلند استفاده می کنند`0.999`. .
+خیلی کم و عامل به طور نزدیک رفتار می کند. بیش از حد بالا و اختصاص اعتبار می شود شور، زیرا بسیاری از مراحل اولیه مسئولیت پاداش آینده را به اشتراک می گذارند. LLM RLHF معمولا استفاده می کند $\gamma = 1$چون قسمت ها کوتاه و محدود هستند.`0.95–0.99`. بازی های استراتژی افق بلند استفاده می کنند`0.999`. .
 
 ## دام ها
 
 - **Non-Markovian state.**اگر شما نیاز به سه مشاهدات اخیر برای تصمیم گیری دارید، "حال" فقط مشاهدات فعلی نیست. درست کنید: فریم های استیک (DQN در استیک های Atari 4) یا از حالت مکرر استفاده کنید (LSTM / GRU در مشاهدات).
 - **Sparse rewards.**پاداش های فقط برنده باعث می شود یادگیری در فضاهای بزرگ غیرممکن باشد. پاداش های شکل (سیگنال میانگین) یا بوتستراپ با تقلید (فاز 9 · 09).
 - **Reward hacking.**بهینه سازی پاداش پراکسی اغلب باعث ایجاد رفتار بیماری می شود. عامل مسابقه قایق OpenAI در دایره ها چرخش می کند و به جای پایان دادن به مسابقه، برای همیشه قدرت را جمع می کند. همیشه پاداش را از نتیجه هدف تعریف کنید، نه پراکسی.
-- **Discount mis-spec.** `γ = 1`در یک کار افق بی نهایت هر مقدار بی نهایت را می کند. همیشه با افق محدود یا`γ < 1`. .
+- **Discount mis-spec.** $\gamma = 1$در یک کار افق بی نهایت هر مقدار بی نهایت را می کند. همیشه با افق محدود یا$\gamma < 1$. .
 - **Reward scale.**پاداش {+100، -100} در مقابل {+1, -1} سیاست های مطلوب یکسان اما شدت گرادینت بسیار متفاوت را ارائه می دهد.`[-1, 1]`- قبل از اتصال به PPO/DQN
 
 ## ازش استفاده کن
@@ -167,21 +171,21 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 ## تمرینات
 
 1. **Easy.**اجرای 4×4 GridWorld و انتشار سیاست تصادفی در `code/main.py`. 10 هزار قسمت اجرا کن . متوسط و ستد بازگشت را گزارش کن . با بازده مطلوب (-6) مقایسه کن
-2. **Medium.**فرار کن`policy_evaluation`با`γ ∈ {0.5, 0.9, 0.99}`برای سیاست تصادفی یکسره.`V`توضیح دهید چرا ارزش های حالت نزدیک ترمینال با افزایش سریعتر رشد می کنند.`γ`. .
-3. **Hard.**شبکه جهانی را به حالت استوکاستیک تبدیل کنید: هر عمل به سمت همسایه با احتمال حرکت می کند `p = 0.1`. دوباره بررسي سيستم يكيده رو انجام بده`V[start]`بهتر میشه یا بدتر میشه؟
+2. **Medium.**فرار کن`policy_evaluation`با$\gamma \in \lbrace 0.5, 0.9, 0.99 \rbrace$برای سیاست تصادفی یکسره.`V`توضیح دهید چرا ارزش های حالت نزدیک ترمینال با افزایش سریعتر رشد می کنند.$\gamma$. .
+3. **Hard.**شبکه جهانی را به حالت استوکاستیک تبدیل کنید: هر عمل به سمت همسایه با احتمال حرکت می کند $p = 0.1$. دوباره بررسي سيستم يكيده رو انجام بده`V[start]`بهتر میشه یا بدتر میشه؟
 
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MDP | "Reinforcement learning setup" | Tuple `(S, A, P, R, γ)` satisfying the Markov property. |
+| MDP | "Reinforcement learning setup" | Tuple $(S, A, P, R, \gamma)$ satisfying the Markov property. |
 | State | "What the agent sees" | Sufficient statistic for future dynamics under the chosen policy class. |
-| Policy | "Agent's behavior" | Conditional distribution `π(a \| s)` or deterministic map `s → a`. |
-| Return | "Total reward" | Discounted sum `Σ γ^t r_t` from the current step. |
-| Value | "How good a state is" | Expected return under `π` starting from `s`. |
-| Q-value | "How good an action is" | Expected return under `π` starting from `s` with first action `a`. |
+| Policy | "Agent's behavior" | Conditional distribution $\pi(a \mid s)$ or deterministic map $s \to a$. |
+| Return | "Total reward" | Discounted sum $\sum \gamma^t r_t$ from the current step. |
+| Value | "How good a state is" | Expected return under $\pi$ starting from $s$. |
+| Q-value | "How good an action is" | Expected return under $\pi$ starting from $s$ with first action $a$. |
 | Bellman equation | "Dynamic programming recursion" | Fixed-point decomposition of value / Q into one-step reward plus discounted successor value. |
-| Discount `γ` | "Future vs present" | Geometric weight on far-future reward; effective horizon `~1/(1-γ)`. |
+| Discount $\gamma$ | "Future vs present" | Geometric weight on far-future reward; effective horizon $\approx 1/(1-\gamma)$. |
 
 ## خواندن بیشتر
 
