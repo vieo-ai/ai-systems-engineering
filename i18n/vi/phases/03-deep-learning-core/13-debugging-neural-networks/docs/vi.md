@@ -22,7 +22,7 @@ Các mạng thần kinh không mang lại cho bạn sự sang trọng đó.
 
 Một mạng thần kinh bị hỏng chạy đến khi hoàn thành, in một giá trị mất mát, và đưa ra dự đoán. Sự mất mát có thể giảm đi. Những dự đoán có vẻ hợp lý. Nhưng mô hình này là sai lầm lặng lẽ - học các đường tắt, ghi nhớ tiếng ồn, hoặc hội tụ với một mức tối thiểu địa phương vô dụng. Các nhà nghiên cứu của Google ước tính rằng 60-70% thời gian gỡ lỗi ML được dành cho các lỗi "hư lặng" không tạo ra lỗi nhưng làm suy giảm chất lượng mô hình.
 
-Sự khác biệt giữa mô hình làm việc và mô hình bị hỏng thường là một dòng bị hỏng: một dòng bị thiếu `zero_grad()`, một chiều hướng được chuyển thể, tốc độ học tập giảm 10x. Công thức "Dịch thức đào tạo mạng thần kinh" (2019) bắt đầu với điều này: "Những lỗi mạng thần kinh phổ biến nhất là lỗi không bị sập".
+Sự khác biệt giữa mô hình làm việc và mô hình bị hỏng thường là một dòng bị hỏng: một dòng bị thiếu `zero_grad()`"Dịch thức để đào tạo mạng thần kinh" (2019) mở đầu bằng cách: "Những lỗi mạng thần kinh phổ biến nhất là lỗi không bị sập".
 
 Bài học này dạy bạn tìm những con bọ đó.
 
@@ -90,14 +90,14 @@ So sánh gradient phân tích của bạn (từ backprop) với gradient số (t
 
 Tốc độ số cho tham số `w`- Có thể là:
 
-```
-grad_numerical = (loss(w + eps) - loss(w - eps)) / (2 * eps)
+```math
+\text{grad\_numerical} = \frac{\text{loss}(w + \text{eps}) - \text{loss}(w - \text{eps})}{2 \cdot \text{eps}}
 ```
 
 Tỷ lệ hợp đồng (các khác biệt tương đối):
 
-```
-rel_diff = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{rel\_diff} = \frac{\lvert \text{grad\_analytical} - \text{grad\_numerical} \rvert}{\max(\lvert \text{grad\_analytical} \rvert, \lvert \text{grad\_numerical} \rvert, 10^{-8})}
 ```
 
 Nếu`rel_diff < 1e-5`: đúng. Nếu `rel_diff > 1e-3`Có lẽ là một con bọ.
