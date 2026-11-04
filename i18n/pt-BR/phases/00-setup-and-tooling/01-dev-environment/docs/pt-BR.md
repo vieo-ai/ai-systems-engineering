@@ -220,3 +220,11 @@ Veja .`outputs/prompt-env-check.md`para um prompt que ajuda os assistentes de IA
 1. Execute o script de verificação e corrija quaisquer falhas
 2. Criar um ambiente virtual Python para este curso e instalar PyTorch
 3. Escreva um "olá ao mundo" em todas as quatro línguas e execute cada uma
+
+### Indicios
+
+**Exercise 1.**Corra .`python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner`A verificação é feita quando você executar o script novamente e todas as sondas necessárias passar.
+
+**Exercise 2.**Fazer o ambiente com `uv venv`no repository root, ativá-lo, instale PyTorch com o comando do passo 6 que corresponde ao seu hardware.`python -c "import torch; print(torch.__version__)"`dentro do ambiente; um número de versão significa a instalação realizada.
+
+**Exercise 3.**Use os quatro tempos de execução da pilha no Concept: Python, TypeScript no Node.js, Rust e Julia. Escreva um pequeno arquivo para cada um e execute-o com `python3`- Não .`npx tsx`(Node.js não pode executar um `.ts`arquivo direto), `cargo run`ou `rustc`, e `julia`Cada corrida deve imprimir a sua mensagem e sair com código 0.
