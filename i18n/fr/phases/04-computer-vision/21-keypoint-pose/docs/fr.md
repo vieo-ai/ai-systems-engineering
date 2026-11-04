@@ -50,8 +50,8 @@ Le haut vers le bas (HRNet, ViTPose) est le leader de la précision; le bas vers
 
 Au lieu de régresser `(x, y)`directement, prédire une`H x W`carte thermique par point clé avec une tache gaussienne centrée sur l'emplacement réel.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 À l'inférence, l'argmax de chaque carte thermique est l'emplacement prévisible du point clé.
@@ -60,7 +60,7 @@ Pourquoi les cartes thermiques fonctionnent mieux que la régression directe: la
 
 ### Localisation sous-pixel
 
-Argmax donne des coordonnées entières. Pour une précision sous-pixel, affiner en fixant une parabole à l'argmax et à ses voisins, ou utiliser le bien connu offset `(dx, dy) = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1], ...)`- Dans quelle direction ?
+Argmax donne des coordonnées entières. Pour une précision sous-pixel, affiner en fixant une parabole à l'argmax et à ses voisins, ou déplacer l'argmax vers le voisin supérieur avec `dx = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1])`et la même chose pour `dy`, comme le code le fait.
 
 ### Les champs d'affinité de partie (PAF)
 

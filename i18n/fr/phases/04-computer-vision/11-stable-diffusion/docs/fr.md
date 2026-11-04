@@ -55,8 +55,8 @@ flowchart LR
 
 Le conditionnement du texte simple apprend `epsilon_theta(x_t, t, c)`pour chaque demande `c`. La CFG traîne le même réseau avec `c`Il a été réalisé à 10% des cas (replacé par une intégration vide), ce qui a donné un modèle unique qui prédit à la fois le bruit conditionnel et l'inconditionnel.
 
-```
-eps = eps_uncond + w * (eps_cond - eps_uncond)
+```math
+\epsilon = \epsilon_{\text{uncond}} + w \cdot (\epsilon_{\text{cond}} - \epsilon_{\text{uncond}})
 ```
 
 `w`est l'échelle de direction. `w=0`est inconditionnelle,`w=1`est clairement conditionnelle, `w>1`Le système de gestion de la décharge est un système de gestion de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de décharge de la décharge de décharge de la décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de`w=7.5`- Je suis désolé .
@@ -235,7 +235,7 @@ Dans la production, les décisions que vous prenez:
 
 - **Model family**: SD 1.5 pour les mélodies de communauté open source, SDXL pour une plus grande fidélité, SD3 / FLUX pour l'état de l'art et les exigences strictes de licence.
 - **Scheduler**: DPM-Solver++ 2M Karras pour 20-30 étapes, LCM-LoRA lorsque la latence est inférieure à 1s.
-- **Precision**Le numéro de la liste:`float16`sur 4080/4090, `bfloat16`sur l'A100 et plus récentes, `int8`(via `bitsandbytes`ou `compel`) lorsque le VRAM est serré.
+- **Precision**Le numéro de la liste:`float16`sur 4080/4090, `bfloat16`sur l'A100 et plus récentes, `int8`(via `bitsandbytes`) lorsque le VRAM est serré.
 - **Conditioning**: fonctionne avec du texte simple; pour un contrôle plus solide, ajoutez le ControlNet (puis, profondeur, pose) au-dessus du pipeline de base.
 
 Pour la génération de lots, `AUTO1111`- Je suis là .`ComfyUI`sont les outils communautaires; pour les API de production, `diffusers`+ `accelerate`ou `optimum-nvidia`avec la compilation TensorRT.

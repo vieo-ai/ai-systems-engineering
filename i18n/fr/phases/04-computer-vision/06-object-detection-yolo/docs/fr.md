@@ -74,11 +74,13 @@ Les détecteurs modernes utilisent souvent des FPN avec différents ensembles d'
 
 Le brut`tx, ty, tw, th`ne sont pas des coordonnées de boîte; elles sont des cibles de régression à transformer avant la traçage:
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`conserve les détournements de centre à l'intérieur de la cellule. `exp`La largeur de l'ancrage est libre sans détour.`stride`Cette étape de décode est la même dans toutes les versions de YOLO depuis v2.
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 La métrique de similitude universelle de détection entre deux boîtes:
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 signifie identique; IoU = 0 signifie aucun chevauchement. IoU entre la prédiction et la boîte de vérité de base est ce qui décide si une prédiction compte comme un vrai positif (habituellement IoU >= 0,5).
+$\mathrm{IoU} = 1$signifie identique; $\mathrm{IoU} = 0$La valeur de l'intervalle entre la prédiction et la boîte de vérité de base est celle qui décide si une prédiction est considérée comme vraie positive (généralement$\mathrm{IoU} \ge 0.5$L'IU entre deux prédictions est ce que le NMS utilise pour dédupliquer.
 
 ### Suppression non maximale
 
@@ -113,11 +115,13 @@ Un seuil typique: 0,45 pour la détection d'objets.`soft-NMS`- Je suis là .`DIo
 
 La perte de YOLO est trois pertes ajoutées avec les poids:
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 Seules les cellules qui contiennent un objet contribuent à la régression des boîtes et aux pertes de classification.`lambda_noobj`est généralement petite (~0,5) car la grande majorité des cellules sont vides et domineraient autrement la perte totale.
@@ -199,8 +203,10 @@ def encode(box_xyxy, cell_x, cell_y, stride, anchor_wh):
     cy = 0.5 * (y1 + y2)
     w = x2 - x1
     h = y2 - y1
-    tx = cx / stride - cell_x
-    ty = cy / stride - cell_y
+    off_x = np.clip(cx / stride - cell_x, 1e-6, 1 - 1e-6)
+    off_y = np.clip(cy / stride - cell_y, 1e-6, 1 - 1e-6)
+    tx = np.log(off_x / (1 - off_x))
+    ty = np.log(off_y / (1 - off_y))
     tw = np.log(w / anchor_wh[0] + 1e-8)
     th = np.log(h / anchor_wh[1] + 1e-8)
     return np.array([tx, ty, tw, th])
@@ -219,7 +225,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 ```
 
-Test: encodez une boîte puis décodez  vous devriez obtenir quelque chose de très proche de l'original (jusqu'à ce que l'inverse sigmoïde ne soit pas parfaitement inversible lorsque `tx`n' est pas dans la plage post-sigmoïde).
+Test: encodez une boîte dont le centre est strictement à l'intérieur de la cellule, puis décodez, et vous devriez récupérer la boîte d'origine pour faire fléchir l'erreur. `encode`détient le centre de l'offset comme un logit, l'inverse de la `sigmoid`dans `decode`Le clip maintient la logite finie; un centre exactement sur le bord d'une cellule se déplace au maximum`1e-6`cellules.`assign_targets`Les mêmes logits sont stockés ci-dessous, donc les trains de tête dans l'espace qui `decode`Il est en train de s'attendre.
 
 ### Étape 4: Une tête YOLO minimale
 
@@ -269,8 +275,10 @@ def assign_targets(boxes_xyxy, classes, anchors, stride, grid_size, num_classes)
         best = int(np.argmax(ious))
         aw, ah = anchors[best]
 
-        target[gy, gx, best, 0] = cx / stride - gx
-        target[gy, gx, best, 1] = cy / stride - gy
+        off_x = np.clip(cx / stride - gx, 1e-6, 1 - 1e-6)
+        off_y = np.clip(cy / stride - gy, 1e-6, 1 - 1e-6)
+        target[gy, gx, best, 0] = np.log(off_x / (1 - off_x))
+        target[gy, gx, best, 1] = np.log(off_y / (1 - off_y))
         target[gy, gx, best, 2] = np.log(bw / aw + 1e-8)
         target[gy, gx, best, 3] = np.log(bh / ah + 1e-8)
         target[gy, gx, best, 4] = 1.0
@@ -315,7 +323,7 @@ def yolo_loss(pred, target, has_obj, lambda_coord=5.0, lambda_obj=1.0, lambda_no
                    "obj_neg": loss_obj_neg.item(), "cls": loss_cls.item()}
 ```
 
-Cinq hyper-paramètres que chaque tutoriel YOLO code ou balaie.`lambda_coord=5, lambda_noobj=0.5`Il reflète le papier original YOLOv1 et fonctionne toujours comme un défaut raisonnable.
+Quatre poids de perte que chaque tutoriel YOLO code ou balaie.`lambda_coord=5, lambda_noobj=0.5`Il reflète le papier original YOLOv1 et fonctionne toujours comme un défaut raisonnable.
 
 ### Étape 7: L'oléoduc d'inférence
 
