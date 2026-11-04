@@ -49,15 +49,14 @@ Para cada una (imagen, pregunta, respuesta), codifica la imagen, incrusta la pre
 
 ### BLEEU-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 ¿ Dónde ?`p_n`es la precisión modificada de n-gram (conto reducido de n-gramos generados que aparecen en cualquier referencia, dividido por n-gramos generados totales), y `BP`es la pena de brevedad:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 Se requiere suavizamiento para muestras pequeñas donde algunas `p_n`La implementación utiliza el "método 1" de Chen y Cherry (agrega 1 al numerador y denominador para cualquier conteo cero), que es el estándar más seguro para regímenes de bajo conteo.
@@ -109,7 +108,7 @@ Resultado: la tabla métrica antes/después muestra la recuperación mejorando d
 
 Cada métrica se asigna directamente a un índice de referencia de producción:
 
-- **Retrieval.**MS-COCO 5K val, Flickr30K, ImageNet zero-shot son todos problemas R@K en la misma matriz de similitud.
+- **Retrieval.**MS-COCO 5K val y Flickr30K son problemas R@K en la misma matriz de similitud. ImageNet Zero-shot utiliza esa matriz también, con una incorporación de prompt por clase, pero informa la precisión de clasificación top-1, que es R@1 sobre las instrucciones de clase.
 - **VQA.**VQA v2, GQA, OK-VQA utilizan la misma forma de coincidencia exacta (con acta suave en lugar de EM de respuesta única para VQA v2).
 - **BLEU-4.**Los subtítulos MS-COCO, NoCaps, Flickr30K y todos ellos usan BLEU-4 más CIDER y METEOR.
 
@@ -142,7 +141,7 @@ python3 -m unittest code/test_main.py
 
 4. Computa la media de rango recíproco (MRR) junto a R@K. MRR es sensible a dónde el elemento correcto cae más allá de la parte superior K; R@K es sensible a si cae en la parte superior K.
 
-5. Realice la evaluación del modelo en cinco puntos de control durante el entrenamiento (pasos 0, 10, 20, 30, 40, 50) y trace la curva de aprendizaje.
+5. Realice la evaluación del modelo en seis puntos de control durante el entrenamiento (pasos 0, 10, 20, 30, 40, 50) y trace la curva de aprendizaje.
 
 ## Términos clave
 
