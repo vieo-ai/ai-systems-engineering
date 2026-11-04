@@ -41,8 +41,8 @@ prediction-game
 
 **N-gram probability:** `P(w_i | w_{i-n+1}, ..., w_{i-1})`. درست کردن`n`(معمولا 3 برای تریگرام، 4 برای 4 گرم)
 
-```text
-P(w | context) = count(context, w) / count(context)
+```math
+P(w \mid \text{context}) = \frac{\mathop{\mathrm{count}}(\text{context}, w)}{\mathop{\mathrm{count}}(\text{context})}
 ```
 
 **The zero-count problem.**هر n-گرام که در آموزش دیده نشده است احتمال صفر را به دست می آورد. یک مطالعه در سال 2007 در مورد کورپوس براون نشان داد که حتی یک مدل 4 گرم نیز 30٪ از 4 گرم را در آموزش دیده است. شما نمی توانید بدون صاف کردن در هر متن واقعی ارزیابی کنید.
@@ -60,8 +60,8 @@ P(w | context) = count(context, w) / count(context)
 
 **Evaluation: perplexity.**نماد احتمال منفی منفی در هر کلمه در یک مجموعه تست انجام شده. پایین تر بهتر است. یک پیچیدگی 100 به این معنی است که مدل به همان اندازه گیج کننده است که می تواند از میان 100 کلمه به طور یکسان انتخاب کند.
 
-```text
-perplexity = exp(- (1/N) * Σ log P(w_i | context_i))
+```math
+\text{perplexity} = \exp\left(-\frac{1}{N} \sum_i \log P(w_i \mid \text{context}_i)\right)
 ```
 
 ```figure

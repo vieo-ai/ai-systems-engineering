@@ -80,8 +80,8 @@ def predict_mft(tokens, word_best, default_tag):
 
 مدل احتمال مشترک دنباله:
 
-```
-P(tags, words) = prod P(tag_i | tag_{i-1}) * P(word_i | tag_i)
+```math
+P(\text{tags}, \text{words}) = \prod_i P(\text{tag}_i \mid \text{tag}_{i-1}) \cdot P(\text{word}_i \mid \text{tag}_i)
 ```
 
 دو جدول: احتمالات انتقال (تگ به عنوان تگ قبلی) ، احتمالات انتشار (تگ به عنوان کلمه داده شده) ، هر دو را از حساب با صاف کردن Laplace تخمین بزنید. با Viterbi (برنامه سازی پویا بر روی شبکه تگ) کدگذاری کنید.

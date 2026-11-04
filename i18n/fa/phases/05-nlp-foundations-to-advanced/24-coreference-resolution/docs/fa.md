@@ -36,7 +36,7 @@
 **Architectures.**
 
 1. **Rule-based (Hobbs, 1978).**با استفاده از قواعد گرامر، قطعنامه اسم های متمایز با درخت، خط پایه خوب، به طرز شگفت انگیزی سخت برای شکست در اسم های متمایز.
-2. **Mention-pair classifier.**برای هر جفت ذکر (m_i، m_j) ، پیش بینی کنید که آیا آنها هسته ای هستند. گروه بندی با بسته شدن انتقالی. استاندارد قبل از سال 2016.
+2. **Mention-pair classifier.**برای هر جفت ذکر$(m_i, m_j)$، پیش بینی می کنند که آیا آنها هسته ای هستند.
 3. **Mention-ranking.**برای هر ذکر، سابقه کاندید را رتبه بندی کنید (از جمله "هیچ سابقه ای").
 4. **Span-based end-to-end (Lee et al., 2017).**ترانسفورماتور کدر تمام دامنه های کاندید را تا حد حد حد طولانی شماره گذاری کنید نمره ها را ذکر کنید احتمال سابقه هر دامنه را پیش بینی کنید با طمع جمع کنید پیش فرض مدرن
 5. **Generative (2024+).**به عنوان یک مدرک LLM: "هر اسم در این متن و پیشینه اش را لیست کنید".
@@ -61,14 +61,14 @@ coref-links
 ```python
 import spacy
 nlp = spacy.load("en_coreference_web_trf")   # experimental model
-doc = nlp("Apple announced new products. The company said they would ship soon.")
+doc = nlp("Apple announced new products. The company said it would ship them soon.")
 for cluster in doc._.coref_clusters:
     print(cluster, "->", [m.text for m in cluster])
 ```
 
 در یک سند طولانی تر، چیزی شبیه به این می آید:
-- گروه اول: [آپل، شرکت، آنها]
-- گروه دوم: [پروژه های جدید]
+- کلستر اول: [آپل، شرکت، آن]
+- گروه دوم: [پروژه های جدید، آنها]
 
 ### مرحله دوم: حل کننده اسم استیاد مبتنی بر قوانین (تدريس)
 

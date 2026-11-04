@@ -29,7 +29,7 @@
 
 اجرای در سال 2026:
 
-- **Outlines.**ترکیب JSON Schema یا regex به یک ماشین حالت محدود. هر توکن یک O(1) معتبر-Next-token جستجو می کند. مبتنی بر FSM، بنابراین طرح های تکراری نیاز به صاف کردن دارند.
+- **Outlines.**به شکل ماشین حالت محدود، طرح JSON یا regex را مرتب می کند. هر توکن یک$O(1)$بر اساس FSM، پس طرح های تکراری نیاز به مسطح کردن دارند.
 - **XGrammar / llguidance.**موتورهای گرائمری بدون زمینه. مدیریت طرح JSON تکراری. تقریبا صفر کید کردن هزینه های بالا. OpenAI در اجرای محصول ساختاری خود در سال 2025 راهنمایی را به حساب آورد.
 - **vLLM guided decoding.**-بنیاده شده`guided_json`،`guided_regex`،`guided_choice`،`guided_grammar`از طریق طرح ها، XGrammar، یا lm-format-enforcer پس زمینه.
 - **Instructor.**بسته بندی مبتنی بر Pydantic بر روی هر LLM. بازبینی در مورد شکست تأیید. ارائه دهنده های مختلف، اما تغییر نمی کند logits  این بر روی بازبینی + ساختاری-خروجی آگاهانه است.
@@ -210,7 +210,7 @@ Refuse any design that puts `answer` or `decision` before reasoning fields. Refu
 |------|-----------------|-----------------------|
 | Constrained decoding | Force valid output | Mask invalid-token logits at every generation step. |
 | Logit processor | The thing that constrains | Function: `(logits, state) -> masked_logits`. |
-| FSM | Finite-state machine | Compiled grammar representation; O(1) valid-next-token lookup. |
+| FSM | Finite-state machine | Compiled grammar representation; $O(1)$ valid-next-token lookup. |
 | CFG | Context-free grammar | Grammar that handles recursion; slower but more expressive than FSM. |
 | Schema field order | Does it matter? | Yes — first field commits; always put reasoning before answer. |
 | Guided decoding | vLLM's name for it | Same concept, integrated into the inference server. |
