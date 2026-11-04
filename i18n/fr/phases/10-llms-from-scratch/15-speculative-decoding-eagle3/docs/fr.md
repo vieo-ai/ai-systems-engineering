@@ -36,8 +36,8 @@ La pile `N`de ces appels de retour en retour en utilisant un vérificateur de tr
 
 Je vous laisse .`α`Le taux d'acceptation attendu par jeton émis.`c = cost(draft) / cost(verifier)`Le nombre attendu de jetons acceptés par vérificateur à terme est:
 
-```
-E[accepted] = (1 - α^(N+1)) / (1 - α)
+```math
+\mathbb{E}[\text{accepted}] = \frac{1 - \alpha^{N+1}}{1 - \alpha}
 ```
 
 Le temps total de paroi attendu par jeton accepté est `(N * c + 1) / E[accepted]`- Réduire au minimum .`N`et vous obtenez le bon point.`α = 0.8, c = 0.05`: optimale `N`est d'environ 57, la vitesse est de 3,2x. Pour `α = 0.95, c = 0.02`: optimale `N`est d'environ 8×10, l'accélération pousse 5x.
@@ -70,6 +70,8 @@ Pour la recherche d'arbre EAGLE-2, le vérificateur exécute l'attention avec un
 | EAGLE-2 | EAGLE-1 + dynamic draft tree | 0.80-0.88 | 3-4× | ~60B tokens |
 | EAGLE-3 | Multi-layer feature fusion + TTT | 0.88-0.92 | 3.5-6.5× | ~60-200B tokens |
 | Lookahead | No draft (Jacobi iteration) | N/A | 1.3-1.6× | None |
+
+Le `α`La colonne est le taux d'acceptation par jeton le long du chemin accepté, sur les benchmarks de chat, avec un projet formé sur la correspondance des données de chat. C'est la bande supérieure. La phase 10 · 25 cite 0,82 pour EAGLE-3 d'une configuration différente, et la phase 17 · 05 prévoit des déploiements de production avec 0,6 à 0,8 sur le chat général. Mesure `α`sur votre propre trafic avant de choisir `N`- Je suis désolé .
 
 En 2026 production: vLLM et SGLang par défaut à EAGLE-3 quand disponible, EAGLE-2 autrement. TensorRT-LLM a le chemin Medusa le plus rapide pour les modèles publics Meta et NVIDIA. llama.cpp expédite le projet de vanille pour les déploiements de CPU.
 

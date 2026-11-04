@@ -11,7 +11,7 @@
 
 La formation d'un transformateur stocke, pour chaque couche, les entrées de chaque opération différenciée en arrière: les entrées d'attention, les projections Q/K/V, la sortie softmax, les entrées FFN, les sorties de norme et le flux résiduel.`d`, longueur de la séquence `L`, lot `B`, c' est à l' ordre de `12 * B * L * d`flottent par couche.
 
-Pour `d=8192, L=8192, B=1`Un modèle de 64 couches est 51 Go d'activations  et c'est avant que vous multipliez par la taille du microbatch, avant que vous ajoutiez des intermédiaires attention-softmax (`L^2`par tête), et avant de faire des copies partielles parallèles à la tenseur.
+Pour `d=8192, L=8192, B=1`, c'est environ 805M valeurs, ou 1,6 GB / couche en BF16. un modèle 64 couches est environ 103 GB d'activations, et c'est avant que vous multipliez par la taille de microbatch, avant que vous ajoutez attention-softmax intermédiaires (`L^2`par tête), et avant de faire des copies partielles parallèles à la tenseur.
 
 Le projet de loi bilatéral: les poids BF16 plus l'état de l'optimisateur peuvent s'adapter à 80 Go, mais les activations vous poussent au-delà. Le contrôle de gradation (alias recomptage d'activation) est la solution standard.
 
@@ -37,13 +37,13 @@ Exemple: transformateur à 32 couches divisé en 32 segments de 1 couche chacun.
 - Mémoire: 32 entrées de couche (petites) contre 32 * (volume d'activation par couche) (énormes).
 - Compute supplémentaire: 1 unité supplémentaire à l'avant par segment, c'est-à-dire ~33% de plus de FLOP à l'avant total (puisque l'arrière est 2 fois plus avant, l'étape complète devient 1 + 1 + 2 = 4 unités au lieu de 1 + 2 = 3).
 
-C'est la recette originale de Chen et al. 2016: un point de contrôle par personne `sqrt(L)`Pour L = 64, c'est 8 points de contrôle.
+C'est la recette originale de Chen et al. 2016: un point de contrôle par personne `sqrt(L)`Les couches permettent d'équilibrer la mémoire et le calcul.$L=64$, c'est 8 points de contrôle.
 
 ### Le contrôle sélectif (Korthikanti 2022)
 
 Toutes les activations ne coûtent pas la même chose.`B*L*L*heads`L'activation cachée du FFN est `B*L*4d`Pour les longues séquences, le softmax domine.
 
-Le point de contrôle sélectif maintient les activations bon marché à la boutique (projections linéaires, résidus) et recompte uniquement les plus chères (attention).
+Le point de contrôle sélectif maintient les activations à bas prix (projections linéaires, résidus) et recompte uniquement les plus chères (attention).$O(L^2)$Je ne sais pas.
 
 Megatron-Core implémente cela comme recomputation d'activation " sélective ". Utilisé dans la plupart des séries d'entraînement frontaliers de 2024+.
 
@@ -293,8 +293,8 @@ Cette leçon produit `outputs/prompt-activation-recompute-policy.md` une requêt
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
-| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
+| Attention-softmax volume | "The O(L^2) problem" | $L^2 \cdot \text{heads} \cdot \text{batch}$ floats; dominates activation memory at long contexts |
 
 ## Pour en savoir plus
 

@@ -36,8 +36,8 @@ Pour chaque requête, la NSA écoute trois fois, contre trois vues différentes 
 
 Les trois sorties de branches sont combinées par un portail par position appris:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
+```math
+\text{out} = g_{\text{cmp}} \cdot \text{out}_{\text{cmp}} + g_{\text{sel}} \cdot \text{out}_{\text{sel}} + g_{\text{win}} \cdot \text{out}_{\text{win}}
 ```
 
 `g_cmp, g_sel, g_win`Ils ne doivent pas être sumés à 1  ils peuvent peser les branches indépendamment.
@@ -46,7 +46,7 @@ out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
 
 La sélection est discrète. Les opérations discrètes brisent le débit de gradient. Le travail d'attention rare précédent a soit sauté le backprop par la sélection (entraînement limitant) ou utilisé des relaxations continues qui ne donnent pas de réelle rareté à l'inférence.
 
-La NSA échappe à cela: l'attention de branches compressées est une attention grossière différenciable sur l'ensemble de la séquence. L'opération top-k utilise simplement les scores d'attention supérieurs de la branche comprimée pour choisir les blocs à grains fins à charger. Les gradients circulent à travers les scores de branches compressées (qui influencent à la fois la sortie compressée ET la logique de sélection), et la contribution des blocs sélectionnés à la sortie finale est également différenciable. Le non-différenciable `top_k`L'opération est un no-op sur le graphique de calcul avant  il contrôle seulement quels blocs sont chargés de la mémoire.
+La NSA échappe à cela: l'attention de branches compressées est une attention grossière différenciable sur l'ensemble de la séquence. L'opération top-k utilise simplement les scores d'attention supérieurs de la branche comprimée pour choisir les blocs à grains fins à charger. Les gradients atteignent les scores de branches compressées par la sortie de la branche compressée elle-même, et non par le choix des blocs. À l'intérieur des blocs choisis, l'attention accordée aux clés et aux valeurs sélectionnées est une attention ordinaire, de sorte que leur contribution à la sortie finale est également différenciable. Le `top_k`Le choix de l'index lui-même n'obtient aucun gradient: il contrôle seulement les blocs chargés de la mémoire.
 
 C'est pourquoi la NSA peut être utilisée dans la pré-entraînement de bout en bout. Le modèle apprend à parcourir les informations à travers les trois branches conjointement, produisant un schéma rare qui, à l'inférence, fournit réellement la vitesse promise.
 
@@ -171,7 +171,7 @@ Cette leçon produit `outputs/skill-nsa-integrator.md`. Compte tenu d'une spéci
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
+| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in $O(N/l)$ keys per query |
 | Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
 | Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
 | Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |
