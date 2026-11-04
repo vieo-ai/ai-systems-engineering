@@ -51,7 +51,7 @@ flowchart LR
 
 **Binning:**Sürekli değerleri kategorilere dönüştürür. Özellik ve hedef arasındaki ilişki doğrusal değil ancak adımlarsal olduğunda yararlıdır (örneğin, yaş grupları).
 
-**Polynomial features:**X^2, x^3, x1*x2 terimleri oluşturur.
+**Polynomial features:**Yaratır $x^2$- Evet .$x^3$- Evet .$x_1 x_2$Düzsel modeller daha fazla özelliğin bedeliyle çizgi olmayan ilişkileri yakalar.
 
 ### Kategori Özellikleri
 
@@ -69,10 +69,12 @@ Modellerin sayılara, kategorilerin kodlanmasına ihtiyacı var.
 
 **TF-IDF:**"Frequency-Inverse Document Frequency" terimi. Sözcüklerin farklılıklarına göre ağırlanır. "the" gibi yaygın kelimeler düşük ağırlık kazanır. Nadir, ayırt edici kelimeler yüksek ağırlık kazanır.
 
-```
-TF(word, doc) = count(word in doc) / total words in doc
-IDF(word) = log(total docs / docs containing word)
-TF-IDF = TF * IDF
+```math
+\begin{aligned}
+\text{TF}(\text{word}, \text{doc}) &= \frac{\text{count(word in doc)}}{\text{total words in doc}} \\
+\text{IDF}(\text{word}) &= \log \frac{\text{total docs}}{\text{docs containing word}} \\
+\text{TF-IDF} &= \text{TF} \cdot \text{IDF}
+\end{aligned}
 ```
 
 ### Kayıp Değerler
@@ -80,14 +82,14 @@ TF-IDF = TF * IDF
 Gerçek verilerde boşluklar var.
 
 - **Drop rows:**Kayıp veriler nadir ve rastgele olduğunda
-- **Mean/median imputation:**Basit, dağılım şeklini korur (ortalama, dış değerlere daha sağlamdır)
+- **Mean/median imputation:**Basit, özelliğin merkezini korur (ortalama daha sağlamdır), ancak varyansiyonunu küçültürür ve her doldurulmuş değeri bir pikte yığar, böylece dağılım şekli değişir
 - **Mode imputation:**Kategorik özellikler için
 - **Indicator column:**İletişimden önce "was_this_missing" ikili bir sütunu ekleyin. Verilerin eksik olduğu gerçeği kendisi bilgi vericidir
 - **Forward/backward fill:**Zaman dizisi verileri için
 
 ### Özellikler etkileşimi
 
-Bazen ilişki kombinasyondadır. "Yükseklik" ve "kozluk" tek başına "BMI = ağırlık / yükseklik^2" ile karşılaştırıldığında daha az öngörücüdür.
+Bazen ilişki kombinasyonda. "Yükseklik" ve "kozluk" tek başına daha az öngörücüdür.$\text{BMI} = \text{weight} / \text{height}^2$Özellik etkileşimleri özellik alanını çoğaltır, bu yüzden doğru olanı seçmek için alan bilgisini kullanın.
 
 ### Özellik Seçimi
 

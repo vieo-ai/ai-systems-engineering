@@ -43,8 +43,8 @@ Bu dersin ana konusu giriş izlemektir, çünkü etiketlerin gelmesinden önce �
 
 Girişlerin ortak dağılımını yazın `x`ve etiketleri`y`İki şekilde:
 
-```text
-P(x, y) = P(x) * P(y | x) = P(y) * P(x | y)
+```math
+P(x, y) = P(x) \cdot P(y \mid x) = P(y) \cdot P(x \mid y)
 ```
 
 Her tür sürükleme farklı bir faktörü değiştirir:
@@ -87,8 +87,8 @@ Mevsimsellik saf pencereleri kırar. Pazartesi trafiği birçok üründe Cumarte
 
 PSI kredi puanlamasından gelir. Referans değerlerini kutulara, genellikle referans desillerinde on kutuya ayırın, böylece her kutu referansın yüzde 10'unu tutar.
 
-```text
-PSI = sum over bins of (current_share - reference_share) * ln(current_share / reference_share)
+```math
+\text{PSI} = \sum_{\text{bins}} (\text{current\_share} - \text{reference\_share}) \cdot \ln\left(\frac{\text{current\_share}}{\text{reference\_share}}\right)
 ```
 
 0'nun payı olan bir bin, günlük sonsuz yapar, bu nedenle her payı 0.0001 gibi küçük bir değere kadar kesin. PSI simetriktir.
@@ -99,8 +99,8 @@ Pratikçiler PSI'yi sabit bantlarla okuyor: 0.1'den aşağı sabit, 0.1'den 0.25
 
 İki örnekli KS istatistikleri `D`iki empiriyel kumülatüel dağılım fonksiyonu arasındaki en büyük dikey boşluk:
 
-```text
-D = max over x of | F_reference(x) - F_current(x) |
+```math
+D = \max_x \left\lvert F_{\text{reference}}(x) - F_{\text{current}}(x) \right\rvert
 ```
 
 `D`Aynı örnekler için 0 ve üst üste olmayan örnekler için 1'dir.`n * m / (n + m)`- Evet .
@@ -111,9 +111,11 @@ Büyük örnekler için, p değeri hiç kimsenin umurunda olmayan bir boşluk i�
 
 Ödeme kanalı gibi kategorik bir özelliğe göre, her kategoriye göre iki satır (referans, akım) ve bir sütunlu bir tablo oluşturun.
 
-```text
-expected[r][c] = row_total[r] * column_total[c] / grand_total
-chi2 = sum over cells of (observed - expected)^2 / expected
+```math
+\begin{aligned}
+\text{expected}[r][c] &= \text{row\_total}[r] \cdot \text{column\_total}[c] / \text{grand\_total} \\
+\text{chi2} &= \sum_{\text{cells}} (\text{observed} - \text{expected})^2 / \text{expected}
+\end{aligned}
 ```
 
 Testin sonucu`k - 1``k`Kategori. Sadece mevcut pencerede görünen bir kategori büyük bir terim ekler, bu nedenle test yeni değerlere tepki verir. Cramér'in V'si etki boyutudur.`chi2 / grand_total`- Evet .
