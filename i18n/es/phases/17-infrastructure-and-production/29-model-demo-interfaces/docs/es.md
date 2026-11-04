@@ -43,7 +43,7 @@ Escriba el contrato antes de escribir la página:
 | Model call | How long does one call take, and what does it cost? | A toy keyword model that runs in under a millisecond at no cost |
 | Output | What does the user see on success and on failure? | A label, a score, and a reply, or a JSON error with a hint |
 
-Un portátil no tiene límite para ninguna de las tres partes. Una demostración establece un límite para cada parte, y el servidor aplica los límites a cada cliente.
+Un portátil no tiene límite en ninguna de las tres partes. Una demostración establece un límite en cada parte, y el servidor aplica los límites a cada cliente.
 
 ```mermaid
 flowchart LR
@@ -76,6 +76,8 @@ Pon los cheques del servidor en orden de costo:
 
 | Failed check | HTTP status | Error code |
 |--------------|-------------|------------|
+| No `Content-Length` header | 411 Length Required | `length_required` |
+| `Content-Length` is not a number | 400 Bad Request | `bad_length` |
 | Body over 4,096 bytes | 413 Content Too Large | `body_too_large` |
 | Body stops before `Content-Length` bytes arrive | 408 Request Timeout | `request_timeout` |
 | Content type is not JSON | 415 Unsupported Media Type | `unsupported_media_type` |
