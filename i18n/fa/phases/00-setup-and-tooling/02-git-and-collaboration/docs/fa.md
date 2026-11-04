@@ -106,6 +106,14 @@ git push origin my-progress
 2. ایجاد یک`.gitignore`که نمونه پرونده های پسته های بازرسی را از بین می برد (`.pt`،`.pth`،`.safetensors`)
 3. به سابقه انجام اين رپو نگاه کنيد`git log --oneline`و بخونيد که چطور درس ها اضافه شده
 
+### اشاره ها
+
+**Exercise 1.**سپس روی فورک روی GitHub کلیک کنید`git clone`URL فورک خودت رو بعد از`git push -u origin my-progress`، فورک خود را در GitHub باز کنید و تایید کنید که لیست شاخه ها نشان می دهد `my-progress`با پرونده ات
+
+**Exercise 2.**اضافه کردن یک الگوی در هر تمدید، مانند `*.pt`، به یک`.gitignore`فایل در ریشه مخزن. با هر افزونه یک فایل خالی ایجاد کنید و اجرا کنید `git status`هیچ کدام از آنها نباید در لیست پرونده های ردیابی نشده ظاهر شوند.
+
+**Exercise 3.**فرار کن`git log --oneline`و بعدش`git log --oneline -- phases/00-setup-and-tooling`فقط اون کاميت ها رو که اين مرحله رو عوض کرده رو نشون بده`git show --stat <hash>`تا ببينم چه پرونده هاي درس اضافه شده
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |

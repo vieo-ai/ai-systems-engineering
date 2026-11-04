@@ -395,3 +395,15 @@ python phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.p
 3. استفاده کنید`tracemalloc`برای پیدا کردن خطی که در خط لوله بارگذاری داده ها بیشترین حافظه را اختصاص می دهد.
 4. TensorBoard را برای یک تمرین ساده تنظیم کنید و مشخص کنید که آیا مدل بیش از حد مناسب است.
 5. استفاده کنید`breakpoint()`تمرین بررسی شکل های تنسور، دستگاه ها و ارزش های گرادینت از پرسشنامه دیبگگر
+
+### اشاره ها
+
+**Exercise 1.**فرار کن`python3 phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.py`و خروجی هر عملکرد دمو را بخوانید. سپس مدل را در  تغییر دهید`demo_nan_detection`تا محصولش با صفر تقسیم بشه و دوباره اجرا بشه`detect_nan`باید یک هشدار NaN با شماره قدم چاپ شود.
+
+**Exercise 2.**. حلق رو اجرا کن`python -m cProfile -s cumtime your_script.py`، یا آن را در بسته بندی `cProfile.Profile()`. صف هاي بالا رو بخونيد`cumtime`ستون: تابع با بیشترین زمان که کد شما است، آهسته ترین است.
+
+**Exercise 3.**تماس بگیرید`tracemalloc.start()`قبل از کد بارگذاری داده ها و`tracemalloc.take_snapshot()`بعدش مثل`demo_memory_tracking`چاپ`snapshot.statistics("lineno")[:5]`; خط اول شماره پرونده و خط با بیشترین توزیع را نشان می دهد.
+
+**Exercise 4.**از دست دادن آموزش و اعتبار به یک`SummaryWriter`در هر دوره، بعد از آن فرار کنید`tensorboard --logdir=runs`اگر خسارت آموزش همچنان کاهش یابد در حالی که خسارت اعتبار افزایش می یابد، مدل بیش از حد می گذرد.
+
+**Exercise 5.**بذار`breakpoint()`داخل حلقه بعد`loss.backward()`و اسکریپت رو اجرا کن`(Pdb)`سریع، چاپ`x.shape`،`x.device`و`next(model.parameters()).grad`، بعد تایپ کن`c`تا به مرحله بعد ادامه بده.

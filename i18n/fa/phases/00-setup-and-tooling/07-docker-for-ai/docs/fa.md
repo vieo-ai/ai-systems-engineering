@@ -375,6 +375,16 @@ docker logs -f <container_id>
 3. اضافه کردن`flask`به فایل Docker، بازسازی کنید و یک سرور API ساده را در پورت 5000 اجرا کنید. پورت را با `-p 5000:5000`
 4. اندازه تصویر را با  اندازه گیری کنید`docker images`. سعی کن عکس پایه رو از`devel`به`runtime`و اندازه ها را مقایسه کنید
 
+### اشاره ها
+
+**Exercise 1.**با استفاده از `docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`دستور از درس، پس واردات رو وارد کن`docker run --rm ai-dev`. در یک مک، خارج`--gpus all`، همانطور که درس توضیح می دهد. ظرف باید نسخه ای را چاپ کند که با`2.6.0`. .
+
+**Exercise 2.**فرار کن`docker compose up -d`در`code/`پوشه، سپس یک پوسته را در `ai-dev`خدمات با `docker compose exec ai-dev bash`داخلش، فرار کن`curl http://qdrant:6333/collections`; پاسخ JSON به معنای نام سرویس در شبکه ترکیب است.
+
+**Exercise 3.**اضافه کنید`RUN pip install flask`خط به فایل Docker، بازسازی، و شروع سرور با `host="0.0.0.0"`، چون سروري که با محوطه ي محموله متصل شده در داخل ظرف از بيرون قابل رسيدن نيست . باز`http://localhost:5000`براي تایید اينکه نقشه بندر کار ميکنه
+
+**Exercise 4.**فرار کن`docker images ai-dev`و ستون SIZE رو بنویس. تغییر بده`devel`به`runtime`در`FROM`خط، با یک برچسب جدید بسازید و دو اندازه را مقایسه کنید؛ تصویر زمان اجرا، مرتب کننده ها و سرنخ ها را خارج می کند.
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |

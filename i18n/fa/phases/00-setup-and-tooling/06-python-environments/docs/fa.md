@@ -259,6 +259,16 @@ bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh
 3. يه حرف بنويس`pyproject.toml`برای یک پروژه که به PyTorch و SDK Anthropic نیاز دارد
 4. عمداً یک بسته را در سطح جهانی نصب کنید (بدون فعال کردن یک venv) ، توجه کنید که به کجا می رود، سپس آن را لغو کنید
 
+### اشاره ها
+
+**Exercise 1.**فرار کن`bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh`از ریشه مخزن. هر خط خروجی را بخوانید؛ وقتی یک چک شکست خورده است، آن یک عنصر را اصلاح کنید و اسکریپت را دوباره اجرا کنید تا هیچ چک شکست نیاورد.
+
+**Exercise 2.**محیط دوم را در یک پوشه جدید با  ایجاد کنید`uv venv`، آن را فعال کنید و یک numpy قدیمی با یک پین نسخه مانند نصب کنید`numpy==1.26.4`. فرار کن`python -c "import numpy; print(numpy.__version__)"`در هر محیط، دو نسخه باید متفاوت باشند.
+
+**Exercise 3.**از مثال در pyproject.toml شروع کنید`torch`و`anthropic`زیر`dependencies`. فرار کن`uv pip install -e .`یا`uv sync`در یک محیط جدید، فایل درست است وقتی هر دو بسته بدون خطا وارد می شوند.
+
+**Exercise 4.**تمام محیط ها رو غیر فعال کن، اجرا کن`pip install --user <small package>`، بعد فرار کن`pip show <package>`و بخونيد`Location`خطي. از نصبش کن`pip uninstall <package>`و فرار کن`pip show`دوباره برای تایید اینکه گم شده
+
 ## اصطلاحات کلیدی
 
 | Term | What people say | What it actually means |

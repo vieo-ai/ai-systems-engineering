@@ -97,7 +97,7 @@ python train.py > output.log 2> errors.log
 python train.py > train_full.log 2>&1
 ```
 
-سه تا ریدایرکت که لازم داری:
+چهار مسیر و لوله ای که نیاز داری:
 
 | Symbol | What it does |
 |--------|-------------|
@@ -335,6 +335,16 @@ env | grep -i torch
 2. اسم مستعار رو از  اضافه کن`code/shell_aliases.sh`به سمت قوس خود پیکربندی و بارگذاری مجدد با `source ~/.zshrc`(یا `~/.bashrc`)
 3. يه دفترچه آموزش جعلی با `for i in $(seq 1 100); do echo "epoch $i loss: $(echo "scale=4; 1/$i" | bc)"; sleep 0.1; done > fake_train.log`و بعد از آن استفاده کنید`grep`،`tail`و`awk`فقط ارزش های تلفات را استخراج کنیم.
 4. یک ورودی پیکربندی SSH را برای یک سرور که دسترسی دارید (یا استفاده می کنید) تنظیم کنید`localhost`برای تمرین ترکیب).
+
+### اشاره ها
+
+**Exercise 1.**از شروع به`tmux new -s practice`، بعدش با پیشگویی تقسیم بشه`Ctrl+B`بعدش`"`و`%`، و بین پين ها با `Ctrl+B`و يه کلید تير`Ctrl+B`پس`d`، فرار`tmux ls`، و دوباره با `tmux attach -t practice`؛ سه برنامه هنوز هم باید اجرا شوند.
+
+**Exercise 2.**خط ها رو از `code/shell_aliases.sh`تا آخر سال`~/.zshrc`یا`~/.bashrc`، بعد فرار کن`source`در اون پرونده`alias`یا`type <name>`براي يکي از اسمي هاي جديد که ميگه که پوسته ميدونه
+
+**Exercise 3.**اولين بار`tail -5 fake_train.log`برای دیدن فرمت خط. سپس با فیلتر کنید `grep loss`و فقط آخرین فیلد را با  چاپ کنید`awk '{print $NF}'`؛ محصول باید 100 عدد باشد که کوچک تر می شوند.
+
+**Exercise 4.**کپی از`Host gpu`تا کلاس اول`~/.ssh/config`و تغییر`HostName`و`User`به سرور شما، یا به `localhost`و اسم کاربریت رو اجرا کن`ssh -G gpu`برای چاپ تنظیمات که SSH استفاده خواهد کرد. اگر شما یک سرور SSH قابل دسترسی دارید که کلید شما را قبول می کند، اجرا کنید `ssh gpu`تا ارتباط برقرار کنه
 
 ## اصطلاحات کلیدی
 
