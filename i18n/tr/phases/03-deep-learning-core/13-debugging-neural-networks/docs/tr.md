@@ -22,7 +22,7 @@ Sinir ağları size bu lüksü vermez.
 
 Kırık bir sinir ağı tamamlanıp, kayıp değeri yazdırır ve tahminler yapar. Kayıplar azaltabilir. Tahminler makul görünebilir. Ama model sessizce yanlış -- kısayolları öğrenmek, gürültü ezberlemek, veya işe yaramaz bir yerel minimum'a yaklaşmak. Google araştırmacıları, ML debugging süresinin %60-70'inin hata üretmeyen, ancak model kalitesini düşüren "sessiz" hatalar üzerinde harcandığını tahmin etti.
 
-İşlemli ve kırık bir model arasındaki fark genellikle tek bir yanlış çizgidir: eksik bir çizgi `zero_grad()`, bir geçiş boyutu, öğrenme oranı 10x. Kanonik "Nöral Ağ Eğitimi Tarifi" (2019) şöyle başlar: "En yaygın sinir ağ hataları çökmeyen hatalardır".
+İşlemli ve kırık bir model arasındaki fark genellikle tek bir yanlış çizgidir: eksik bir çizgi `zero_grad()`Kanonik "Nöral Ağ Eğitimi Tarifi" (2019) şöyle başlar: "En yaygın sinir ağ hataları çökmeyen hatalardır".
 
 Bu ders size bu böcekleri bulmayı öğretiyor.
 
@@ -90,14 +90,14 @@ Analiz gradiyentilerinizi (backprop'dan) sayısal gradiyentilere (sınırlı far
 
 Parametre için sayısal gradient `w`- ...
 
-```
-grad_numerical = (loss(w + eps) - loss(w - eps)) / (2 * eps)
+```math
+\text{grad\_numerical} = \frac{\text{loss}(w + \text{eps}) - \text{loss}(w - \text{eps})}{2 \cdot \text{eps}}
 ```
 
 Anlaşmanın ölçüsü (sarefli fark):
 
-```
-rel_diff = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{rel\_diff} = \frac{\lvert \text{grad\_analytical} - \text{grad\_numerical} \rvert}{\max(\lvert \text{grad\_analytical} \rvert, \lvert \text{grad\_numerical} \rvert, 10^{-8})}
 ```
 
 - Eğer`rel_diff < 1e-5`Doğru.`rel_diff > 1e-3`- Kesinlikle bir böcek.
